@@ -12,15 +12,58 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Variables CSS personalizadas */
+@theme {
+  --font-family-sans: "Open Sans", sans-serif;
+  --color-text-muted: rgba(33, 37, 41, 0.75);
+  --color-bg-light: rgb(248, 248, 248);
+  --color-border-custom: rgb(247, 247, 247);
+  --radius-xl-custom: 1rem;
+  --spacing-5-custom: 3rem;
+  --spacing-3-custom: 1rem;
+  --font-size-fs-5: 1.25rem;
+  --font-size-fs-6: 1rem;
+}
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
+  font-family: var(--font-family-sans);
+}
+
+/* Clases personalizadas */
+@layer utilities {
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+  .bg-light {
+    background-color: var(--color-bg-light);
+  }
+  .fs-6 {
+    font-size: var(--font-size-fs-6);
+  }
+  .fs-5 {
+    font-size: var(--font-size-fs-5);
+  }
+  .border-bottom-custom {
+    border-bottom: 1px solid var(--color-border-custom);
+  }
+  .rounded-xl-custom {
+    border-radius: var(--radius-xl-custom);
+  }
+  .gap-5-custom {
+    gap: var(--spacing-5-custom);
+  }
+  .py-3-custom {
+    padding-top: var(--spacing-3-custom);
+    padding-bottom: var(--spacing-3-custom);
+  }
 }
