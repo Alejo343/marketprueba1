@@ -1,3 +1,4 @@
+@config "../tailwind.config.ts";
 @import "tailwindcss";
 
 :root {
@@ -39,6 +40,20 @@ body {
   font-family: var(--font-family-sans);
 }
 
+@layer components {
+  .layout-container {
+    @apply max-w-[1440px] mx-auto px-24 xl:px-6;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+}
+
 /* Clases personalizadas */
 @layer utilities {
   .text-muted {
@@ -65,5 +80,8 @@ body {
   .py-3-custom {
     padding-top: var(--spacing-3-custom);
     padding-bottom: var(--spacing-3-custom);
+  }
+  .drop-shadow-logo {
+    filter: drop-shadow(0 4px 4px rgb(0, 0, 0, 0.25));
   }
 }
