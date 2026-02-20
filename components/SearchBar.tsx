@@ -45,7 +45,13 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
         </button>
       </div>
       <div className="absolute top-[0px] right-[-70px] max-md:hidden z-0">
-        <Image src="/saleOff.png" alt="" width={1010} height={200} priority />
+        <Image
+          src="/images/saleOff.png"
+          alt=""
+          width={1010}
+          height={200}
+          priority
+        />
       </div>
     </div>
   );

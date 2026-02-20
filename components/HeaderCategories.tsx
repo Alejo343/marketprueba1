@@ -38,7 +38,7 @@ export default function Header() {
           <span className="font-normal drop-shadow-logo">house</span>
           <div className="absolute -top-[3px] right-[31px] -z-10 h-10 w-10">
             <Image
-              src="/sun.png"
+              src="/images/sun.png"
               alt="the sun | cosmestic content"
               width={192}
               height={192}
