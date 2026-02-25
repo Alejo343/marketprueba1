@@ -46,7 +46,7 @@ export default function CategoryTitle({
   return (
     <div>
       <div
-        className="mt-[30px] font-bold text-5xl mb-6 capitalize text-black
+        className="mt-[30px] font-bold text-5xl mb-6 capitalize text-theme
       max-xs:text-4xl
       max-xs:mb-4
       max-xs:mt-[15px]"
@@ -55,21 +55,24 @@ export default function CategoryTitle({
         {possessive}
         products
       </div>
+
       <p
-        className="text-slate-600 text-base mb-[61px] font-medium
+        className="text-muted-theme text-base mb-[61px] font-medium
       max-md:text-sm max-md:mb-[20px]
       max-lg:mb-[20px]
       max-xs:text-xs"
       >
         Showing {displayedProducts} products out of {totalProducts} products
       </p>
+
       <div
-        className="text-right text-sm font-semibold uppercase relative text-black
-        max-md:text-xs
-        sm:text-right
-        max-xs:text-left"
+        className="text-right text-sm font-semibold uppercase relative text-theme
+      max-md:text-xs
+      sm:text-right
+      max-xs:text-left"
       >
         <p>sorted by:</p>
+
         <div
           className="absolute top-[-3px] right-[-90px] flex items-center gap-2
         max-md:right-[-50px]
@@ -79,26 +82,21 @@ export default function CategoryTitle({
           <button
             onClick={sortAscendingHandler}
             className={`flex items-center justify-center
-      py-1 px-2 bg-white text-black z-10 transition duration-300 ${
-        currentSort === "asc" && "!bg-primary-color"
-      }`}
+          py-1 px-2 bg-surface text-theme transition duration-300
+          ${currentSort === "asc" ? "bg-primary-theme" : ""}
+          `}
           >
-            <FaSortAmountDownAlt
-              className="text-lg 
-            max-md:text-sm"
-            />
+            <FaSortAmountDownAlt className="text-lg max-md:text-sm" />
           </button>
+
           <button
             onClick={sortDescendingHandler}
             className={`flex items-center justify-center
-      py-1 px-2 bg-white text-black z-10 transition duration-300 ${
-        currentSort === "desc" && "!bg-primary-color"
-      }`}
+          py-1 px-2 bg-surface text-theme transition duration-300
+          ${currentSort === "desc" ? "bg-primary-theme" : ""}
+          `}
           >
-            <FaSortAmountDown
-              className="text-lg
-            max-md:text-sm"
-            />
+            <FaSortAmountDown className="text-lg max-md:text-sm" />
           </button>
         </div>
       </div>

@@ -19,14 +19,17 @@ export default function Accordion({ children, heading }: AccordionProps) {
   };
 
   return (
-    <div className="shadow-sm">
+    <div className="shadow-sm bg-surface rounded-xl-custom">
       <button
-        className="flex items-center justify-between bg-white py-[23px] px-5 w-full group z-10"
+        className="flex items-center justify-between
+      bg-surface text-theme
+      py-[23px] px-5 w-full group"
         onClick={toggleContent}
       >
-        <p className="font-medium z-10">{heading}</p>
-        {!isOpen && <BsChevronDown className="z-10" />}
-        {isOpen && <BsChevronUp className="z-10" />}
+        <p className="font-medium">{heading}</p>
+
+        {!isOpen && <BsChevronDown />}
+        {isOpen && <BsChevronUp />}
       </button>
 
       <Transition
@@ -40,7 +43,7 @@ export default function Accordion({ children, heading }: AccordionProps) {
           return (
             <div
               ref={nodeRef}
-              className={`bg-white ${
+              className={`bg-surface text-theme ${
                 state === "entering"
                   ? "animate__animated animate__fadeInDown animate__fast"
                   : state === "exiting"

@@ -23,10 +23,10 @@ export default function Header() {
 
   return (
     <header
-      className={`pt-10 px-24 xl:px-6 pb-5 transition duration-300 xs:text-sm sm:pt-6 ${plusJakarta.className}`}
+      className={`pt-10 px-24 xl:px-6 pb-5 transition duration-300 xs:text-sm sm:pt-6 bg-theme text-theme ${plusJakarta.className}`}
     >
       <div className="flex items-center justify-between relative mb-14">
-        {/* Left side - empty link for auth */}
+        {/* Left */}
         <Link href="/auth" className="flex items-center gap-1"></Link>
 
         {/* Center - Logo */}
@@ -36,10 +36,11 @@ export default function Header() {
         >
           <span className="font-extrabold">Light</span>
           <span className="font-normal drop-shadow-logo">house</span>
+
           <div className="absolute -top-[3px] right-[31px] -z-10 h-10 w-10">
             <Image
               src="/images/sun.png"
-              alt="the sun | cosmestic content"
+              alt="the sun | cosmetic content"
               width={192}
               height={192}
               className="w-full h-full"
@@ -49,7 +50,7 @@ export default function Header() {
         </Link>
 
         {/* Right - Cart */}
-        <Link href="/cart" className="relative">
+        <Link href="/cart" className="relative text-theme">
           <svg
             stroke="currentColor"
             fill="none"
@@ -58,14 +59,13 @@ export default function Header() {
             className="text-2xl xs:text-lg"
             height="1em"
             width="1em"
-            xmlns="http://www.w3.org/2000/svg"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-            ></path>
+            />
           </svg>
         </Link>
       </div>
@@ -80,11 +80,23 @@ export default function Header() {
               <li key={link.label} className="relative group transition p-1">
                 <Link
                   href={link.href}
-                  className={`text-base leading-none ${isActive ? "font-bold" : "font-normal"}`}
+                  className={`text-base leading-none transition-colors ${
+                    isActive
+                      ? "font-bold text-theme"
+                      : "font-normal text-muted-theme hover:text-theme"
+                  }`}
                 >
                   {link.label}
                 </Link>
-                <div className="absolute bottom-0 left-0 w-0 right-0 m-auto text-transparent bg-[#aaa] h-[3px] text-left opacity-0 group-hover:-z-10 group-hover:opacity-100 group-hover:animate-nav-move"></div>
+
+                <div
+                  className={`absolute bottom-0 left-0 w-full h-[3px]
+                    bg-primary-theme
+                    origin-center
+                    transition-transform duration-300
+                    ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}
+                  `}
+                />
               </li>
             );
           })}
