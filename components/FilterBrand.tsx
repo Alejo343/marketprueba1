@@ -54,39 +54,64 @@ export default function FilterBrand({
   return (
     <Accordion heading="Brand">
       <div className="p-7">
-        {stylesOptions.map((option, position) => (
-          <div
-            className="flex items-center gap-x-5 mb-[30px] relative max-lg:gap-x-3"
-            key={option.id}
-          >
-            <div className="relative">
-              <input
-                type="checkbox"
-                id={option.title.toLowerCase()}
-                name="checkboxs"
-                value={option.title.toLowerCase()}
-                className="appearance-none h-[15px] w-[15px] bg-slate-200 rounded-md peer transition cursor-pointer"
-                onChange={() => handleSelectBrand(position)}
-                checked={selectedBrands[position]}
-              />
-              {selectedBrands[position] && (
-                <HiCheck
-                  onClick={() => handleSelectBrand(position)}
-                  className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-lg text-black cursor-pointer"
-                />
-              )}
-            </div>
-            <label
-              htmlFor={option.title.toLowerCase()}
-              className={`flex-1 flex items-center justify-between text-gray-600 transition relative cursor-pointer
-              ${selectedBrands[position] && "text-black font-medium"}
-              `}
+        {stylesOptions.map((option, position) => {
+          const isChecked = selectedBrands[position];
+
+          return (
+            <div
+              className="flex items-center gap-x-5 mb-[30px] relative max-lg:gap-x-3"
+              key={option.id}
             >
-              <p>{option.title}</p>
-              <p>{option.quantity}</p>
-            </label>
-          </div>
-        ))}
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  id={option.title.toLowerCase()}
+                  name="checkboxs"
+                  value={option.title.toLowerCase()}
+                  className="
+                peer appearance-none
+                h-[16px] w-[16px]
+                rounded-md
+                border-2
+                border-[var(--color-border)]
+                bg-transparent
+                transition
+                cursor-pointer
+                checked:bg-[var(--color-primary)]
+                checked:border-[var(--color-primary)]
+              "
+                  onChange={() => handleSelectBrand(position)}
+                  checked={isChecked}
+                />
+
+                {/* Check icon */}
+                <HiCheck
+                  className="
+                absolute top-1/2 left-1/2
+                -translate-x-1/2 -translate-y-1/2
+                text-sm
+                text-white
+                opacity-0
+                pointer-events-none
+                peer-checked:opacity-100
+              "
+                />
+              </div>
+
+              <label
+                htmlFor={option.title.toLowerCase()}
+                className={`
+              flex-1 flex items-center justify-between
+              transition relative cursor-pointer
+              ${isChecked ? "text-theme font-medium" : "text-muted-theme"}
+            `}
+              >
+                <p>{option.title}</p>
+                <p>{option.quantity}</p>
+              </label>
+            </div>
+          );
+        })}
       </div>
     </Accordion>
   );

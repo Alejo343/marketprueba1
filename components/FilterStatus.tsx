@@ -54,45 +54,52 @@ export default function FilterStatus({
   return (
     <Accordion heading="Status">
       <div className="px-6 pt-3 pb-5 mb-5">
-        {categoryOptions.map((option) => (
-          <div
-            className="flex items-center gap-x-5 mb-[30px] relative max-lg:gap-x-3"
-            key={option.id}
-          >
-            <div className="relative w-[18px] h-[18px]">
-              <input
-                onChange={selectStatusHandler}
-                type="radio"
-                id={option.title.toLowerCase()}
-                name="category"
-                value={option.title.toLowerCase()}
-                className={`appearance-none h-full w-full rounded-full border-2 transition ${
-                  selectedStatus === option.title.toLowerCase()
-                    ? "border-primary-color"
-                    : "border-gray-600"
-                }
-                max-lg:h-[15px] max-lg:w-[15px]`}
-              />
-              {selectedStatus === option.title.toLowerCase() && (
-                <div
-                  className="absolute h-3 w-3 rounded-full bg-primary-color top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                max-lg:h-[10px] max-lg:w-[10px] max-lg:-translate-x-[6px] max-lg:-translate-y-[6.5px]"
-                ></div>
-              )}
-            </div>
+        {categoryOptions.map((option) => {
+          const isSelected = selectedStatus === option.title.toLowerCase();
 
-            <label
-              htmlFor={option.title.toLowerCase()}
-              className={`flex-1 flex items-center justify-between text-gray-600 transition relative cursor-pointer ${
-                selectedStatus === option.title.toLowerCase() &&
-                "!text-black !font-medium"
-              }`}
+          return (
+            <div
+              className="flex items-center gap-x-5 mb-[30px] relative max-lg:gap-x-3"
+              key={option.id}
             >
-              <p>{option.title}</p>
-              <p>{option.quantity}</p>
-            </label>
-          </div>
-        ))}
+              <div className="relative w-[18px] h-[18px] max-lg:w-[15px] max-lg:h-[15px]">
+                <input
+                  onChange={selectStatusHandler}
+                  type="radio"
+                  id={option.title.toLowerCase()}
+                  name="category"
+                  value={option.title.toLowerCase()}
+                  className={`
+  appearance-none h-full w-full rounded-full border-2 transition
+  ${isSelected ? "border-[var(--color-primary)]" : "border-[var(--color-text)]"}
+`}
+                />
+
+                {isSelected && (
+                  <div
+                    className="
+                  absolute h-3 w-3 rounded-full bg-primary-theme
+                  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                  max-lg:h-[10px] max-lg:w-[10px]
+                "
+                  />
+                )}
+              </div>
+
+              <label
+                htmlFor={option.title.toLowerCase()}
+                className={`
+              flex-1 flex items-center justify-between
+              transition relative cursor-pointer
+              ${isSelected ? "text-theme font-medium" : "text-muted-theme"}
+            `}
+              >
+                <p>{option.title}</p>
+                <p>{option.quantity}</p>
+              </label>
+            </div>
+          );
+        })}
       </div>
     </Accordion>
   );

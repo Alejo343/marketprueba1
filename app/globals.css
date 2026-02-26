@@ -126,6 +126,47 @@ body {
   .animate-nav-move {
     animation: nav-move 800ms forwards;
   }
+
+  .range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    background: transparent;
+    position: absolute;
+    top: -6px;
+  }
+
+  .range-slider::-webkit-slider-runnable-track {
+    height: 5px;
+    background: transparent;
+  }
+
+  .range-slider::-moz-range-track {
+    height: 5px;
+    background: transparent;
+  }
+
+  .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+
+    margin-top: -6.5px; /* 🔥 esto lo centra */
+  }
+
+  .range-slider::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+    border: none;
+  }
 }
 
 /* Theme específico para category */

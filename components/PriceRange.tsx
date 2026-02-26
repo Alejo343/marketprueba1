@@ -70,42 +70,44 @@ export default function PriceRange({
 
   return (
     <Accordion heading="Price">
-      <div className="px-6 py-3 pb-5 mb-5 shadow-sm">
+      <div className="px-6 py-3 pb-5 mb-5 shadow-sm bg-surface text-theme">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2 max-lg:gap-1">
-            <span className="text-sm">From</span>
+            <span className="text-sm text-muted-theme">From</span>
             <div className="text-center select-none font-semibold text-lg max-w-[66px] max-lg:text-sm">
               ${minInput}
             </div>
           </div>
+
           <div className="flex items-center gap-2">
-            <span className="text-sm">To</span>
+            <span className="text-sm text-muted-theme">To</span>
             <div className="text-center select-none font-semibold text-lg max-w-[66px] max-lg:text-sm">
               ${maxInput}
             </div>
           </div>
         </div>
 
-        <div className="h-[5px] bg-[#ddd] rounded-md relative">
+        {/* Track */}
+        <div className="h-[5px] bg-border-theme rounded-md relative">
           <div
-            className="h-[5px] absolute bg-primary-color rounded-md"
+            className="h-[5px] absolute bg-primary-theme rounded-md"
             ref={progressRef}
           ></div>
         </div>
 
         <div className="relative">
           <input
-            className="absolute top-[-5px] h-[5px] appearance-none bg-transparent w-full pointer-events-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[17px] [&::-webkit-slider-thumb]:h-[17px] [&::-webkit-slider-thumb]:bg-primary-color [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:pointer-events-auto"
             type="range"
             min="0"
             max={MAX_PRICE}
             step="100"
             name="min-range"
-            onChange={handleChangeSlider}
             value={minInput}
+            onChange={handleChangeSlider}
+            className="range-slider"
           />
+
           <input
-            className="absolute top-[-5px] h-[5px] appearance-none bg-transparent w-full pointer-events-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[17px] [&::-webkit-slider-thumb]:h-[17px] [&::-webkit-slider-thumb]:bg-primary-color [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:pointer-events-auto"
             type="range"
             min="0"
             max={MAX_PRICE}
@@ -113,21 +115,24 @@ export default function PriceRange({
             name="max-range"
             onChange={handleChangeSlider}
             value={maxInput}
+            className="range-slider"
           />
         </div>
 
         <div className="text-center mb-6">
           <button
             onClick={handleFilter}
-            className="mt-8 border-2 py-3 px-5 hover:border-primary-color transition active:translate-y-[1px]"
+            className="mt-8 border-2 border-theme py-3 px-5
+          hover:border-primary-theme
+          transition active:translate-y-[1px]"
           >
-            <p>Apply filter</p>
+            <p className="text-theme">Apply filter</p>
           </button>
         </div>
 
-        <div className="max-lg:text-sm">
+        <div className="max-lg:text-sm text-muted-theme">
           <span>Result: </span>
-          <span>{resultCount} products</span>
+          <span className="text-theme font-medium">{resultCount} products</span>
         </div>
       </div>
     </Accordion>
