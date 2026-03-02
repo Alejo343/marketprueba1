@@ -51,9 +51,7 @@ export default function CategoryTitle({
       max-xs:mb-4
       max-xs:mt-[15px]"
       >
-        {categoryDisplay}
-        {possessive}
-        products
+        {categoryDisplay}s productos
       </div>
 
       <p
@@ -62,7 +60,7 @@ export default function CategoryTitle({
       max-lg:mb-[20px]
       max-xs:text-xs"
       >
-        Showing {displayedProducts} products out of {totalProducts} products
+        Mostrando {displayedProducts} de un total de {totalProducts} productos
       </p>
 
       <div

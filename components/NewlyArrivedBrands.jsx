@@ -1,49 +1,26 @@
 "use client";
 
-import React, { useRef } from "react";
-
-const brands = [
-  {
-    id: 1,
-    subtitle: "Amber Jar",
-    title: "Honey best nectar you wish to get",
-    image: "/images/product-thumb-11.jpg",
-  },
-  {
-    id: 2,
-    subtitle: "Amber Jar",
-    title: "Honey best nectar you wish to get",
-    image: "/images/product-thumb-12.jpg",
-  },
-  {
-    id: 3,
-    subtitle: "Amber Jar",
-    title: "Honey best nectar you wish to get",
-    image: "/images/product-thumb-13.jpg",
-  },
-  {
-    id: 4,
-    subtitle: "Amber Jar",
-    title: "Honey best nectar you wish to get",
-    image: "/images/product-thumb-14.jpg",
-  },
-  {
-    id: 5,
-    subtitle: "Amber Jar",
-    title: "Honey best nectar you wish to get",
-    image: "/images/product-thumb-11.jpg",
-  },
-  {
-    id: 6,
-    subtitle: "Amber Jar",
-    title: "Honey best nectar you wish to get",
-    image: "/images/product-thumb-12.jpg",
-  },
-];
+import React, { useRef, useState, useEffect } from "react";
+import { getProducts } from "@/lib/api";
 
 const NewlyArrivedBrands = () => {
   const scrollRef = useRef(null);
-  const slideWidth = 365.5 + 30; // ancho del slide + margin-right
+  const slideWidth = 365.5 + 30;
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getProducts()
+      .then((res) => {
+        // Ordenar por created_at descendente y tomar los últimos 6
+        const sorted = [...res.data].sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at),
+        );
+        setProducts(sorted.slice(0, 6));
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const scrollPrev = () => {
     if (scrollRef.current) {
@@ -66,7 +43,7 @@ const NewlyArrivedBrands = () => {
             className="text-[2rem] font-bold text-[#222222] leading-[1.2] mb-[0.5rem]"
             style={{ fontFamily: "Nunito, sans-serif" }}
           >
-            Newly Arrived Brands
+            Nuevos productos
           </h2>
 
           <div className="flex items-center">
@@ -74,10 +51,9 @@ const NewlyArrivedBrands = () => {
               href="#"
               className="no-underline font-semibold text-[16px] leading-[22px] text-[#787878] capitalize mr-[30px] hover:text-[#222222] transition-colors"
             >
-              View All Categories →
+              Ver todos →
             </a>
 
-            {/* Carousel Buttons */}
             <div className="flex gap-2">
               <button
                 onClick={scrollPrev}
@@ -97,47 +73,82 @@ const NewlyArrivedBrands = () => {
           </div>
         </div>
 
-        {/* Brand Carousel */}
-        <div
-          ref={scrollRef}
-          className="flex overflow-x-hidden"
-          style={{ scrollSnapType: "x mandatory" }}
-        >
-          {brands.map((brand) => (
-            <div
-              key={brand.id}
-              className="flex-shrink-0"
-              style={{ width: "365.5px", marginRight: "30px" }}
-            >
-              {/* Card */}
-              <div className="bg-white border-0 rounded-[1rem] p-[1rem] mb-[1rem] shadow-[0_.5rem_1rem_rgba(0,0,0,0.15)]">
-                <div className="flex gap-0">
-                  {/* Imagen */}
-                  <div className="w-4/12 flex-shrink-0">
-                    <img
-                      src={brand.image}
-                      alt="Card title"
-                      className="w-full h-full object-cover rounded-[0.375rem]"
+        {/* Skeleton */}
+        {loading && (
+          <div className="flex gap-[30px]">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex-shrink-0 animate-pulse"
+                style={{ width: "365.5px" }}
+              >
+                <div className="bg-white rounded-[1rem] p-[1rem] shadow-[0_.5rem_1rem_rgba(0,0,0,0.15)]">
+                  <div className="flex gap-3">
+                    <div
+                      className="w-4/12 bg-[#F0F0F0] rounded-[0.375rem]"
+                      style={{ aspectRatio: "1" }}
                     />
-                  </div>
-
-                  {/* Contenido */}
-                  <div className="w-8/12 px-[1rem] py-0">
-                    <p className="text-[rgba(33,37,41,0.75)] text-[1rem] mb-0">
-                      {brand.subtitle}
-                    </p>
-                    <h5
-                      className="text-[1.25rem] font-bold text-[#222222] leading-[1.2] mt-0 mb-[0.5rem]"
-                      style={{ fontFamily: "Nunito, sans-serif" }}
-                    >
-                      {brand.title}
-                    </h5>
+                    <div className="w-8/12 flex flex-col gap-2 py-2">
+                      <div className="h-3 bg-[#F0F0F0] rounded w-1/2" />
+                      <div className="h-4 bg-[#F0F0F0] rounded w-3/4" />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {/* Carousel */}
+        {!loading && (
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-hidden"
+            style={{ scrollSnapType: "x mandatory" }}
+          >
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="flex-shrink-0"
+                style={{ width: "365.5px", marginRight: "30px" }}
+              >
+                <div className="bg-white border-0 rounded-[1rem] p-[1rem] mb-[1rem] shadow-[0_.5rem_1rem_rgba(0,0,0,0.15)]">
+                  <div className="flex gap-0">
+                    {/* Imagen */}
+                    <div className="w-4/12 flex-shrink-0">
+                      <img
+                        src={
+                          product.primary_image?.url ??
+                          "/images/placeholder.png"
+                        }
+                        alt={product.primary_image?.alt ?? product.name}
+                        className="w-full h-full object-cover rounded-[0.375rem]"
+                      />
+                    </div>
+
+                    {/* Contenido */}
+                    <div className="w-8/12 px-[1rem] py-0">
+                      <p className="text-[rgba(33,37,41,0.75)] text-[1rem] mb-0">
+                        {product.sale_type_label}
+                      </p>
+                      <h5
+                        className="text-[1.25rem] font-bold text-[#222222] leading-[1.2] mt-0 mb-[0.5rem] capitalize"
+                        style={{ fontFamily: "Nunito, sans-serif" }}
+                      >
+                        {product.name}
+                      </h5>
+                      {product.description && (
+                        <p className="text-[0.875rem] text-[#787878] m-0 line-clamp-2">
+                          {product.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

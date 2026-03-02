@@ -4,21 +4,10 @@ import ProductItem from "./ProductItem";
 import ProductEmpty from "./ProductEmpty";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { useState } from "react";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  discount: number;
-  availability: boolean;
-  brand: string;
-  image: {
-    img1: string;
-  };
-}
+import { ProductVariant } from "@/types";
 
 interface ProductListProps {
-  products: Product[];
+  products: ProductVariant[];
   category: string;
   productsPerPage?: number;
 }
@@ -32,12 +21,10 @@ export default function ProductList({
 
   if (products.length === 0) return <ProductEmpty />;
 
-  // Pagination logic
   const maxPage = Math.ceil(products.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = currentPage * productsPerPage;
   const renderedProducts = products.slice(startIndex, endIndex);
-
   const pageNumbers = Array.from({ length: maxPage }, (_, i) => i + 1);
 
   const handleClickPagination = (number: number) => {
@@ -59,25 +46,32 @@ export default function ProductList({
     }
   };
 
+  // Calcula el porcentaje de descuento para pasarlo a ProductItem
+  const getDiscountPercent = (variant: ProductVariant): number => {
+    if (!variant.has_sale || !variant.sale_price) return 0;
+    return Math.round(
+      ((variant.price - variant.sale_price) / variant.price) * 100,
+    );
+  };
+
   return (
     <div>
       <ul className="grid grid-cols-3 gap-x-5 gap-y-[26px] max-md:grid-cols-2 max-md:gap-x-2">
-        {renderedProducts.map((product) => (
+        {renderedProducts.map((variant) => (
           <ProductItem
-            key={product.id}
-            availability={product.availability}
-            img={product.image.img1}
-            name={product.name}
-            price={product.price}
-            discount={product.discount}
-            brand={product.brand}
-            id={product.id}
+            key={variant.id}
+            id={String(variant.id)}
+            name={variant.product?.name ?? "Producto"}
+            price={variant.final_price}
+            discount={getDiscountPercent(variant)}
+            availability={variant.in_stock}
+            brand={variant.product?.brand?.name ?? ""}
+            img={variant.primary_image?.url ?? "/images/placeholder.png"}
             category={category}
           />
         ))}
       </ul>
 
-      {/* Pagination */}
       {maxPage > 1 && (
         <div className="flex justify-center">
           <button onClick={previousPageHandler} disabled={currentPage === 1}>

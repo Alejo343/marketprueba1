@@ -1,81 +1,7 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-
-const products = [
-  {
-    id: 1,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-bananas.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: "-30%",
-  },
-  {
-    id: 2,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-biscuits.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: "-30%",
-  },
-  {
-    id: 3,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-cucumber.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 4,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-milk.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 5,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-bananas.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 6,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-biscuits.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 7,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-cucumber.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 8,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-milk.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-];
+import React, { useState, useRef, useEffect } from "react";
+import { getProductVariants } from "@/lib/api";
 
 // Iconos SVG
 const HeartIcon = () => (
@@ -117,53 +43,70 @@ const CartIcon = () => (
   </svg>
 );
 
-// ProductCard exacta de TrendingProducts
-const ProductCard = ({ product }) => {
+const formatPrice = (price) => {
+  if (price == null) return "-";
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  }).format(price);
+};
+
+const ProductCard = ({ variant }) => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlist, setIsWishlist] = useState(false);
 
+  const productName = variant.product?.name ?? "Producto";
+  const image = variant.primary_image?.url ?? "/images/placeholder.png";
+  const imageAlt = variant.primary_image?.alt ?? productName;
+
   return (
     <div className="relative bg-white border border-[#FBFBFB] rounded-[16px] p-[16px] shadow-[0px_5px_22px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 flex flex-col h-full">
-      {/* Badge Descuento */}
-      {product.discount && (
+      {variant.has_sale && (
         <span className="absolute top-[12px] left-[12px] z-10 bg-[rgba(163,190,76,1)] text-white text-xs font-semibold px-2 py-1 rounded">
-          {product.discount}
+          Oferta
+        </span>
+      )}
+      {!variant.in_stock && (
+        <span className="absolute top-[12px] left-[12px] z-10 bg-[#dc3545] text-white text-xs font-semibold px-2 py-1 rounded">
+          Agotado
         </span>
       )}
 
-      {/* Wishlist Button */}
       <button
         onClick={() => setIsWishlist(!isWishlist)}
-        className="absolute top-[20px] right-[20px] w-[50px] h-[50px] rounded-full flex items-center justify-center bg-white border border-[#d8d8d8] hover:border-[#FFC43F] hover:text-[#FFC43F] transition-all duration-300 z-10"
+        className={`absolute top-[20px] right-[20px] w-[50px] h-[50px] rounded-full flex items-center justify-center bg-white border transition-all duration-300 z-10 ${
+          isWishlist
+            ? "border-[#FFC43F] text-[#FFC43F]"
+            : "border-[#d8d8d8] hover:border-[#FFC43F] hover:text-[#FFC43F]"
+        }`}
       >
         <HeartIcon />
       </button>
 
-      {/* Imagen */}
       <figure
         className="bg-[#F9F9F9] rounded-[12px] text-center m-0 mb-[1rem] flex-shrink-0"
         style={{ aspectRatio: "1" }}
       >
         <a
           href="#"
-          title="Product Title"
+          title={productName}
           className="flex items-center justify-center h-full"
         >
           <img
-            src={product.image}
-            alt="Product Thumbnail"
+            src={image}
+            alt={imageAlt}
             className="max-w-full max-h-full h-auto object-contain p-4"
           />
         </a>
       </figure>
 
-      {/* Info abajo */}
       <div className="flex flex-col mt-auto">
         <h3
           className="block w-full font-semibold text-[18px] leading-[25px] capitalize text-[#333333] m-0 mb-2"
           style={{ fontFamily: "Nunito, sans-serif" }}
         >
-          {product.name}
+          {productName}
         </h3>
 
         <div className="flex justify-between items-center mb-1">
@@ -171,19 +114,26 @@ const ProductCard = ({ product }) => {
             className="font-normal text-[13px] leading-[18px] uppercase text-[#9D9D9D]"
             style={{ letterSpacing: "0.02em" }}
           >
-            {product.qty}
+            {variant.presentation}
           </span>
           <span className="flex items-center gap-1 font-semibold text-[13px] leading-[18px] text-[#222222]">
             <span className="text-[#1d9bf0]">
               <StarIcon />
             </span>
-            {product.rating}
+            5.0
           </span>
         </div>
 
-        <span className="block w-full font-semibold text-[22px] leading-[30px] text-[#222222] mb-3">
-          {product.price}
-        </span>
+        <div className="mb-3">
+          <span className="block w-full font-semibold text-[22px] leading-[30px] text-[#222222]">
+            {formatPrice(variant.final_price)}
+          </span>
+          {variant.has_sale && (
+            <span className="text-[13px] text-[#9D9D9D] line-through">
+              {formatPrice(variant.price)}
+            </span>
+          )}
+        </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center" style={{ width: "85px" }}>
@@ -199,11 +149,12 @@ const ProductCard = ({ product }) => {
               value={quantity}
               readOnly
               className="text-center border-0 focus:outline-none text-sm"
-              style={{ width: "28px", height: "auto", margin: 0, padding: 0 }}
+              style={{ width: "28px", margin: 0, padding: 0 }}
             />
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="flex items-center justify-center bg-white border border-[#E2E2E2] rounded-[6px] text-[#222] hover:bg-[#198754] hover:text-white hover:border-[#198754] transition-colors"
+              disabled={!variant.in_stock}
+              className="flex items-center justify-center bg-white border border-[#E2E2E2] rounded-[6px] text-[#222] hover:bg-[#198754] hover:text-white hover:border-[#198754] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ width: "26px", height: "26px", padding: 0 }}
             >
               <PlusIcon />
@@ -212,7 +163,11 @@ const ProductCard = ({ product }) => {
 
           <a
             href="#"
-            className="flex items-center gap-1 text-[#555] hover:text-[#111] no-underline transition-colors text-sm"
+            className={`flex items-center gap-1 no-underline transition-colors text-sm ${
+              variant.in_stock
+                ? "text-[#555] hover:text-[#111]"
+                : "text-[#aaa] pointer-events-none"
+            }`}
           >
             Add to Cart <CartIcon />
           </a>
@@ -222,11 +177,36 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// Componente principal del carousel
+const ProductSkeleton = ({ width }) => (
+  <div className="flex-shrink-0 animate-pulse" style={{ width: `${width}px` }}>
+    <div className="bg-white border border-[#FBFBFB] rounded-[16px] p-[16px]">
+      <div
+        className="bg-[#F0F0F0] rounded-[12px] mb-4"
+        style={{ aspectRatio: "1" }}
+      />
+      <div className="h-4 bg-[#F0F0F0] rounded mb-2 w-3/4" />
+      <div className="h-3 bg-[#F0F0F0] rounded mb-3 w-1/2" />
+      <div className="h-6 bg-[#F0F0F0] rounded mb-4 w-1/3" />
+      <div className="h-8 bg-[#F0F0F0] rounded" />
+    </div>
+  </div>
+);
+
 const ProductCarousel = ({ title = "Featured Products" }) => {
   const scrollRef = useRef(null);
   const SLIDE_WIDTH = 230;
   const GAP = 30;
+
+  const [variants, setVariants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getProductVariants()
+      .then((res) => setVariants(res.data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -240,7 +220,6 @@ const ProductCarousel = ({ title = "Featured Products" }) => {
   return (
     <section className="py-[3rem] overflow-hidden">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header exacto de Categories */}
         <div className="flex flex-wrap justify-between items-center mb-[3rem]">
           <h2
             className="text-[2rem] font-bold text-[#222222] leading-[1.2] mb-[0.5rem]"
@@ -254,9 +233,8 @@ const ProductCarousel = ({ title = "Featured Products" }) => {
               href="#"
               className="no-underline font-semibold text-[16px] leading-[22px] text-[#787878] capitalize mr-[30px] hover:text-[#222222] transition-colors"
             >
-              View All Categories →
+              Ver todos →
             </a>
-
             <div className="flex gap-2">
               <button
                 onClick={() => scroll(-1)}
@@ -276,21 +254,32 @@ const ProductCarousel = ({ title = "Featured Products" }) => {
           </div>
         </div>
 
-        {/* Carousel de ProductCards */}
+        {error && (
+          <div className="py-8 text-center text-red-500">
+            Error al cargar productos: {error}
+          </div>
+        )}
+
         <div
           ref={scrollRef}
           className="flex overflow-x-hidden"
           style={{ scrollSnapType: "x mandatory" }}
         >
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="flex-shrink-0"
-              style={{ width: `${SLIDE_WIDTH}px`, marginRight: `${GAP}px` }}
-            >
-              <ProductCard product={product} />
-            </div>
-          ))}
+          {loading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} style={{ marginRight: `${GAP}px` }}>
+                  <ProductSkeleton width={SLIDE_WIDTH} />
+                </div>
+              ))
+            : variants.map((variant) => (
+                <div
+                  key={variant.id}
+                  className="flex-shrink-0"
+                  style={{ width: `${SLIDE_WIDTH}px`, marginRight: `${GAP}px` }}
+                >
+                  <ProductCard variant={variant} />
+                </div>
+              ))}
         </div>
       </div>
     </section>

@@ -59,7 +59,7 @@ const Header = ({ cartTotal = "$1290.00" }) => {
                 <img
                   src="/logo.png"
                   alt="FoodMart - Grocery Store"
-                  className="max-w-full h-auto inline-block"
+                  className="h-10 sm:h-12 lg:h-[54px] w-auto inline-block"
                 />
               </Link>
             </div>
@@ -75,7 +75,7 @@ const Header = ({ cartTotal = "$1290.00" }) => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full border-0 bg-transparent focus:outline-none text-base"
-                    placeholder="Search for more than 20,000 products"
+                    placeholder="Busca en mas de 100 productos"
                   />
                 </form>
               </div>
@@ -126,7 +126,7 @@ const Header = ({ cartTotal = "$1290.00" }) => {
                 className="border-0 bg-transparent flex flex-col gap-2 leading-none"
               >
                 <span className="text-[1rem] text-[rgba(33,37,41,0.75)]">
-                  Your Cart
+                  Tu Carrito
                 </span>
                 <span className="text-[1.25rem] font-bold">{cartTotal}</span>
               </button>
@@ -154,7 +154,7 @@ const Header = ({ cartTotal = "$1290.00" }) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full border border-gray-300 p-3 rounded"
-                placeholder="Search for more than 20,000 products"
+                placeholder="Busca en mas de 100 productos"
                 autoFocus
               />
             </form>

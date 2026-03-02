@@ -1,99 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-
-const products = [
-  {
-    id: 1,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-bananas.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: "-30%",
-  },
-  {
-    id: 2,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-biscuits.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: "-30%",
-  },
-  {
-    id: 3,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-cucumber.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 4,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-milk.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 5,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-bananas.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 6,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-biscuits.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 7,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-cucumber.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 8,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-milk.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 9,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-tomatoketchup.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-  {
-    id: 10,
-    name: "Sunstar Fresh Melon Juice",
-    image: "/images/thumb-bananas.png",
-    price: "$18.00",
-    qty: "1 Unit",
-    rating: 4.5,
-    discount: null,
-  },
-];
+import React, { useState, useEffect } from "react";
+import { getProductVariants } from "@/lib/api";
 
 const tabs = [
   { id: "all", label: "All" },
@@ -141,24 +49,45 @@ const CartIcon = () => (
   </svg>
 );
 
-// Componente individual de producto
-const ProductCard = ({ product }) => {
+const formatPrice = (price) => {
+  if (price == null) return "-";
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  }).format(price);
+};
+
+const ProductCard = ({ variant }) => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlist, setIsWishlist] = useState(false);
 
+  const productName = variant.product?.name ?? "Producto";
+  const image = variant.primary_image?.url ?? "/images/placeholder.png";
+  const imageAlt = variant.primary_image?.alt ?? productName;
+
   return (
     <div className="relative bg-white border border-[#FBFBFB] rounded-[16px] p-[16px] mb-[30px] shadow-[0px_5px_22px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 flex flex-col">
-      {/* Badge Descuento */}
-      {product.discount && (
+      {/* Badge */}
+      {variant.has_sale && (
         <span className="absolute top-[12px] left-[12px] z-10 bg-[rgba(163,190,76,1)] text-white text-xs font-semibold px-2 py-1 rounded">
-          {product.discount}
+          Oferta
+        </span>
+      )}
+      {!variant.in_stock && (
+        <span className="absolute top-[12px] left-[12px] z-10 bg-[#dc3545] text-white text-xs font-semibold px-2 py-1 rounded">
+          Agotado
         </span>
       )}
 
-      {/* Wishlist Button */}
+      {/* Wishlist */}
       <button
         onClick={() => setIsWishlist(!isWishlist)}
-        className="absolute top-[20px] right-[20px] w-[50px] h-[50px] rounded-full flex items-center justify-center bg-white border border-[#d8d8d8] hover:border-[#FFC43F] hover:text-[#FFC43F] transition-all duration-300 z-10"
+        className={`absolute top-[20px] right-[20px] w-[50px] h-[50px] rounded-full flex items-center justify-center bg-white border transition-all duration-300 z-10 ${
+          isWishlist
+            ? "border-[#FFC43F] text-[#FFC43F]"
+            : "border-[#d8d8d8] hover:border-[#FFC43F] hover:text-[#FFC43F]"
+        }`}
       >
         <HeartIcon />
       </button>
@@ -170,51 +99,53 @@ const ProductCard = ({ product }) => {
       >
         <a
           href="#"
-          title="Product Title"
+          title={productName}
           className="flex items-center justify-center h-full"
         >
           <img
-            src={product.image}
-            alt="Product Thumbnail"
+            src={image}
+            alt={imageAlt}
             className="max-w-full max-h-full h-auto object-contain p-4"
           />
         </a>
       </figure>
 
-      {/* Info abajo - se expande para alinearse */}
+      {/* Info */}
       <div className="flex flex-col mt-auto">
-        {/* Nombre */}
         <h3
           className="block w-full font-semibold text-[18px] leading-[25px] capitalize text-[#333333] m-0 mb-2"
           style={{ fontFamily: "Nunito, sans-serif" }}
         >
-          {product.name}
+          {productName}
         </h3>
 
-        {/* Qty + Rating */}
         <div className="flex justify-between items-center mb-1">
           <span
             className="font-normal text-[13px] leading-[18px] uppercase text-[#9D9D9D]"
             style={{ letterSpacing: "0.02em" }}
           >
-            {product.qty}
+            {variant.presentation}
           </span>
           <span className="flex items-center gap-1 font-semibold text-[13px] leading-[18px] text-[#222222]">
             <span className="text-[#1d9bf0]">
               <StarIcon />
             </span>
-            {product.rating}
+            5.0
           </span>
         </div>
 
-        {/* Precio */}
-        <span className="block w-full font-semibold text-[22px] leading-[30px] text-[#222222] mb-3">
-          {product.price}
-        </span>
+        <div className="mb-3">
+          <span className="block w-full font-semibold text-[22px] leading-[30px] text-[#222222]">
+            {formatPrice(variant.final_price)}
+          </span>
+          {variant.has_sale && (
+            <span className="text-[13px] text-[#9D9D9D] line-through">
+              {formatPrice(variant.price)}
+            </span>
+          )}
+        </div>
 
-        {/* Cantidad + Add to Cart */}
         <div className="flex items-center justify-between">
-          {/* Input Cantidad */}
           <div className="flex items-center" style={{ width: "85px" }}>
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -228,21 +159,25 @@ const ProductCard = ({ product }) => {
               value={quantity}
               readOnly
               className="text-center border-0 focus:outline-none text-sm"
-              style={{ width: "28px", height: "auto", margin: 0, padding: 0 }}
+              style={{ width: "28px", margin: 0, padding: 0 }}
             />
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="flex items-center justify-center bg-white border border-[#E2E2E2] rounded-[6px] text-[#222] hover:bg-[#198754] hover:text-white hover:border-[#198754] transition-colors"
+              disabled={!variant.in_stock}
+              className="flex items-center justify-center bg-white border border-[#E2E2E2] rounded-[6px] text-[#222] hover:bg-[#198754] hover:text-white hover:border-[#198754] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ width: "26px", height: "26px", padding: 0 }}
             >
               <PlusIcon />
             </button>
           </div>
 
-          {/* Add to Cart */}
           <a
             href="#"
-            className="flex items-center gap-1 text-[#555] hover:text-[#111] no-underline transition-colors text-sm"
+            className={`flex items-center gap-1 no-underline transition-colors text-sm ${
+              variant.in_stock
+                ? "text-[#555] hover:text-[#111]"
+                : "text-[#aaa] pointer-events-none"
+            }`}
           >
             Add to Cart <CartIcon />
           </a>
@@ -252,14 +187,35 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// Componente principal
+const ProductSkeleton = () => (
+  <div className="bg-white border border-[#FBFBFB] rounded-[16px] p-[16px] mb-[30px] animate-pulse">
+    <div
+      className="bg-[#F0F0F0] rounded-[12px] mb-4"
+      style={{ aspectRatio: "1" }}
+    />
+    <div className="h-4 bg-[#F0F0F0] rounded mb-2 w-3/4" />
+    <div className="h-3 bg-[#F0F0F0] rounded mb-3 w-1/2" />
+    <div className="h-6 bg-[#F0F0F0] rounded mb-4 w-1/3" />
+    <div className="h-8 bg-[#F0F0F0] rounded" />
+  </div>
+);
+
 const TrendingProducts = () => {
   const [activeTab, setActiveTab] = useState("all");
+  const [variants, setVariants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getProductVariants()
+      .then((res) => setVariants(res.data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section className="py-[3rem]">
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Tabs Header */}
         <div className="flex flex-wrap justify-between items-center border-b border-[rgb(247,247,247)] my-[3rem]">
           <h3
             className="text-[1.75rem] font-bold text-[#222222] leading-[1.2] mb-[0.5rem]"
@@ -267,14 +223,13 @@ const TrendingProducts = () => {
           >
             Trending Products
           </h3>
-
           <nav>
             <div className="flex justify-end">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`uppercase text-[1rem] px-4 py-2 border-0 bg-transparent cursor-pointer transition-colors no-underline ${
+                  className={`uppercase text-[1rem] px-4 py-2 border-0 bg-transparent cursor-pointer transition-colors ${
                     activeTab === tab.id
                       ? "text-[#000] border-b-[3px] border-[#FFC43F]"
                       : "text-[#555] border-b-[3px] border-transparent hover:text-[#111]"
@@ -287,11 +242,20 @@ const TrendingProducts = () => {
           </nav>
         </div>
 
-        {/* Product Grid */}
+        {error && (
+          <div className="py-12 text-center text-red-500">
+            Error al cargar productos: {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading
+            ? Array.from({ length: 10 }).map((_, i) => (
+                <ProductSkeleton key={i} />
+              ))
+            : variants.map((variant) => (
+                <ProductCard key={variant.id} variant={variant} />
+              ))}
         </div>
       </div>
     </section>
