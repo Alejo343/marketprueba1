@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "the_market.test",
+        protocol: "https",
+        hostname: "thebarrilmarket.com",
       },
     ],
   },
