@@ -8,7 +8,7 @@ import FilterStatus from "@/components/FilterStatus";
 import FilterBrand from "@/components/FilterBrand";
 import ProductList from "@/components/ProductList";
 import { getCategories, getProductVariantsByCategory } from "@/lib/api";
-import { Category } from "@/types";
+import { Category, ProductVariant } from "@/types";
 
 interface PageProps {
   params: Promise<{
@@ -50,7 +50,7 @@ export default async function ProductsPage({ params }: PageProps) {
 
   // Obtener variantes filtradas por category_id
   const variantsRes = await getProductVariantsByCategory(matchedCategory.id);
-  const variants = variantsRes.data;
+  const variants: ProductVariant[] = variantsRes.data;
 
   const totalProducts = variants.length;
   const displayedProducts = variants.length;
