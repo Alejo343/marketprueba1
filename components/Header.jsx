@@ -57,7 +57,7 @@ const Header = ({ cartTotal = "$1290.00" }) => {
             <div className="main-logo">
               <Link href="/">
                 <img
-                  src="/logo.png"
+                  src="/logo2.png"
                   alt="FoodMart - Grocery Store"
                   className="h-10 sm:h-12 lg:h-[54px] w-auto inline-block"
                 />

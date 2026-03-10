@@ -12,7 +12,7 @@ const FeaturedBanners = () => {
       title: "Fresh Smoothie & Summer Juice",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
-      image: "/images/product-thumb-1.png",
+      image: "/images/barril.png",
       buttonText: "Shop Now",
     },
     {
@@ -21,18 +21,18 @@ const FeaturedBanners = () => {
       title: "Fresh Smoothie & Summer Juice",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
-      image: "/images/product-thumb-1.png",
+      image: "/images/setBBQnintenod .png",
       buttonText: "Shop Collection",
     },
-    {
-      id: 3,
-      category: "100% natural",
-      title: "Heinz Tomato Ketchup",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
-      image: "/images/product-thumb-2.png",
-      buttonText: "Shop Collection",
-    },
+    // {
+    //   id: 3,
+    //   category: "100% natural",
+    //   title: "Heinz Tomato Ketchup",
+    //   description:
+    //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
+    //   image: "/images/product-thumb-2.png",
+    //   buttonText: "Shop Collection",
+    // },
   ];
 
   // Auto-play carousel

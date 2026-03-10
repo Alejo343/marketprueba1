@@ -16,7 +16,13 @@ import {
 import Link from "next/link";
 
 const categories = [
-  { id: 1, title: "Carnes", slug: "carnes", icon: Beef, color: "text-red-600" },
+  {
+    id: 1,
+    title: "Carnes",
+    slug: "carnes-y-embutidos",
+    icon: Beef,
+    color: "text-red-600",
+  },
   {
     id: 2,
     title: "Congelados",
