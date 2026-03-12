@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { notFound } from "next/navigation";
 import Header from "@/components/HeaderCategories";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -63,11 +64,13 @@ export default async function ProductsPage({ params }: PageProps) {
           <Breadcrumb category={categorySlug} />
 
           <div className="flex xs:flex-col gap-3 overflow-visible">
-            <CategoryTitle
-              category={matchedCategory.name}
-              totalProducts={totalProducts}
-              displayedProducts={displayedProducts}
-            />
+            <Suspense fallback={null}>  
+              <CategoryTitle
+                category={matchedCategory.name}
+                totalProducts={totalProducts}
+                displayedProducts={displayedProducts}
+              />
+            </Suspense>
             <SearchBar />
           </div>
 
