@@ -21,7 +21,7 @@ const FeaturedBanners = () => {
       title: "Fresh Smoothie & Summer Juice",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
-      image: "/images/setBBQnintenod .png",
+      image: "/images/setBBQ.png",
       buttonText: "Shop Collection",
     },
     // {
@@ -142,6 +142,7 @@ const FeaturedBanners = () => {
               backgroundImage: "url('/images/ad-image-1.png')",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right bottom",
+              backgroundSize: "60%",
             }}
           >
             <div className="grid grid-cols-12">
@@ -175,9 +176,10 @@ const FeaturedBanners = () => {
           <div
             className="banner-ad-small bg-[rgb(249,235,231)] rounded-lg p-8 md:p-12"
             style={{
-              backgroundImage: "url('/images/ad-image-2.png')",
+              backgroundImage: "url('/images/ad-image-2-2.png')",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "right bottom",
+              backgroundSize: "45%",
             }}
           >
             <div className="grid grid-cols-12">
