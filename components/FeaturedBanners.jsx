@@ -8,21 +8,21 @@ const FeaturedBanners = () => {
   const slides = [
     {
       id: 1,
-      category: "100% natural",
-      title: "Fresh Smoothie & Summer Juice",
+      category: "BBQ Profesional",
+      title: "Asador & Ahumador Tipo Barril",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
+        "Controla la temperatura y logra el sabor ahumado perfecto para carnes, costillas, pollo y más.",
       image: "/images/barril.png",
-      buttonText: "Shop Now",
+      buttonText: "Compra ahora",
     },
     {
       id: 2,
-      category: "100% natural",
-      title: "Fresh Smoothie & Summer Juice",
+      category: "Todo para tu Parrilla",
+      title: "Utensilios profesionales para asados perfectos.",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
+        "Espátulas, pinzas y herramientas de acero diseñadas para que disfrutes cada parrillada como un experto.",
       image: "/images/setBBQ.png",
-      buttonText: "Shop Collection",
+      buttonText: "Colleción",
     },
     // {
     //   id: 3,
@@ -160,13 +160,13 @@ const FeaturedBanners = () => {
                     letterSpacing: "0.02em",
                   }}
                 >
-                  Fruits & Vegetables
+                  Carbón Premium para Parrilla
                 </h3>
                 <a
                   href="#"
                   className="flex items-center gap-2 text-[#555] hover:text-[#111] no-underline transition-colors"
                 >
-                  Shop Collection <ArrowRightIcon />
+                  Comprar <ArrowRightIcon />
                 </a>
               </div>
             </div>
@@ -197,13 +197,13 @@ const FeaturedBanners = () => {
                     letterSpacing: "0.02em",
                   }}
                 >
-                  Baked Products
+                  Delantales para Parrilleros
                 </h3>
                 <a
                   href="#"
                   className="flex items-center gap-2 text-[#555] hover:text-[#111] no-underline transition-colors"
                 >
-                  Shop Collection <ArrowRightIcon />
+                  Comprar coleción <ArrowRightIcon />
                 </a>
               </div>
             </div>

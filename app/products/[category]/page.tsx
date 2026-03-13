@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Header from "@/components/HeaderCategories";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -53,6 +53,8 @@ export default async function ProductsPage({ params }: PageProps) {
   const variantsRes = await getProductVariantsByCategory(matchedCategory.id);
   const variants: ProductVariant[] = variantsRes.data;
 
+  const displayedVariants = variants.slice(0, 10);
+
   const totalProducts = variants.length;
   const displayedProducts = variants.length;
 
@@ -64,7 +66,7 @@ export default async function ProductsPage({ params }: PageProps) {
           <Breadcrumb category={categorySlug} />
 
           <div className="flex xs:flex-col gap-3 overflow-visible">
-            <Suspense fallback={null}>  
+            <Suspense fallback={null}>
               <CategoryTitle
                 category={matchedCategory.name}
                 totalProducts={totalProducts}
@@ -93,7 +95,10 @@ export default async function ProductsPage({ params }: PageProps) {
 
             {/* Products grid */}
             <section className="col-span-9">
-              <ProductList products={variants} category={categorySlug} />
+              <ProductList
+                products={displayedVariants}
+                category={categorySlug}
+              />
             </section>
           </div>
         </div>
