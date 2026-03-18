@@ -25,7 +25,7 @@ const sections = [
     title: "Delish",
     desc: "Gourmet • Exclusivos",
     image: "/images/sections/delish.webp",
-    href: "/region/delish-y-sabores-del-mundo",
+    href: "/region/delish",
   },
   {
     title: "Market",
@@ -87,7 +87,7 @@ const FeaturedSections = () => {
         {/* TARJETA GRANDE */}
         <div className="mt-[30px]">
           <Link
-            href="/region/delish-y-sabores-del-mundo"
+            href="/region/sabores-del-mundo"
             className="relative block h-[300px] rounded-[16px] overflow-hidden shadow-[0px_5px_22px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 group"
           >
             <div
