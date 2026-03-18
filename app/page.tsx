@@ -5,12 +5,14 @@ import CategoriesBanners from "@/components/CategoriesBanner";
 import NewlyArrivedBrands from "@/components/NewlyArrivedBrands";
 import TrendingProducts from "@/components/TrendingProducts";
 import ProductCarousel from "@/components/ProductCarousel";
+import FeaturedSections from "@/components/FeaturedSections";
 
 export default function Home() {
   return (
     <div className="App">
       <Header cartTotal="$1290.00" />
       <FeturedBanners />
+      <FeaturedSections />
       <CategoriesBanners />
       <NewlyArrivedBrands />
       <TrendingProducts />

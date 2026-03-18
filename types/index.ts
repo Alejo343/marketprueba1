@@ -56,3 +56,12 @@ export interface Category {
 export interface ApiResponse<T> {
   data: T[];
 }
+
+export interface Region {
+  id: number;
+  name: string;
+  description: string | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}

@@ -93,12 +93,12 @@ const Categories = () => {
           </h2>
 
           <div className="flex items-center">
-            <a
+            {/* <a
               href="#"
               className="font-semibold text-[16px] text-[#787878] capitalize mr-[30px] hover:text-[#222222] transition-colors"
             >
               Ver todas →
-            </a>
+            </a> */}
 
             <div className="flex gap-2">
               <button

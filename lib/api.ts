@@ -1,4 +1,10 @@
-import { ApiResponse, ProductVariant, Product, Category } from "@/types";
+import {
+  ApiResponse,
+  ProductVariant,
+  Product,
+  Category,
+  Region,
+} from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -27,5 +33,17 @@ export async function getProductVariantsByCategory(categoryId: number) {
     `${BASE_URL}/product-variants?include=product.brand,product.media&category_id=${categoryId}`,
   );
   if (!res.ok) throw new Error("Error al obtener variantes");
+  return res.json();
+}
+
+export async function getRegions(): Promise<ApiResponse<Region>> {
+  const res = await fetch(`${BASE_URL}/regions`);
+  if (!res.ok) throw new Error("Error al obtener regiones");
+  return res.json();
+}
+
+export async function getProductVariantsByRegion(regionId: number) {
+  const res = await fetch(`${BASE_URL}/regions/${regionId}/variants`);
+  if (!res.ok) throw new Error("Error al obtener variantes por región");
   return res.json();
 }

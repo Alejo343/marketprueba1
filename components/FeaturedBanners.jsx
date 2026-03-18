@@ -27,10 +27,10 @@ const FeaturedBanners = () => {
     {
       id: 2,
       category: "Todo para tu Parrilla",
-      title: "Utensilios profesionales para asados perfectos.",
+      title: "Accesesorios para asados perfectos.",
       description:
         "Espátulas, pinzas y herramientas de acero diseñadas para que disfrutes cada parrillada como un experto.",
-      image: "/images/setBBQ.png",
+      image: "/images/garra.png",
       buttonText: "Colleción",
     },
     // {
