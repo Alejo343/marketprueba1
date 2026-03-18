@@ -208,7 +208,9 @@ const TrendingProducts = () => {
 
   useEffect(() => {
     getProductVariants()
-      .then((res) => setVariants(res.data))
+      .then((res) => {
+        setVariants(res.data.slice(0, 10)); /* solo los primeros 10 */
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);

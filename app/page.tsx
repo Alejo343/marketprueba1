@@ -16,12 +16,12 @@ export default function Home() {
       <TrendingProducts />
       <ProductCarousel />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold">Bienvenido a FoodMart</h1>
+      {/* <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold">Bienvenido a The Barril Market</h1>
         <p className="mt-4 text-gray-600">
           Este es un ejemplo de cómo usar el componente Header.
         </p>
-      </main>
+      </main> */}
       <Footer />
     </div>
   );
