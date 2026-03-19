@@ -90,7 +90,7 @@ export default async function ProductsPage({ params }: PageProps) {
                 numLimited={variants.filter((v) => v.low_stock).length}
                 numLoved={0}
               />
-              <FilterBrand numBalenciaga={0} numLouisVuitton={0} numGucci={0} />
+              {/* <FilterBrand numBalenciaga={0} numLouisVuitton={0} numGucci={0} /> */}
             </aside>
 
             {/* Products grid */}

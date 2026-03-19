@@ -2,6 +2,15 @@ export interface Media {
   id: number;
   url: string;
   alt: string;
+  pivot?: {
+    is_primary: boolean;
+    order: number;
+  };
+}
+
+export interface Brand {
+  id: number;
+  name: string;
 }
 
 export interface ProductVariant {
@@ -21,13 +30,14 @@ export interface ProductVariant {
   primary_image: Media | null;
   product: Pick<
     Product,
-    "id" | "name" | "description" | "sale_type_label" | "brand"
+    | "id"
+    | "name"
+    | "description"
+    | "sale_type"
+    | "sale_type_label"
+    | "brand"
+    | "media"
   >;
-}
-
-export interface Brand {
-  id: number;
-  name: string;
 }
 
 export interface Product {
@@ -42,6 +52,7 @@ export interface Product {
   brand?: Brand | null;
   primary_image: Media | null;
   has_images: boolean;
+  media: Media[];
   variants: ProductVariant[];
 }
 

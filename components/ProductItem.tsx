@@ -14,8 +14,8 @@ interface ProductItemProps {
   availability: boolean;
   discount: number;
   brand: string;
-  id: string;
   category: string;
+  productId: number;
 }
 
 export default function ProductItem({
@@ -25,16 +25,13 @@ export default function ProductItem({
   discount,
   availability,
   brand,
-  id,
   category,
+  productId,
 }: ProductItemProps) {
   const [isLoved, setIsLoved] = useState(false);
 
-  const handleLove = () => {
-    setIsLoved(!isLoved);
-  };
-
   const finalPrice = (price - (price * discount) / 100).toFixed(2);
+  const productUrl = `/products/${category}/${productId}`;
 
   return (
     <li className="bg-[#F6F5F3] dark:bg-[#484848] shadow-md overflow-hidden dark:text-slate-900">
@@ -45,6 +42,7 @@ export default function ProductItem({
           fill
           className="object-cover"
           sizes="(max-width: 768px) 50vw, 33vw"
+          unoptimized
         />
 
         {discount > 0 && (
@@ -55,13 +53,13 @@ export default function ProductItem({
         )}
 
         <Link
-          href={`/${category}/${id}`}
+          href={productUrl}
           className="absolute opacity-0 transition duration-300 z-10 group-hover:opacity-100 py-2 px-5 border-2 font-normal border-primary-color text-primary-color top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center cursor-pointer shadow-md"
         >
-          View product
+          Ver producto
         </Link>
 
-        <div className="absolute opacity-0 transition duration-500 w-full h-full top-0 left-0 bg-black/60 group-hover:opacity-100"></div>
+        <div className="absolute opacity-0 transition duration-500 w-full h-full top-0 left-0 bg-black/60 group-hover:opacity-100" />
       </div>
 
       <div className="py-5 px-5 bg-white dark:bg-[#ced2d6] h-[156px] flex flex-col justify-between">
@@ -80,20 +78,18 @@ export default function ProductItem({
             </p>
           </div>
 
-          {availability && (
+          {availability ? (
             <div className="text-right text-sm font-thin max-lg:text-xs">
               ${finalPrice}
             </div>
-          )}
-
-          {!availability && (
+          ) : (
             <div className="text-right text-sm text-slate-700 italic font-thin max-lg:text-xs">
-              Unavailable
+              Sin stock
             </div>
           )}
 
           <button
-            onClick={handleLove}
+            onClick={() => setIsLoved(!isLoved)}
             className="flex items-center gap-2 mt-auto"
           >
             {isLoved ? (

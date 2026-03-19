@@ -47,3 +47,15 @@ export async function getProductVariantsByRegion(regionId: number) {
   if (!res.ok) throw new Error("Error al obtener variantes por región");
   return res.json();
 }
+
+// Obtiene todas las variantes de un producto por su ID
+// Incluye brand y media para la página de detalle
+export async function getProductVariantsByProductId(
+  productId: number,
+): Promise<ApiResponse<ProductVariant>> {
+  const res = await fetch(
+    `${BASE_URL}/product-variants?include=product.brand,product.media&product_id=${productId}`,
+  );
+  if (!res.ok) throw new Error("Error al obtener variantes del producto");
+  return res.json();
+}

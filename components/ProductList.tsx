@@ -46,7 +46,6 @@ export default function ProductList({
     }
   };
 
-  // Calcula el porcentaje de descuento para pasarlo a ProductItem
   const getDiscountPercent = (variant: ProductVariant): number => {
     if (!variant.has_sale || !variant.sale_price) return 0;
     return Math.round(
@@ -60,7 +59,7 @@ export default function ProductList({
         {renderedProducts.map((variant) => (
           <ProductItem
             key={variant.id}
-            id={String(variant.id)}
+            productId={variant.product_id}
             name={variant.product?.name ?? "Producto"}
             price={variant.final_price}
             discount={getDiscountPercent(variant)}

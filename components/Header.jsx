@@ -128,7 +128,7 @@ const Header = ({ cartTotal = "$1290.00" }) => {
                 <span className="text-[1rem] text-[rgba(33,37,41,0.75)]">
                   Tu Carrito
                 </span>
-                <span className="text-[1.25rem] font-bold">{cartTotal}</span>
+                {/* <span clas sName="text-[1.25rem] font-bold">{cartTotal}</span> */}
               </button>
             </div>
           </div>

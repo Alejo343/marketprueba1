@@ -69,7 +69,7 @@ export default function CategoryTitle({
       sm:text-right
       max-xs:text-left"
       >
-        <p>sorted by:</p>
+        <p>Ordenar por:</p>
 
         <div
           className="absolute top-[-3px] right-[-90px] flex items-center gap-2

@@ -30,22 +30,22 @@ export default function FilterStatus({
     return [
       {
         id: 1,
-        title: "Sale-off",
+        title: "Descuento",
         quantity: numSaleOff,
       },
       {
         id: 2,
-        title: "Limited",
+        title: "Limitados",
         quantity: numLimited,
       },
       {
         id: 3,
-        title: "Loved",
+        title: "Favoritos",
         quantity: numLoved,
       },
       {
         id: 4,
-        title: "No filter",
+        title: "Sin filtro",
         quantity: "",
       },
     ];

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 const ArrowRightIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -97,12 +98,12 @@ const FeaturedBanners = () => {
                           {slide.description}
                         </p>
                         <div>
-                          <a
-                            href="#"
+                          <Link
+                            href="/region/market"
                             className="inline-block px-6 py-3 border-2 border-[#212529] text-[#212529] hover:bg-[#212529] hover:text-white uppercase text-base font-medium rounded-[0.25rem] transition-colors"
                           >
                             {slide.buttonText}
-                          </a>
+                          </Link>
                         </div>
                       </div>
                       <div className="col-span-1 md:col-span-5 flex items-center justify-center">
@@ -162,12 +163,12 @@ const FeaturedBanners = () => {
                 >
                   Carbón Premium para Parrilla
                 </h3>
-                <a
-                  href="#"
+                <Link
+                  href="/region/market"
                   className="flex items-center gap-2 text-[#555] hover:text-[#111] no-underline transition-colors"
                 >
                   Comprar <ArrowRightIcon />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -199,12 +200,12 @@ const FeaturedBanners = () => {
                 >
                   Delantales para Parrilleros
                 </h3>
-                <a
-                  href="#"
+                <Link
+                  href="/region/market"
                   className="flex items-center gap-2 text-[#555] hover:text-[#111] no-underline transition-colors"
                 >
                   Comprar coleción <ArrowRightIcon />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
