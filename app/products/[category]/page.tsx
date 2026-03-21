@@ -53,8 +53,6 @@ export default async function ProductsPage({ params }: PageProps) {
   const variantsRes = await getProductVariantsByCategory(matchedCategory.id);
   const variants: ProductVariant[] = variantsRes.data;
 
-  const displayedVariants = variants.slice(0, 10);
-
   const totalProducts = variants.length;
   const displayedProducts = variants.length;
 
@@ -95,10 +93,7 @@ export default async function ProductsPage({ params }: PageProps) {
 
             {/* Products grid */}
             <section className="col-span-9">
-              <ProductList
-                products={displayedVariants}
-                category={categorySlug}
-              />
+              <ProductList products={variants} category={categorySlug} />
             </section>
           </div>
         </div>

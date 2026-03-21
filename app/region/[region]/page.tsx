@@ -54,8 +54,6 @@ export default async function RegionPage({ params }: PageProps) {
 
   const variantsRes = await getProductVariantsByRegion(matchedRegion.id);
   const variants: ProductVariant[] = variantsRes.data;
-
-  const displayedVariants = variants.slice(0, 10);
   const totalProducts = variants.length;
   const displayedProducts = variants.length;
 
@@ -93,7 +91,7 @@ export default async function RegionPage({ params }: PageProps) {
             </aside>
 
             <section className="col-span-9">
-              <ProductList products={displayedVariants} category={regionSlug} />
+              <ProductList products={variants} category={regionSlug} />
             </section>
           </div>
         </div>
