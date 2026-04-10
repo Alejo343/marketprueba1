@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { getProductVariants } from "@/lib/api";
 
-const tabs = [
-  { id: "all", label: "All" },
-  { id: "fruits", label: "Fruits & Veges" },
-  { id: "juices", label: "Juices" },
-];
+const tabs = [{ id: "all", label: "All" }];
+// const tabs = [
+//   { id: "all", label: "All" },
+//   { id: "fruits", label: "Fruits & Veges" },
+//   { id: "juices", label: "Juices" },
+// ];
 
 // Iconos SVG
 const HeartIcon = () => (

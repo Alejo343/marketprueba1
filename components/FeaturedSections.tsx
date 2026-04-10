@@ -3,48 +3,45 @@
 import Link from "next/link";
 import { useRef, useState, useCallback, useEffect } from "react";
 
+// Secciones actualizadas según la API (id + name)
+// Los slugs se generan desde el name, igual que antes
+// Las imágenes deben existir en /public/images/sections/
 const sections = [
   {
-    title: "Italia",
-    desc: "Pastas • Aceites • Quesos",
-    image: "/images/sections/italia.webp",
-    href: "/region/italia",
+    title: "Accesorios y vitrinas",
+    desc: "Exhibidores • Utensilios • Vitrinas",
+    image: "/images/sections/accesorios.webp",
+    href: "/region/accesorios-y-vitrinas",
   },
   {
-    title: "México",
+    title: "Cocina Mexicana",
     desc: "Salsas • Chiles • Maíz",
     image: "/images/sections/mexico.webp",
-    href: "/region/mexico",
+    href: "/region/cocina-mexicana",
   },
   {
-    title: "Nikkei",
-    desc: "Soja • Algas • Ramen",
-    image: "/images/sections/nikkei.webp",
-    href: "/region/nikkei",
-  },
-  {
-    title: "Delish",
-    desc: "Gourmet • Exclusivos",
-    image: "/images/sections/delish.webp",
-    href: "/region/delish",
-  },
-  {
-    title: "Market",
-    desc: "Marca propia",
-    image: "/images/sections/market.png",
-    href: "/region/market",
-  },
-  {
-    title: "Café & Mieles",
-    desc: "Origen • Naturales",
+    title: "Colmena & café",
+    desc: "Origen • Naturales • Mieles",
     image: "/images/sections/cafe-miel.webp",
     href: "/region/colmena-y-cafe",
   },
   {
-    title: "🌎 Sabores del Mundo",
-    desc: "Italia • México • Japón • Francia • España",
-    image: "/images/sections/mundo.jpg",
-    href: "/region/sabores-del-mundo",
+    title: "Despensa Gourmet",
+    desc: "Gourmet • Exclusivos • Selectos",
+    image: "/images/sections/gourmet.webp",
+    href: "/region/despensa-gourmet",
+  },
+  {
+    title: "Escencia Nikkei",
+    desc: "Soja • Algas • Ramen",
+    image: "/images/sections/nikkei.webp",
+    href: "/region/escencia-nikkei",
+  },
+  {
+    title: "Rincón Italiano",
+    desc: "Pastas • Aceites • Quesos",
+    image: "/images/sections/italia.webp",
+    href: "/region/rincon-italiano",
   },
 ];
 

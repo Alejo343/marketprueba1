@@ -1,19 +1,47 @@
 import Link from "next/link";
 
 interface BreadcrumbProps {
-  category: string;
+  category: string; // slug: "cocina-mexicana"
+  productName?: string; // nombre real: "Taco Abierto Paquete"
 }
 
-export default function Breadcrumb({ category }: BreadcrumbProps) {
-  const categoryDisplay = category.charAt(0).toUpperCase() + category.slice(1);
+// Convierte slug a label legible: "cocina-mexicana" → "Cocina Mexicana"
+function slugToLabel(slug: string): string {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+export default function Breadcrumb({ category, productName }: BreadcrumbProps) {
+  const categoryLabel = slugToLabel(category);
 
   return (
-    <nav className="flex items-center gap-2 text-sm text-muted-theme mb-4">
-      <Link href="/" className="hover:text-theme transition-colors">
+    <nav className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)] mb-6">
+      <Link
+        href="/"
+        className="hover:text-[var(--color-text-primary)] transition-colors"
+      >
         Homepage
       </Link>
-      <span>&gt;</span>
-      <span className="text-theme">{categoryDisplay}'s Product</span>
+
+      <span className="text-[var(--color-text-tertiary)]">›</span>
+
+      <Link
+        href={`/region/${category}`}
+        className="hover:text-[var(--color-text-primary)] transition-colors"
+      >
+        {categoryLabel}
+      </Link>
+
+      {productName && (
+        <>
+          <span className="text-[var(--color-text-tertiary)]">›</span>
+          <span className="text-[var(--color-text-primary)] font-medium">
+            {productName}
+          </span>
+        </>
+      )}
     </nav>
   );
 }

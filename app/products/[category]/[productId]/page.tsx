@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Header from "@/components/HeaderCategories";
+import Footer from "@/components/Footer";
 import Breadcrumb from "@/components/Breadcrumb";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
@@ -46,6 +47,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
