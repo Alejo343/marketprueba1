@@ -1,168 +1,265 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { useCartStore } from "@/store/cartStore";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
-// Iconos SVG como componentes
-const HeartIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24">
-    <path
-      fill="currentColor"
-      d="M20.16 4.61A6.27 6.27 0 0 0 12 4a6.27 6.27 0 0 0-8.16 9.48l7.45 7.45a1 1 0 0 0 1.42 0l7.45-7.45a6.27 6.27 0 0 0 0-8.87Zm-1.41 7.46L12 18.81l-6.75-6.74a4.28 4.28 0 0 1 3-7.3a4.25 4.25 0 0 1 3 1.25a1 1 0 0 0 1.42 0a4.27 4.27 0 0 1 6 6.05Z"
-    />
-  </svg>
-);
-
-const CartIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24">
-    <path
-      fill="currentColor"
-      d="M8.5 19a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 8.5 19ZM19 16H7a1 1 0 0 1 0-2h8.491a3.013 3.013 0 0 0 2.885-2.176l1.585-5.55A1 1 0 0 0 19 5H6.74a3.007 3.007 0 0 0-2.82-2H3a1 1 0 0 0 0 2h.921a1.005 1.005 0 0 1 .962.725l.155.545v.005l1.641 5.742A3 3 0 0 0 7 18h12a1 1 0 0 0 0-2Zm-1.326-9l-1.22 4.274a1.005 1.005 0 0 1-.963.726H8.754l-.255-.892L7.326 7ZM16.5 19a1.5 1.5 0 1 0 1.5 1.5a1.5 1.5 0 0 0-1.5-1.5Z"
-    />
-  </svg>
-);
+const navLinks = [
+  { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
+  { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
+  { label: "Colmena & café", href: "/region/colmena-y-cafe" },
+  { label: "Despensa Gourmet", href: "/region/despensa-gourmet" },
+  { label: "Escencia Nikkei", href: "/region/escencia-nikkei" },
+  { label: "Rincón Italiano", href: "/region/rincon-italiano" },
+];
 
 const SearchIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width="16"
+    height="16"
     viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
-    <path
-      fill="currentColor"
-      d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"
-    />
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
   </svg>
 );
 
-const Header = ({ cartTotal = "$1290.00" }) => {
+const CartIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <path d="M16 10a4 4 0 0 1-8 0" />
+  </svg>
+);
+
+const MenuIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+export default function Header() {
+  const pathname = usePathname();
+  const { toggleCart, totalItems } = useCartStore();
+  const mounted = useIsMounted();
   const [searchQuery, setSearchQuery] = useState("");
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  const itemCount = mounted ? totalItems() : 0;
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("Searching for:", searchQuery);
-    // Aquí puedes agregar la lógica de búsqueda
   };
 
   return (
-    <header className="w-full">
-      {/* Container fluid - ocupa todo el ancho */}
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center py-4 border-b pb-6 border-[rgb(247,247,247)]">
-          {/* Logo */}
-          <div className="w-full sm:w-4/12 lg:w-3/12 text-center sm:text-left">
-            <div className="main-logo">
-              <Link href="/">
-                <img
-                  src="/logo2.png"
-                  alt="FoodMart - Grocery Store"
-                  className="h-10 sm:h-12 lg:h-[54px] w-auto inline-block"
-                />
-              </Link>
-            </div>
-          </div>
+    <header className="w-full sticky top-0 z-30 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+      {/* Main bar */}
+      <div className="bg-[#111111] border-b border-[#C9A84C]/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-4 h-[72px]">
 
-          {/* Search Bar - Desktop only */}
-          <div className="hidden lg:block w-full lg:w-5/12">
-            <div className="flex items-center bg-[rgb(248,248,248)] p-2 my-2 rounded-[1rem]">
-              <div className="flex-1">
-                <form onSubmit={handleSearch} className="text-center">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-colors duration-200 cursor-pointer"
+              aria-label="Menú de navegación"
+            >
+              {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
+
+            {/* Logo */}
+            <Link href="/" className="flex-shrink-0 flex items-center">
+              <img
+                src="/logov2w.webp"
+                alt="Barril Market"
+                className="h-14 w-auto"
+              />
+            </Link>
+
+            {/* Search - Desktop */}
+            <div className="hidden lg:flex flex-1 mx-8">
+              <form onSubmit={handleSearch} className="w-full">
+                <div className="flex items-center bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg px-4 py-2.5 gap-3 focus-within:border-[#C9A84C]/60 focus-within:bg-[#1C1C1C] transition-all duration-200">
+                  <span className="text-[#C9A84C]/60 flex-shrink-0">
+                    <SearchIcon />
+                  </span>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full border-0 bg-transparent focus:outline-none text-base"
-                    placeholder="Busca en mas de 100 productos"
+                    placeholder="Busca productos artesanales y gourmet..."
+                    className="flex-1 bg-transparent text-[#F5F0E8] text-sm placeholder:text-[#666] focus:outline-none"
                   />
-                </form>
-              </div>
-              <div className="ml-2">
-                <SearchIcon />
-              </div>
+                </div>
+              </form>
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="w-full sm:w-8/12 lg:w-4/12 flex justify-end gap-[3rem] items-center mt-4 sm:mt-0 justify-center sm:justify-end">
-            {/* Icon Actions */}
-            <ul className="flex justify-end list-none m-0 gap-1">
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center rounded-full bg-[rgb(248,248,248)] p-2"
-                >
-                  <HeartIcon />
-                </a>
-              </li>
-
-              {/* Cart Icon - Mobile only */}
-              <li className="lg:hidden">
-                <button
-                  onClick={() => setIsCartOpen(!isCartOpen)}
-                  className="flex items-center justify-center rounded-full bg-[rgb(248,248,248)] p-2"
-                >
-                  <CartIcon />
-                </button>
-              </li>
-
-              {/* Search Icon - Mobile only */}
-              <li className="lg:hidden">
-                <button
-                  onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-                  className="flex items-center justify-center rounded-full bg-[rgb(248,248,248)] p-2"
-                >
-                  <SearchIcon />
-                </button>
-              </li>
-            </ul>
-
-            {/* Cart Info - Desktop only */}
-            <div className="hidden lg:block text-right">
+            {/* Actions */}
+            <div className="flex items-center gap-3 ml-auto">
+              {/* Mobile search toggle */}
               <button
-                onClick={() => setIsCartOpen(!isCartOpen)}
-                className="border-0 bg-transparent flex flex-col gap-2 leading-none"
+                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+                className="lg:hidden flex items-center justify-center w-9 h-9 rounded text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-colors duration-200 cursor-pointer"
+                aria-label="Buscar"
               >
-                <span className="text-[1rem] text-[rgba(33,37,41,0.75)]">
-                  Tu Carrito
-                </span>
-                {/* <span clas sName="text-[1.25rem] font-bold">{cartTotal}</span> */}
+                <SearchIcon />
+              </button>
+
+              {/* Cart button */}
+              <button
+                onClick={toggleCart}
+                className="relative flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer"
+                aria-label="Abrir carrito"
+              >
+                <CartIcon />
+                <span className="hidden sm:inline tracking-wide">Carrito</span>
+                {itemCount > 0 && (
+                  <span className="bg-[#111111] text-[#C9A84C] text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 leading-none">
+                    {itemCount > 99 ? "99+" : itemCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Search Overlay */}
-      {isMobileSearchOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Search</h3>
-              <button
-                onClick={() => setIsMobileSearchOpen(false)}
-                className="text-2xl"
-              >
-                ×
-              </button>
-            </div>
+        {/* Mobile search */}
+        {mobileSearchOpen && (
+          <div className="lg:hidden px-4 pb-3">
             <form onSubmit={handleSearch}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full border border-gray-300 p-3 rounded"
-                placeholder="Busca en mas de 100 productos"
-                autoFocus
-              />
+              <div className="flex items-center bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg px-4 py-2.5 gap-3 focus-within:border-[#C9A84C]/60 transition-all duration-200">
+                <span className="text-[#C9A84C]/60 flex-shrink-0">
+                  <SearchIcon />
+                </span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar productos..."
+                  className="flex-1 bg-transparent text-[#F5F0E8] text-sm placeholder:text-[#666] focus:outline-none"
+                  autoFocus
+                />
+              </div>
             </form>
           </div>
+        )}
+      </div>
+
+      {/* Gold separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#C9A84C]/50 to-transparent" />
+
+      {/* Nav bar - Desktop */}
+      <nav className="hidden lg:block bg-[#0D0D0D]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ul className="flex items-center justify-center">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href} className="relative group">
+                  <Link
+                    href={link.href}
+                    className={`block px-4 py-3.5 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
+                      isActive
+                        ? "text-[#C9A84C]"
+                        : "text-[#9A8C7A] hover:text-[#C9A84C]"
+                    }`}
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {link.label}
+                  </Link>
+                  {/* Gold underline */}
+                  <span
+                    className={`absolute bottom-0 left-4 right-4 h-px bg-[#C9A84C] transition-transform duration-200 origin-center ${
+                      isActive
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-[#0D0D0D] border-b border-[#C9A84C]/20">
+          <nav className="max-w-7xl mx-auto px-4 py-3">
+            <ul className="flex flex-col">
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between px-4 py-3.5 text-sm border-b border-[#1A1A1A] transition-colors duration-200 cursor-pointer tracking-wide ${
+                        isActive
+                          ? "text-[#C9A84C] font-semibold"
+                          : "text-[#9A8C7A] hover:text-[#C9A84C]"
+                      }`}
+                    >
+                      {link.label}
+                      {isActive && (
+                        <span className="w-1 h-1 rounded-full bg-[#C9A84C]" />
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
         </div>
       )}
     </header>
   );
-};
-
-export default Header;
+}

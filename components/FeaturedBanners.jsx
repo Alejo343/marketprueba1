@@ -1,259 +1,215 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const ArrowRightIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24">
-    <path
-      fill="currentColor"
-      d="M13.3 17.275q-.3-.3-.288-.725t.313-.725L16.15 13H5q-.425 0-.713-.288T4 12q0-.425.288-.713T5 11h11.15L13.3 8.15q-.3-.3-.3-.713t.3-.712q.3-.3.713-.3t.712.3L19.3 11.3q.15.15.213.325t.062.375q0 .2-.062.375t-.213.325l-4.6 4.6q-.275.275-.687.275t-.713-.3Z"
-    />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M5 12h14M12 5l7 7-7 7" />
   </svg>
 );
 
-const FeaturedBanners = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+const slides = [
+  {
+    id: 1,
+    category: "BBQ Profesional",
+    title: "Asador & Ahumador Tipo Barril",
+    description:
+      "Controla la temperatura y logra el sabor ahumado perfecto para carnes, costillas, pollo y más.",
+    image: "/images/barril.png",
+    buttonText: "Compra ahora",
+    href: "/region/accesorios-y-vitrinas",
+  },
+  {
+    id: 2,
+    category: "Todo para tu Parrilla",
+    title: "Accesorios para asados perfectos",
+    description:
+      "Espátulas, pinzas y herramientas de acero diseñadas para que disfrutes cada parrillada como un experto.",
+    image: "/images/garra.png",
+    buttonText: "Ver colección",
+    href: "/region/accesorios-y-vitrinas",
+  },
+];
 
-  const slides = [
-    {
-      id: 1,
-      category: "BBQ Profesional",
-      title: "Asador & Ahumador Tipo Barril",
-      description:
-        "Controla la temperatura y logra el sabor ahumado perfecto para carnes, costillas, pollo y más.",
-      image: "/images/barril.png",
-      buttonText: "Compra ahora",
-    },
-    {
-      id: 2,
-      category: "Todo para tu Parrilla",
-      title: "Accesesorios para asados perfectos.",
-      description:
-        "Espátulas, pinzas y herramientas de acero diseñadas para que disfrutes cada parrillada como un experto.",
-      image: "/images/garra.png",
-      buttonText: "Colleción",
-    },
-    // {
-    //   id: 3,
-    //   category: "100% natural",
-    //   title: "Heinz Tomato Ketchup",
-    //   description:
-    //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.",
-    //   image: "/images/product-thumb-2.png",
-    //   buttonText: "Shop Collection",
-    // },
-  ];
+const smallBanners = [
+  {
+    id: 1,
+    badge: "20% Off",
+    title: "Carbón Premium para Parrilla",
+    href: "/region/accesorios-y-vitrinas",
+    image: "/images/ad-image-1.png",
+    cta: "Comprar",
+  },
+  {
+    id: 2,
+    badge: "15% Off",
+    title: "Delantales para Parrilleros",
+    href: "/region/accesorios-y-vitrinas",
+    image: "/images/ad-image-2-2.png",
+    cta: "Comprar colección",
+  },
+];
 
-  // Auto-play carousel
+export default function FeaturedBanners() {
+  const [current, setCurrent] = useState(0);
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+    const t = setInterval(() => setCurrent((p) => (p + 1) % slides.length), 5000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
-    <section
-      className="py-4"
-      style={{
-        backgroundImage: "url('/images/background-pattern.jpg')",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="banner-blocks-container">
-          {/* Block 1 - Large Carousel */}
-          <div className="banner-ad-large bg-[rgb(230,243,250)] rounded-lg overflow-hidden">
-            <div className="relative h-full">
-              {/* Slides */}
-              <div className="relative h-full overflow-hidden">
-                {slides.map((slide, index) => (
-                  <div
-                    key={slide.id}
-                    className={`absolute inset-0 transition-opacity duration-500 ${
-                      index === currentSlide ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-12 h-full p-8 md:p-12">
-                      <div className="col-span-1 md:col-span-7 flex flex-col justify-center">
-                        <div
-                          className="text-[37px] text-[#FFC43F] capitalize mb-4"
-                          style={{ fontFamily: "Garamond, serif" }}
+    <section className="bg-[#080808] py-8">
+      {/* Gold entry line */}
+      <div className="w-full h-px bg-linear-to-r from-transparent via-[#C9A84C]/40 to-transparent mb-8" />
+
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[560px]">
+
+          {/* Large carousel */}
+          <div className="lg:col-span-7 relative bg-[#111111] rounded-2xl overflow-hidden border border-[#C9A84C]/15">
+            {/* Gold corner accent */}
+            <div className="absolute top-0 left-0 w-32 h-32 opacity-10">
+              <div className="w-full h-full border-t-2 border-l-2 border-[#C9A84C] rounded-tl-2xl" />
+            </div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 opacity-10">
+              <div className="w-full h-full border-b-2 border-r-2 border-[#C9A84C] rounded-br-2xl" />
+            </div>
+
+            {/* Slides */}
+            <div className="relative h-full min-h-[500px]">
+              {slides.map((slide, i) => (
+                <div
+                  key={slide.id}
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    i === current ? "opacity-100" : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <div className="flex flex-col md:flex-row h-full p-8 md:p-12 gap-6">
+                    {/* Text */}
+                    <div className="flex-1 flex flex-col justify-center">
+                      <span
+                        className="text-[#C9A84C] text-sm font-medium tracking-widest uppercase mb-4 block"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {slide.category}
+                      </span>
+                      <h2
+                        className="text-[2.4rem] md:text-[3rem] font-bold text-[#F5F0E8] leading-[1.15] mb-4"
+                        style={{ fontFamily: "var(--font-playfair)" }}
+                      >
+                        {slide.title}
+                      </h2>
+                      <p
+                        className="text-[#9A8C7A] text-base leading-relaxed mb-8 max-w-sm"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {slide.description}
+                      </p>
+                      <div>
+                        <Link
+                          href={slide.href}
+                          className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] px-6 py-3 rounded-lg font-semibold text-sm tracking-wide transition-all duration-200 cursor-pointer"
+                          style={{ fontFamily: "var(--font-inter)" }}
                         >
-                          {slide.category}
-                        </div>
-                        <h3
-                          className="text-[2.5rem] md:text-[3.5rem] font-bold text-[#222222] leading-[1.2] mb-4"
-                          style={{ fontFamily: "Nunito, sans-serif" }}
-                        >
-                          {slide.title}
-                        </h3>
-                        <p className="text-base md:text-lg mb-6 text-gray-700">
-                          {slide.description}
-                        </p>
-                        <div>
-                          <Link
-                            href="/region/market"
-                            className="inline-block px-6 py-3 border-2 border-[#212529] text-[#212529] hover:bg-[#212529] hover:text-white uppercase text-base font-medium rounded-[0.25rem] transition-colors"
-                          >
-                            {slide.buttonText}
-                          </Link>
-                        </div>
-                      </div>
-                      <div className="col-span-1 md:col-span-5 flex items-center justify-center">
-                        <img
-                          src={slide.image}
-                          alt="Product Thumbnail"
-                          className="max-w-full h-auto"
-                        />
+                          {slide.buttonText}
+                          <ArrowRightIcon />
+                        </Link>
                       </div>
                     </div>
+
+                    {/* Image */}
+                    <div className="flex items-center justify-center md:w-[45%] flex-shrink-0">
+                      <img
+                        src={slide.image}
+                        alt={slide.title}
+                        className="max-h-[320px] w-auto object-contain drop-shadow-2xl"
+                      />
+                    </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
-                {slides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentSlide
-                        ? "bg-[#212529]"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Block 2 - Fruits & Vegetables */}
-          <div
-            className="banner-ad-small bg-[#eef5e5] rounded-lg p-8 md:p-12"
-            style={{
-              backgroundImage: "url('/images/ad-image-1.png')",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "right bottom",
-              backgroundSize: "60%",
-            }}
-          >
-            <div className="grid grid-cols-12">
-              <div className="col-span-12 md:col-span-7">
-                <div
-                  className="text-[37px] text-[#222222] capitalize mb-4 pb-4"
-                  style={{ fontFamily: "Garamond, serif" }}
-                >
-                  20% off
                 </div>
-                <h3
-                  className="text-[33px] font-bold text-[#222222] leading-[1.2] mb-4"
-                  style={{
-                    fontFamily: "Nunito, sans-serif",
-                    letterSpacing: "0.02em",
-                  }}
-                >
-                  Carbón Premium para Parrilla
-                </h3>
-                <Link
-                  href="/region/market"
-                  className="flex items-center gap-2 text-[#555] hover:text-[#111] no-underline transition-colors"
-                >
-                  Comprar <ArrowRightIcon />
-                </Link>
-              </div>
+              ))}
+            </div>
+
+            {/* Dots */}
+            <div className="absolute bottom-6 left-12 flex gap-2 z-10">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    i === current
+                      ? "w-6 h-2 bg-[#C9A84C]"
+                      : "w-2 h-2 bg-[#C9A84C]/30 hover:bg-[#C9A84C]/60"
+                  }`}
+                  aria-label={`Slide ${i + 1}`}
+                />
+              ))}
             </div>
           </div>
 
-          {/* Block 3 - Baked Products */}
-          <div
-            className="banner-ad-small bg-[rgb(249,235,231)] rounded-lg p-8 md:p-12"
-            style={{
-              backgroundImage: "url('/images/ad-image-2-2.png')",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "right bottom",
-              backgroundSize: "45%",
-            }}
-          >
-            <div className="grid grid-cols-12">
-              <div className="col-span-12 md:col-span-7">
+          {/* Small banners */}
+          <div className="lg:col-span-5 flex flex-col gap-4">
+            {smallBanners.map((banner) => (
+              <Link
+                key={banner.id}
+                href={banner.href}
+                className="group relative flex-1 bg-[#111111] rounded-2xl overflow-hidden border border-[#C9A84C]/15 hover:border-[#C9A84C]/40 transition-all duration-300 cursor-pointer min-h-[200px]"
+              >
+                {/* Background image */}
                 <div
-                  className="text-[37px] text-[#222222] capitalize mb-4 pb-4"
-                  style={{ fontFamily: "Garamond, serif" }}
-                >
-                  15% off
-                </div>
-                <h3
-                  className="text-[33px] font-bold text-[#222222] leading-[1.2] mb-4"
+                  className="absolute inset-0 bg-no-repeat bg-right-bottom opacity-40 group-hover:opacity-55 transition-opacity duration-300"
                   style={{
-                    fontFamily: "Nunito, sans-serif",
-                    letterSpacing: "0.02em",
+                    backgroundImage: `url('${banner.image}')`,
+                    backgroundSize: "45%",
                   }}
-                >
-                  Delantales para Parrilleros
-                </h3>
-                <Link
-                  href="/region/market"
-                  className="flex items-center gap-2 text-[#555] hover:text-[#111] no-underline transition-colors"
-                >
-                  Comprar coleción <ArrowRightIcon />
-                </Link>
-              </div>
-            </div>
+                />
+
+                {/* Gold gradient overlay */}
+                <div className="absolute inset-0 bg-linear-to-r from-[#111111] via-[#111111]/80 to-transparent" />
+
+                {/* Content */}
+                <div className="relative z-10 p-8 h-full flex flex-col justify-between">
+                  <div>
+                    <span
+                      className="inline-block bg-[#C9A84C]/15 text-[#C9A84C] text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4 border border-[#C9A84C]/30"
+                      style={{ fontFamily: "var(--font-inter)" }}
+                    >
+                      {banner.badge}
+                    </span>
+                    <h3
+                      className="text-[1.5rem] font-bold text-[#F5F0E8] leading-tight"
+                      style={{ fontFamily: "var(--font-playfair)" }}
+                    >
+                      {banner.title}
+                    </h3>
+                  </div>
+
+                  <div
+                    className="flex items-center gap-2 text-[#C9A84C] text-sm font-medium mt-4 group-hover:gap-3 transition-all duration-200"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {banner.cta}
+                    <ArrowRightIcon />
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
+
         </div>
       </div>
-
-      <style jsx>{`
-        .banner-blocks-container {
-          display: grid;
-          grid-template-columns: repeat(12, 1fr);
-          grid-template-rows: repeat(2, 1fr);
-          gap: 2rem;
-          min-height: 600px;
-        }
-
-        .banner-ad-large {
-          grid-area: 1 / 1 / 3 / 8;
-        }
-
-        .banner-ad-small:nth-child(2) {
-          grid-area: 1 / 8 / 2 / 13;
-        }
-
-        .banner-ad-small:nth-child(3) {
-          grid-area: 2 / 8 / 3 / 13;
-        }
-
-        @media screen and (max-width: 1140px) {
-          .banner-blocks-container {
-            grid-template-columns: 1fr;
-            grid-template-rows: repeat(4, 1fr);
-          }
-
-          .banner-ad-large {
-            grid-area: 1 / 1 / 3 / 2;
-          }
-
-          .banner-ad-small:nth-child(2) {
-            grid-area: 3 / 1 / 4 / 2;
-          }
-
-          .banner-ad-small:nth-child(3) {
-            grid-area: 4 / 1 / 5 / 2;
-          }
-        }
-      `}</style>
     </section>
   );
-};
-
-export default FeaturedBanners;
+}

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx ctx7 *)",
+      "Bash(python3 *)"
+    ]
+  }
+}

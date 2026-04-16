@@ -1,25 +1,20 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import Providers from "@/components/Providers";
 import "./globals.css";
 
-// Configurar fuente Open Sans
-const openSans = Open_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-open-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
 });
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfair = Playfair_Display({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-playfair",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={openSans.className}>
-      <body className="antialiased">
+    <html lang="es" className={`${inter.variable} ${playfair.variable}`}>
+      <body className={`antialiased ${inter.className}`}>
         <Providers>{children}</Providers>
       </body>
     </html>
