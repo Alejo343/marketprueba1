@@ -48,6 +48,19 @@ export async function getProductVariantsByRegion(regionId: number) {
   return res.json();
 }
 
+// TEMPORAL: selección aleatoria hasta que el backend exponga un endpoint de destacados.
+// Para quitar esto: reemplazar el body por una llamada al nuevo endpoint real.
+export async function getFeaturedVariants(count = 8): Promise<ProductVariant[]> {
+  const res = await fetch("/api/product-variants");
+  if (!res.ok) throw new Error("Error al obtener variantes destacadas");
+  const json = await res.json();
+  const all: ProductVariant[] = json.data ?? [];
+  return all
+    .filter((v) => v.primary_image !== null)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count);
+}
+
 // Obtiene todas las variantes de un producto por su ID
 // Incluye brand y media para la página de detalle
 export async function getProductVariantsByProductId(

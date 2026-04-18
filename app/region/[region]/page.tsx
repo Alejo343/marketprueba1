@@ -13,9 +13,13 @@ interface PageProps {
 const toSlug = (name: string) =>
   name
     .toLowerCase()
+    .replace(/&/g, "y")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "-");
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 
 export async function generateStaticParams() {
   try {
