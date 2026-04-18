@@ -16,9 +16,9 @@ export default function CategoryTitle({
   displayedProducts,
 }: CategoryTitleProps) {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const searchParams = useSearchParams();
-  const currentSort = searchParams.get("sort");
+  const currentSort = searchParams?.get("sort") ?? null;
 
   const sortAscendingHandler = () => {
     if (currentSort === "asc") {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactElement } from "react";
+import { useEffect, useState, type ReactElement, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -95,9 +95,9 @@ const STATUS_CONFIG: Record<NonNullable<TxStatus>, { icon: ReactElement; title: 
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 
-export default function CheckoutResultPage() {
+function CheckoutResultContent() {
   const searchParams = useSearchParams();
-  const transactionId = searchParams.get("id");
+  const transactionId = searchParams?.get("id") ?? null;
 
   const [status, setStatus] = useState<TxStatus>(null);
   const [loading, setLoading] = useState(true);
@@ -138,9 +138,7 @@ export default function CheckoutResultPage() {
   const config = status ? STATUS_CONFIG[status] : null;
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4 py-16"
+    <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4 py-16"
         style={{ fontFamily: "var(--font-inter)" }}>
         <div className="w-full max-w-lg">
 
@@ -231,6 +229,22 @@ export default function CheckoutResultPage() {
 
         </div>
       </div>
+  );
+}
+
+export default function CheckoutResultPage() {
+  return (
+    <>
+      <Header />
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#080808] flex items-center justify-center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" className="animate-spin">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        </div>
+      }>
+        <CheckoutResultContent />
+      </Suspense>
     </>
   );
 }
