@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -55,7 +55,7 @@ const SpinnerIcon = () => (
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<NonNullable<TxStatus>, { icon: JSX.Element; title: string; subtitle: string; color: string; bg: string }> = {
+const STATUS_CONFIG: Record<NonNullable<TxStatus>, { icon: ReactElement; title: string; subtitle: string; color: string; bg: string }> = {
   APPROVED: {
     icon: <CheckIcon />,
     title: "¡Pago aprobado!",
