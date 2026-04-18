@@ -114,7 +114,7 @@ function VariantCard({ variant, category }: { variant: ProductVariant; category:
         {/* Quick add */}
         <div className={`absolute inset-x-0 bottom-0 p-3 transition-all duration-300 ${hovered && variant.in_stock ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
           <button
-            onClick={(e) => { e.preventDefault(); addItem(variant); }}
+            onClick={(e) => { e.preventDefault(); addItem({ variantId: variant.id, productId: variant.product_id, name: variant.product?.name ?? "", presentation: variant.presentation, price: variant.final_price, image: variant.primary_image?.url ?? null }); }}
             className="w-full flex items-center justify-center gap-2 bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] py-2.5 rounded-xl text-xs font-bold transition-colors duration-200 cursor-pointer">
             <CartIcon /> Agregar al carrito
           </button>

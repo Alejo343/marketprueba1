@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Media } from "@/types";
 
 interface ProductGalleryProps {
@@ -9,91 +8,60 @@ interface ProductGalleryProps {
   productName: string;
 }
 
-export default function ProductGallery({
-  images,
-  productName,
-}: ProductGalleryProps) {
-  const sorted = [...images].sort(
-    (a, b) => (a.pivot?.order ?? 0) - (b.pivot?.order ?? 0),
-  );
-
+export default function ProductGallery({ images, productName }: ProductGalleryProps) {
+  const sorted = [...images].sort((a, b) => (a.pivot?.order ?? 0) - (b.pivot?.order ?? 0));
   const [selected, setSelected] = useState<Media | null>(sorted[0] ?? null);
 
   if (sorted.length === 0) {
     return (
-      <div className="flex items-center justify-center aspect-square rounded-2xl border border-[var(--color-border-tertiary)] bg-[var(--color-background-secondary)]">
-        <svg
-          width="64"
-          height="64"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="var(--color-border-secondary)"
-          strokeWidth="1"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <path d="m21 15-5-5L5 21" />
-        </svg>
+      <div className="aspect-square rounded-2xl bg-[#111111] border border-[#C9A84C]/10 flex items-center justify-center">
+        <span className="text-[#C9A84C]/20 text-8xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>B</span>
       </div>
     );
   }
 
   return (
-    <div className="flex gap-3">
-      {/* Thumbnails verticales */}
+    <div className="flex flex-col gap-3 lg:sticky lg:top-28">
+      {/* Main image */}
+      <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#0D0D0D] border border-[#C9A84C]/10">
+        {selected ? (
+          <img
+            src={selected.url}
+            alt={selected.alt || productName}
+            className="w-full h-full object-contain p-6"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-[#C9A84C]/20 text-8xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>B</span>
+          </div>
+        )}
+
+        {/* Counter badge */}
+        {sorted.length > 1 && (
+          <div className="absolute bottom-3 right-3 bg-[#111111]/80 backdrop-blur-sm border border-[#C9A84C]/20 rounded-lg px-2.5 py-1 text-[10px] text-[#9A8C7A] font-medium">
+            {sorted.indexOf(selected!) + 1} / {sorted.length}
+          </div>
+        )}
+      </div>
+
+      {/* Thumbnails */}
       {sorted.length > 1 && (
-        <div className="flex flex-col gap-2 w-[70px] flex-shrink-0">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
           {sorted.map((img) => (
             <button
               key={img.id}
               onClick={() => setSelected(img)}
-              className={`w-[70px] h-[70px] rounded-lg overflow-hidden border transition-all ${
+              className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
                 selected?.id === img.id
-                  ? "border-[#E07B2A] border-2"
-                  : "border-[var(--color-border-tertiary)] hover:border-[var(--color-border-secondary)]"
+                  ? "border-[#C9A84C] shadow-[0_0_14px_rgba(201,168,76,0.3)]"
+                  : "border-[#1E1E1E] hover:border-[#C9A84C]/40 bg-[#0D0D0D]"
               }`}
             >
-              <Image
-                src={img.url}
-                alt={img.alt || productName}
-                width={70}
-                height={70}
-                className="w-full h-full object-cover"
-                unoptimized
-              />
+              <img src={img.url} alt={img.alt || productName} className="w-full h-full object-cover" />
             </button>
           ))}
         </div>
       )}
-
-      {/* Imagen principal */}
-      <div className="flex-1 relative aspect-square rounded-2xl overflow-hidden border border-[var(--color-border-tertiary)] bg-[var(--color-background-secondary)]">
-        {selected ? (
-          <Image
-            src={selected.url}
-            alt={selected.alt || productName}
-            fill
-            className="object-contain p-4"
-            unoptimized
-            priority
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <svg
-              width="64"
-              height="64"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="var(--color-border-secondary)"
-              strokeWidth="1"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <path d="m21 15-5-5L5 21" />
-            </svg>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 import { useIsMounted } from "@/hooks/useIsMounted";
 import CartItem from "./CartItem";
@@ -150,9 +151,10 @@ export default function CartDrawer() {
                 {formatPrice(total)}
               </span>
             </div>
-            <button className="w-full h-11 bg-[#E07B2A] hover:bg-[#C96A1A] text-white rounded-lg text-sm font-medium transition-colors">
+            <Link href="/checkout" onClick={closeCart}
+              className="w-full h-11 bg-[#E07B2A] hover:bg-[#C96A1A] text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center cursor-pointer">
               Ir a pagar
-            </button>
+            </Link>
             <button
               onClick={clearCart}
               className="w-full text-xs transition-colors hover:text-red-500"

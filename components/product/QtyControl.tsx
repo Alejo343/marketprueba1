@@ -7,36 +7,23 @@ interface QtyControlProps {
   max?: number;
 }
 
-export default function QtyControl({
-  value,
-  onChange,
-  min = 1,
-  max,
-}: QtyControlProps) {
-  const decrease = () => {
-    if (value > min) onChange(value - 1);
-  };
-
-  const increase = () => {
-    if (max === undefined || value < max) onChange(value + 1);
-  };
-
+export default function QtyControl({ value, onChange, min = 1, max }: QtyControlProps) {
   return (
-    <div className="flex items-center border border-[var(--color-border-secondary)] rounded-lg overflow-hidden w-fit">
+    <div className="flex items-center bg-[#111111] border border-[#1E1E1E] rounded-xl overflow-hidden h-12">
       <button
-        onClick={decrease}
+        onClick={() => value > min && onChange(value - 1)}
         disabled={value <= min}
-        className="w-9 h-9 flex items-center justify-center bg-[var(--color-background-secondary)] hover:bg-[var(--color-background-tertiary)] text-[var(--color-text-primary)] text-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-10 h-full flex items-center justify-center text-[#9A8C7A] hover:text-[#C9A84C] hover:bg-[#C9A84C]/5 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-lg font-light"
+        aria-label="Disminuir cantidad"
       >
         −
       </button>
-      <span className="w-10 text-center text-sm font-medium text-[var(--color-text-primary)]">
-        {value}
-      </span>
+      <span className="w-10 text-center text-sm font-semibold text-[#F5F0E8]">{value}</span>
       <button
-        onClick={increase}
+        onClick={() => (max === undefined || value < max) && onChange(value + 1)}
         disabled={max !== undefined && value >= max}
-        className="w-9 h-9 flex items-center justify-center bg-[var(--color-background-secondary)] hover:bg-[var(--color-background-tertiary)] text-[var(--color-text-primary)] text-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-10 h-full flex items-center justify-center text-[#9A8C7A] hover:text-[#C9A84C] hover:bg-[#C9A84C]/5 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer text-lg font-light"
+        aria-label="Aumentar cantidad"
       >
         +
       </button>

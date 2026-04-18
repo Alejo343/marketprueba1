@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npx ctx7 *)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(python \"C:\\\\Users\\\\Webmaster\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"ecommerce checkout cart summary dark luxury premium\" --design-system -p \"Barril Market Checkout\")",
+      "mcp__context7__resolve-library-id"
     ]
   }
 }
