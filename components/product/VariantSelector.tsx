@@ -13,7 +13,7 @@ export default function VariantSelector({ variants, selected, onChange }: Varian
 
   return (
     <div>
-      <p className="text-[#9A8C7A] text-xs font-semibold uppercase tracking-widest mb-3">
+      <p className="text-[var(--color-muted)] text-xs font-semibold uppercase tracking-widest mb-3">
         Presentación
       </p>
       <div className="flex flex-wrap gap-2">
@@ -27,10 +27,10 @@ export default function VariantSelector({ variants, selected, onChange }: Varian
               disabled={isOutOfStock}
               className={`px-4 py-2 rounded-xl text-sm border transition-all duration-200 cursor-pointer ${
                 isActive
-                  ? "border-[#C9A84C] bg-[#C9A84C]/10 text-[#C9A84C] font-semibold"
+                  ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-semibold"
                   : isOutOfStock
-                  ? "border-[#1E1E1E] text-[#444] line-through cursor-not-allowed"
-                  : "border-[#1E1E1E] bg-[#111111] text-[#9A8C7A] hover:border-[#C9A84C]/40 hover:text-[#F5F0E8]"
+                  ? "border-[var(--color-divider)] text-[var(--color-placeholder)] line-through cursor-not-allowed"
+                  : "border-[var(--color-divider)] bg-[var(--color-surface)] text-[var(--color-muted)] hover:border-[var(--color-primary)]/40 hover:text-[var(--color-text)]"
               }`}
             >
               {variant.presentation}

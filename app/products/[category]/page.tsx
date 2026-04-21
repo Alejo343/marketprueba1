@@ -40,7 +40,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     <>
       <Header />
 
-      <div className="min-h-screen bg-[#080808]" style={{ fontFamily: "var(--font-inter)" }}>
+      <div className="min-h-screen bg-[var(--color-bg)]" style={{ fontFamily: "var(--font-inter)" }}>
         <div
           className="absolute inset-x-0 top-0 h-96 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 70%)" }}
@@ -49,10 +49,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
 
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-[#555] mb-8" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-[#C9A84C] transition-colors duration-200">Inicio</Link>
+          <nav className="flex items-center gap-2 text-xs text-[var(--color-placeholder)] mb-8" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-[var(--color-primary)] transition-colors duration-200">Inicio</Link>
             <ChevronIcon />
-            <span className="text-[#9A8C7A] truncate max-w-50">{product.name}</span>
+            <span className="text-[var(--color-muted)] truncate max-w-50">{product.name}</span>
           </nav>
 
           {/* Product layout */}
@@ -62,18 +62,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
 
           {/* Gold divider */}
-          <div className="h-px bg-linear-to-r from-transparent via-[#C9A84C]/20 to-transparent my-16" />
+          <div className="h-px bg-linear-to-r from-transparent via-[var(--color-primary)]/20 to-transparent my-16" />
 
           {/* Description section */}
           {product.description && (
             <div className="max-w-2xl">
               <h2
-                className="text-lg font-bold text-[#F5F0E8] mb-4"
+                className="text-lg font-bold text-[var(--color-text)] mb-4"
                 style={{ fontFamily: "var(--font-playfair)" }}
               >
                 Descripción
               </h2>
-              <p className="text-[#9A8C7A] text-sm leading-relaxed">{product.description}</p>
+              <p className="text-[var(--color-muted)] text-sm leading-relaxed">{product.description}</p>
             </div>
           )}
         </div>

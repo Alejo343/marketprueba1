@@ -70,21 +70,21 @@ export default function FeaturedBanners() {
   }, []);
 
   return (
-    <section className="bg-[#080808] py-8">
+    <section className="bg-(--color-nav) py-8">
       {/* Gold entry line */}
-      <div className="w-full h-px bg-linear-to-r from-transparent via-[#C9A84C]/40 to-transparent mb-8" />
+      <div className="w-full h-px bg-linear-to-r from-transparent via-(--color-primary)/40 to-transparent mb-8" />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[560px]">
 
           {/* Large carousel */}
-          <div className="lg:col-span-7 relative bg-[#111111] rounded-2xl overflow-hidden border border-[#C9A84C]/15">
+          <div className="lg:col-span-7 relative bg-(--color-surface) rounded-2xl overflow-hidden border border-(--color-primary)/15">
             {/* Gold corner accent */}
             <div className="absolute top-0 left-0 w-32 h-32 opacity-10">
-              <div className="w-full h-full border-t-2 border-l-2 border-[#C9A84C] rounded-tl-2xl" />
+              <div className="w-full h-full border-t-2 border-l-2 border-(--color-primary) rounded-tl-2xl" />
             </div>
             <div className="absolute bottom-0 right-0 w-32 h-32 opacity-10">
-              <div className="w-full h-full border-b-2 border-r-2 border-[#C9A84C] rounded-br-2xl" />
+              <div className="w-full h-full border-b-2 border-r-2 border-(--color-primary) rounded-br-2xl" />
             </div>
 
             {/* Slides */}
@@ -100,19 +100,19 @@ export default function FeaturedBanners() {
                     {/* Text */}
                     <div className="flex-1 flex flex-col justify-center">
                       <span
-                        className="text-[#C9A84C] text-sm font-medium tracking-widest uppercase mb-4 block"
+                        className="text-(--color-primary) text-sm font-medium tracking-widest uppercase mb-4 block"
                         style={{ fontFamily: "var(--font-inter)" }}
                       >
                         {slide.category}
                       </span>
                       <h2
-                        className="text-[2.4rem] md:text-[3rem] font-bold text-[#F5F0E8] leading-[1.15] mb-4"
+                        className="text-[2.4rem] md:text-[3rem] font-bold text-(--color-text) leading-[1.15] mb-4"
                         style={{ fontFamily: "var(--font-playfair)" }}
                       >
                         {slide.title}
                       </h2>
                       <p
-                        className="text-[#9A8C7A] text-base leading-relaxed mb-8 max-w-sm"
+                        className="text-(--color-muted) text-base leading-relaxed mb-8 max-w-sm"
                         style={{ fontFamily: "var(--font-inter)" }}
                       >
                         {slide.description}
@@ -120,7 +120,7 @@ export default function FeaturedBanners() {
                       <div>
                         <Link
                           href={slide.href}
-                          className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] px-6 py-3 rounded-lg font-semibold text-sm tracking-wide transition-all duration-200 cursor-pointer"
+                          className="inline-flex items-center gap-2 bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) px-6 py-3 rounded-lg font-semibold text-sm tracking-wide transition-all duration-200 cursor-pointer"
                           style={{ fontFamily: "var(--font-inter)" }}
                         >
                           {slide.buttonText}
@@ -130,7 +130,7 @@ export default function FeaturedBanners() {
                     </div>
 
                     {/* Image */}
-                    <div className="flex items-center justify-center md:w-[45%] flex-shrink-0">
+                    <div className="flex items-center justify-center md:w-[45%] shrink-0">
                       <img
                         src={slide.image}
                         alt={slide.title}
@@ -150,8 +150,8 @@ export default function FeaturedBanners() {
                   onClick={() => setCurrent(i)}
                   className={`transition-all duration-300 rounded-full cursor-pointer ${
                     i === current
-                      ? "w-6 h-2 bg-[#C9A84C]"
-                      : "w-2 h-2 bg-[#C9A84C]/30 hover:bg-[#C9A84C]/60"
+                      ? "w-6 h-2 bg-(--color-primary)"
+                      : "w-2 h-2 bg-(--color-primary)/30 hover:bg-(--color-primary)/60"
                   }`}
                   aria-label={`Slide ${i + 1}`}
                 />
@@ -165,7 +165,7 @@ export default function FeaturedBanners() {
               <Link
                 key={banner.id}
                 href={banner.href}
-                className="group relative flex-1 bg-[#111111] rounded-2xl overflow-hidden border border-[#C9A84C]/15 hover:border-[#C9A84C]/40 transition-all duration-300 cursor-pointer min-h-[200px]"
+                className="group relative flex-1 bg-(--color-surface) rounded-2xl overflow-hidden border border-(--color-primary)/15 hover:border-(--color-primary)/40 transition-all duration-300 cursor-pointer min-h-[200px]"
               >
                 {/* Background image */}
                 <div
@@ -176,20 +176,20 @@ export default function FeaturedBanners() {
                   }}
                 />
 
-                {/* Gold gradient overlay */}
-                <div className="absolute inset-0 bg-linear-to-r from-[#111111] via-[#111111]/80 to-transparent" />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-linear-to-r from-(--color-surface) via-(--color-surface)/80 to-transparent" />
 
                 {/* Content */}
                 <div className="relative z-10 p-8 h-full flex flex-col justify-between">
                   <div>
                     <span
-                      className="inline-block bg-[#C9A84C]/15 text-[#C9A84C] text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4 border border-[#C9A84C]/30"
+                      className="inline-block bg-(--color-primary)/15 text-(--color-primary) text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4 border border-(--color-primary)/30"
                       style={{ fontFamily: "var(--font-inter)" }}
                     >
                       {banner.badge}
                     </span>
                     <h3
-                      className="text-[1.5rem] font-bold text-[#F5F0E8] leading-tight"
+                      className="text-[1.5rem] font-bold text-(--color-text) leading-tight"
                       style={{ fontFamily: "var(--font-playfair)" }}
                     >
                       {banner.title}
@@ -197,7 +197,7 @@ export default function FeaturedBanners() {
                   </div>
 
                   <div
-                    className="flex items-center gap-2 text-[#C9A84C] text-sm font-medium mt-4 group-hover:gap-3 transition-all duration-200"
+                    className="flex items-center gap-2 text-(--color-primary) text-sm font-medium mt-4 group-hover:gap-3 transition-all duration-200"
                     style={{ fontFamily: "var(--font-inter)" }}
                   >
                     {banner.cta}

@@ -2,14 +2,44 @@
 @import "tailwindcss";
 
 :root {
+  --background: #F0F0F0;
+  --foreground: #1A1816;
+  --color-bg: #F0F0F0;
+  --color-text: #1A1816;
+  --color-muted: #6B6866;
+  --color-border: #D8D5D2;
+  --color-surface: #FFFFFF;
+  --color-nav: #1A1816;
+  --color-primary: #C9A84C;
+  --color-primary-hover: #B8973D;
+  --color-on-primary: #1D1A17;
+  /* Extended tokens */
+  --color-nav-text: #414141;
+  --color-input-bg: #E6E6E6;
+  --color-input-border: #D0D0D0;
+  --color-placeholder: #999999;
+  --color-divider: #E5E5E5;
+  --color-subtle-bg: #F5F5F5;
+}
+
+[data-theme="dark"] {
   --background: #080808;
   --foreground: #F5F0E8;
   --color-bg: #080808;
   --color-text: #F5F0E8;
   --color-muted: #9A8C7A;
-  --color-border: #1F1F1F;
+  --color-border: #1E1E1E;
   --color-surface: #111111;
+  --color-nav: #0D0D0D;
   --color-primary: #C9A84C;
+  --color-primary-hover: #B8973D;
+  --color-on-primary: #111111;
+  --color-nav-text: #F5F0E8;
+  --color-input-bg: #0D0D0D;
+  --color-input-border: #1E1E1E;
+  --color-placeholder: #555555;
+  --color-divider: #1E1E1E;
+  --color-subtle-bg: #0D0D0D;
 }
 
 @theme inline {
@@ -32,6 +62,11 @@
   --font-size-fs-6: 1rem;
 }
 
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 @keyframes nav-move {
   0% {
     width: 0%;
@@ -52,6 +87,7 @@ body {
   color: var(--foreground);
   /* font-family: Arial, Helvetica, sans-serif; */
   font-family: var(--font-family-sans);
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 @layer components {
@@ -125,6 +161,15 @@ body {
 
   .animate-nav-move {
     animation: nav-move 800ms forwards;
+  }
+
+  .animate-marquee {
+    animation: marquee-x 40s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee-pause:hover .animate-marquee {
+    animation-play-state: paused;
   }
 
   .range-slider {

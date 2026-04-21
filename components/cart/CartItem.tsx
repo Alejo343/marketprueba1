@@ -15,15 +15,9 @@ export default function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeItem } = useCartStore();
 
   return (
-    <div
-      className="flex gap-3 py-4"
-      style={{ borderBottom: "1px solid #f0f0f0" }}
-    >
+    <div className="flex gap-3 py-4 border-b border-(--color-divider)">
       {/* Imagen */}
-      <div
-        className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden"
-        style={{ background: "#f5f5f5", border: "1px solid #e5e5e5" }}
-      >
+      <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-(--color-subtle-bg) border border-(--color-divider)">
         {item.image ? (
           <Image
             src={item.image}
@@ -34,13 +28,13 @@ export default function CartItem({ item }: { item: CartItemType }) {
             unoptimized
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center text-(--color-border)">
             <svg
               width="24"
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#ccc"
+              stroke="currentColor"
               strokeWidth="1.5"
             >
               <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -53,58 +47,35 @@ export default function CartItem({ item }: { item: CartItemType }) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p
-          className="text-sm font-medium leading-tight truncate"
-          style={{ color: "#1a1a1a" }}
-        >
+        <p className="text-sm font-medium leading-tight truncate text-(--color-text)">
           {item.name}
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "#888" }}>
+        <p className="text-xs mt-0.5 text-(--color-muted)">
           {item.presentation}
         </p>
 
         <div className="flex items-center justify-between mt-2">
           {/* Qty control */}
-          <div
-            className="flex items-center rounded-lg overflow-hidden"
-            style={{ border: "1px solid #ddd" }}
-          >
+          <div className="flex items-center rounded-lg overflow-hidden border border-(--color-input-border)">
             <button
               onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-              className="w-7 h-7 flex items-center justify-center text-base transition-colors"
-              style={{ background: "#f5f5f5", color: "#1a1a1a" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#ebebeb")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "#f5f5f5")
-              }
+              className="w-7 h-7 flex items-center justify-center text-base transition-colors bg-(--color-subtle-bg) text-(--color-text) hover:bg-(--color-border) cursor-pointer"
             >
               −
             </button>
-            <span
-              className="w-8 text-center text-sm font-medium"
-              style={{ color: "#1a1a1a" }}
-            >
+            <span className="w-8 text-center text-sm font-medium text-(--color-text)">
               {item.quantity}
             </span>
             <button
               onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-              className="w-7 h-7 flex items-center justify-center text-base transition-colors"
-              style={{ background: "#f5f5f5", color: "#1a1a1a" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#ebebeb")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "#f5f5f5")
-              }
+              className="w-7 h-7 flex items-center justify-center text-base transition-colors bg-(--color-subtle-bg) text-(--color-text) hover:bg-(--color-border) cursor-pointer"
             >
               +
             </button>
           </div>
 
           {/* Precio */}
-          <span className="text-sm font-medium" style={{ color: "#1a1a1a" }}>
+          <span className="text-sm font-medium text-(--color-text)">
             {formatPrice(item.price * item.quantity)}
           </span>
         </div>
@@ -113,10 +84,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
       {/* Eliminar */}
       <button
         onClick={() => removeItem(item.variantId)}
-        className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
-        style={{ color: "#aaa" }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "#e24b4a")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "#aaa")}
+        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg transition-colors text-(--color-muted)/60 hover:text-red-500 cursor-pointer"
         title="Eliminar"
       >
         <svg

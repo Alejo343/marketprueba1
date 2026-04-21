@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactElement, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
+import { useCartStore } from "@/store/cartStore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,7 +31,7 @@ function fmt(n: number) {
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
 const CheckIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.5">
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.5">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
   </svg>
 );
@@ -48,7 +49,7 @@ const ClockIcon = () => (
 );
 
 const SpinnerIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" className="animate-spin">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" className="animate-spin">
     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
   </svg>
 );
@@ -60,8 +61,8 @@ const STATUS_CONFIG: Record<NonNullable<TxStatus>, { icon: ReactElement; title: 
     icon: <CheckIcon />,
     title: "¡Pago aprobado!",
     subtitle: "Tu pedido fue procesado exitosamente. Recibirás confirmación por email.",
-    color: "#C9A84C",
-    bg: "bg-[#C9A84C]/10 border-[#C9A84C]/30",
+    color: "var(--color-primary)",
+    bg: "bg-(--color-primary)/10 border-(--color-primary)/30",
   },
   DECLINED: {
     icon: <XIcon />,
@@ -102,6 +103,7 @@ function CheckoutResultContent() {
   const [status, setStatus] = useState<TxStatus>(null);
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<PendingOrder | null>(null);
+  const clearCart = useCartStore((s) => s.clearCart);
 
   useEffect(() => {
     // Load saved order
@@ -111,6 +113,9 @@ function CheckoutResultContent() {
     }
 
     if (!transactionId) {
+      // Hosted Wompi / PSE redirect — cart was already cleared before redirect.
+      // Ensure it's empty in case user landed here without tx id.
+      clearCart();
       setLoading(false);
       return;
     }
@@ -118,11 +123,12 @@ function CheckoutResultContent() {
     // Verify transaction with Wompi API
     const verify = async () => {
       try {
-        const res = await fetch(`https://production.wompi.co/v1/transactions/${transactionId}`);
+        const res = await fetch(`/api/checkout/nequi/status/${transactionId}`);
         if (!res.ok) throw new Error();
-        const data = await res.json();
-        setStatus(data.data?.status ?? "PENDING");
-        if (data.data?.status === "APPROVED") {
+        const { status: txStatus } = await res.json();
+        setStatus(txStatus ?? "PENDING");
+        if (txStatus === "APPROVED") {
+          clearCart();
           localStorage.removeItem("barril-pending-order");
         }
       } catch {
@@ -133,82 +139,82 @@ function CheckoutResultContent() {
     };
 
     verify();
-  }, [transactionId]);
+  }, [transactionId, clearCart]);
 
   const config = status ? STATUS_CONFIG[status] : null;
 
   return (
-    <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4 py-16"
+    <div className="min-h-screen bg-(--color-bg) flex items-center justify-center px-4 py-16"
         style={{ fontFamily: "var(--font-inter)" }}>
         <div className="w-full max-w-lg">
 
           {/* Status card */}
-          <div className="bg-[#111111] rounded-2xl border border-[#C9A84C]/10 p-8 text-center mb-6">
+          <div className="bg-(--color-surface) rounded-2xl border border-(--color-primary)/10 p-8 text-center mb-6">
             {loading ? (
               <div className="flex flex-col items-center gap-4 py-4">
                 <SpinnerIcon />
-                <p className="text-[#9A8C7A] text-sm">Verificando tu pago...</p>
+                <p className="text-(--color-muted) text-sm">Verificando tu pago...</p>
               </div>
             ) : config ? (
               <>
                 <div className={`w-20 h-20 rounded-full ${config.bg} border flex items-center justify-center mx-auto mb-5`}>
                   {config.icon}
                 </div>
-                <h1 className="text-[#F5F0E8] text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-playfair)" }}>
+                <h1 className="text-(--color-text) text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-playfair)" }}>
                   {config.title}
                 </h1>
-                <p className="text-[#9A8C7A] text-sm leading-relaxed mb-2">{config.subtitle}</p>
+                <p className="text-(--color-muted) text-sm leading-relaxed mb-2">{config.subtitle}</p>
                 {transactionId && (
-                  <p className="text-[#9A8C7A] text-xs mt-3">
-                    ID de transacción: <span className="text-[#F5F0E8] font-mono">{transactionId}</span>
+                  <p className="text-(--color-muted) text-xs mt-3">
+                    ID de transacción: <span className="text-(--color-text) font-mono">{transactionId}</span>
                   </p>
                 )}
               </>
             ) : (
               <>
-                <div className="w-20 h-20 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/30 flex items-center justify-center mx-auto mb-5">
+                <div className="w-20 h-20 rounded-full bg-(--color-primary)/10 border border-(--color-primary)/30 flex items-center justify-center mx-auto mb-5">
                   <CheckIcon />
                 </div>
-                <h1 className="text-[#F5F0E8] text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-playfair)" }}>
+                <h1 className="text-(--color-text) text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-playfair)" }}>
                   Pedido recibido
                 </h1>
-                <p className="text-[#9A8C7A] text-sm">Pronto recibirás confirmación de tu pedido.</p>
+                <p className="text-(--color-muted) text-sm">Pronto recibirás confirmación de tu pedido.</p>
               </>
             )}
           </div>
 
           {/* Order summary */}
           {order && (
-            <div className="bg-[#111111] rounded-2xl border border-[#C9A84C]/10 p-6 mb-6">
-              <h2 className="text-[#F5F0E8] font-semibold text-sm mb-4 flex items-center justify-between">
+            <div className="bg-(--color-surface) rounded-2xl border border-(--color-primary)/10 p-6 mb-6">
+              <h2 className="text-(--color-text) font-semibold text-sm mb-4 flex items-center justify-between">
                 Detalle del pedido
-                <span className="text-[#9A8C7A] font-normal text-xs font-mono">{order.reference}</span>
+                <span className="text-(--color-muted) font-normal text-xs font-mono">{order.reference}</span>
               </h2>
 
               <div className="space-y-2 mb-4">
                 {order.items.map((item, i) => (
                   <div key={i} className="flex justify-between text-sm">
-                    <span className="text-[#9A8C7A] line-clamp-1 flex-1 pr-4">
-                      {item.name} <span className="text-[#555]">×{item.quantity}</span>
+                    <span className="text-(--color-muted) line-clamp-1 flex-1 pr-4">
+                      {item.name} <span className="text-(--color-placeholder)">×{item.quantity}</span>
                     </span>
-                    <span className="text-[#F5F0E8] shrink-0">{fmt(item.price * item.quantity)}</span>
+                    <span className="text-(--color-text) shrink-0">{fmt(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="h-px bg-[#1E1E1E] mb-4" />
+              <div className="h-px bg-(--color-divider) mb-4" />
 
               <div className="flex justify-between items-baseline">
-                <span className="text-[#9A8C7A] text-sm">Total pagado</span>
-                <span className="text-[#C9A84C] text-xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>
+                <span className="text-(--color-muted) text-sm">Total pagado</span>
+                <span className="text-(--color-primary) text-xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>
                   {fmt(order.total)}
                 </span>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-[#1E1E1E] text-xs text-[#9A8C7A] space-y-1">
-                <p><span className="text-[#F5F0E8]/50">Cliente:</span> {order.customer.name}</p>
-                <p><span className="text-[#F5F0E8]/50">Email:</span> {order.customer.email}</p>
-                <p><span className="text-[#F5F0E8]/50">Entrega:</span> {order.customer.address}, {order.customer.city}</p>
+              <div className="mt-4 pt-4 border-t border-(--color-divider) text-xs text-(--color-muted) space-y-1">
+                <p><span className="text-(--color-text)/50">Cliente:</span> {order.customer.name}</p>
+                <p><span className="text-(--color-text)/50">Email:</span> {order.customer.email}</p>
+                <p><span className="text-(--color-text)/50">Entrega:</span> {order.customer.address}, {order.customer.city}</p>
               </div>
             </div>
           )}
@@ -217,12 +223,12 @@ function CheckoutResultContent() {
           <div className="flex gap-3 justify-center flex-wrap">
             {(status === "DECLINED" || status === "ERROR") ? (
               <Link href="/checkout"
-                className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] font-bold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer text-sm">
+                className="inline-flex items-center gap-2 bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) font-bold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer text-sm">
                 Intentar de nuevo
               </Link>
             ) : null}
             <Link href="/"
-              className="inline-flex items-center gap-2 bg-[#111111] border border-[#C9A84C]/30 hover:border-[#C9A84C]/60 text-[#F5F0E8] px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer text-sm">
+              className="inline-flex items-center gap-2 bg-(--color-surface) border border-(--color-primary)/30 hover:border-(--color-primary)/60 text-(--color-text) px-6 py-3 rounded-xl transition-all duration-200 cursor-pointer text-sm">
               Volver a la tienda
             </Link>
           </div>
@@ -237,8 +243,8 @@ export default function CheckoutResultPage() {
     <>
       <Header />
       <Suspense fallback={
-        <div className="min-h-screen bg-[#080808] flex items-center justify-center">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" className="animate-spin">
+        <div className="min-h-screen bg-(--color-bg) flex items-center justify-center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" className="animate-spin">
             <path d="M21 12a9 9 0 1 1-6.219-8.56" />
           </svg>
         </div>

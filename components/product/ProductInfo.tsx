@@ -24,8 +24,8 @@ const CartIcon = () => (
 
 const HeartIcon = ({ filled }: { filled: boolean }) => (
   <svg width="18" height="18" viewBox="0 0 24 24"
-    fill={filled ? "#C9A84C" : "none"}
-    stroke={filled ? "#C9A84C" : "currentColor"}
+    fill={filled ? "var(--color-primary)" : "none"}
+    stroke={filled ? "var(--color-primary)" : "currentColor"}
     strokeWidth="1.5">
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
   </svg>
@@ -104,41 +104,41 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
       <div className="flex items-center gap-2">
         {product.brand ? (
           <>
-            <span className="text-[#C9A84C] text-[10px] font-bold uppercase tracking-widest">
+            <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest">
               {product.brand.name}
             </span>
-            <span className="w-px h-3 bg-[#C9A84C]/20" />
+            <span className="w-px h-3 bg-[var(--color-primary)]/20" />
           </>
         ) : null}
-        <span className="text-[#9A8C7A] text-[10px] uppercase tracking-wider">
+        <span className="text-[var(--color-muted)] text-[10px] uppercase tracking-wider">
           {product.sale_type_label}
         </span>
       </div>
 
       {/* Product name */}
       <h1
-        className="text-3xl sm:text-4xl font-bold text-[#F5F0E8] leading-tight"
+        className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] leading-tight"
         style={{ fontFamily: "var(--font-playfair)" }}
       >
         {product.name}
       </h1>
 
       {/* Gold divider */}
-      <div className="h-px bg-linear-to-r from-[#C9A84C]/40 via-[#C9A84C]/10 to-transparent" />
+      <div className="h-px bg-linear-to-r from-[var(--color-primary)]/40 via-[var(--color-primary)]/10 to-transparent" />
 
       {/* Price */}
       <div className="flex items-baseline gap-3 flex-wrap">
         <span
-          className="text-4xl font-bold text-[#C9A84C]"
+          className="text-4xl font-bold text-[var(--color-primary)]"
           style={{ fontFamily: "var(--font-playfair)" }}
         >
           {fmt(selected.final_price)}
         </span>
         {selected.has_sale && selected.sale_price && (
           <>
-            <span className="text-[#9A8C7A] text-lg line-through">{fmt(selected.price)}</span>
+            <span className="text-[var(--color-muted)] text-lg line-through">{fmt(selected.price)}</span>
             {discount && (
-              <span className="bg-[#C9A84C] text-[#111111] text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+              <span className="bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
                 -{discount}%
               </span>
             )}
@@ -148,7 +148,7 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
 
       {/* Description */}
       {product.description && (
-        <p className="text-[#9A8C7A] text-sm leading-relaxed">{product.description}</p>
+        <p className="text-[var(--color-muted)] text-sm leading-relaxed">{product.description}</p>
       )}
 
       {/* Variant selector */}
@@ -178,10 +178,10 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
           disabled={!selected.in_stock}
           className={`flex-1 h-12 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
             !selected.in_stock
-              ? "bg-[#1A1A1A] text-[#555] cursor-not-allowed"
+              ? "bg-[var(--color-subtle-bg)] text-[var(--color-placeholder)] cursor-not-allowed"
               : added
               ? "bg-emerald-700 text-white"
-              : "bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_28px_rgba(201,168,76,0.35)]"
+              : "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_28px_rgba(201,168,76,0.35)]"
           }`}
         >
           {added ? (
@@ -194,8 +194,8 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
           onClick={() => setIsFav(!isFav)}
           className={`w-12 h-12 shrink-0 flex items-center justify-center rounded-xl border transition-all duration-200 cursor-pointer ${
             isFav
-              ? "border-[#C9A84C] bg-[#C9A84C]/10 text-[#C9A84C]"
-              : "border-[#1E1E1E] bg-[#111111] text-[#9A8C7A] hover:border-[#C9A84C]/40 hover:text-[#C9A84C]"
+              ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+              : "border-[var(--color-divider)] bg-[var(--color-on-primary)] text-[var(--color-muted)] hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]"
           }`}
           aria-label={isFav ? "Quitar de favoritos" : "Añadir a favoritos"}
         >
@@ -212,17 +212,17 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
         ].map((item) => (
           <div
             key={item.label}
-            className="flex flex-col items-center gap-1.5 bg-[#111111] border border-[#1E1E1E] rounded-xl py-3"
+            className="flex flex-col items-center gap-1.5 bg-[var(--color-surface)] border border-[var(--color-divider)] rounded-xl py-3"
           >
-            <span className="text-[#C9A84C]/60">{item.icon}</span>
-            <span className="text-[#9A8C7A] text-[10px] font-medium text-center">{item.label}</span>
+            <span className="text-[var(--color-primary)]/60">{item.icon}</span>
+            <span className="text-[var(--color-muted)] text-[10px] font-medium text-center">{item.label}</span>
           </div>
         ))}
       </div>
 
       {/* SKU */}
       {selected.sku && (
-        <p className="text-[#444] text-xs">SKU: {selected.sku}</p>
+        <p className="text-[var(--color-placeholder)] text-xs">SKU: {selected.sku}</p>
       )}
     </div>
   );

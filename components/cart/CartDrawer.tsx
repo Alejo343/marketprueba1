@@ -52,34 +52,25 @@ export default function CartDrawer() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-105 z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-full max-w-105 z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out bg-(--color-surface) text-(--color-text) ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
-        style={{ background: "#ffffff", color: "#1a1a1a" }}
       >
         {/* Header */}
-        <div
-          className="flex items-center justify-between px-5 py-4"
-          style={{ borderBottom: "1px solid #e5e5e5" }}
-        >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-(--color-divider)">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-medium" style={{ color: "#1a1a1a" }}>
+            <h2 className="text-base font-medium text-(--color-text)">
               Tu carrito
             </h2>
             {count > 0 && (
-              <span className="bg-[#E07B2A] text-white text-xs font-medium px-2 py-0.5 rounded-full">
+              <span className="bg-(--color-primary) text-(--color-on-primary) text-xs font-medium px-2 py-0.5 rounded-full">
                 {count}
               </span>
             )}
           </div>
           <button
             onClick={closeCart}
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
-            style={{ color: "#666" }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#f5f5f5")}
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.background = "transparent")
-            }
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors text-(--color-muted) hover:bg-(--color-subtle-bg) cursor-pointer"
           >
             <svg
               width="18"
@@ -103,24 +94,25 @@ export default function CartDrawer() {
                 height="56"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#ccc"
+                stroke="currentColor"
                 strokeWidth="1"
+                className="text-(--color-border)"
               >
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
               <div>
-                <p className="text-sm font-medium" style={{ color: "#1a1a1a" }}>
+                <p className="text-sm font-medium text-(--color-text)">
                   Tu carrito está vacío
                 </p>
-                <p className="text-xs mt-1" style={{ color: "#888" }}>
+                <p className="text-xs mt-1 text-(--color-muted)">
                   Agrega productos para comenzar
                 </p>
               </div>
               <button
                 onClick={closeCart}
-                className="text-sm text-[#E07B2A] hover:underline"
+                className="text-sm text-(--color-primary) hover:underline cursor-pointer"
               >
                 Seguir comprando
               </button>
@@ -136,29 +128,23 @@ export default function CartDrawer() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div
-            className="px-5 py-4 flex flex-col gap-3"
-            style={{ borderTop: "1px solid #e5e5e5" }}
-          >
+          <div className="px-5 py-4 flex flex-col gap-3 border-t border-(--color-divider)">
             <div className="flex items-center justify-between">
-              <span className="text-sm" style={{ color: "#666" }}>
-                Total
-              </span>
-              <span
-                className="text-xl font-medium"
-                style={{ color: "#1a1a1a" }}
-              >
+              <span className="text-sm text-(--color-muted)">Total</span>
+              <span className="text-xl font-medium text-(--color-text)">
                 {formatPrice(total)}
               </span>
             </div>
-            <Link href="/checkout" onClick={closeCart}
-              className="w-full h-11 bg-[#E07B2A] hover:bg-[#C96A1A] text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center cursor-pointer">
+            <Link
+              href="/checkout"
+              onClick={closeCart}
+              className="w-full h-11 bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) rounded-lg text-sm font-medium transition-colors flex items-center justify-center cursor-pointer"
+            >
               Ir a pagar
             </Link>
             <button
               onClick={clearCart}
-              className="w-full text-xs transition-colors hover:text-red-500"
-              style={{ color: "#aaa" }}
+              className="w-full text-xs text-(--color-muted)/60 hover:text-red-500 transition-colors cursor-pointer"
             >
               Vaciar carrito
             </button>

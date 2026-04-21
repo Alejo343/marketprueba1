@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -76,35 +76,35 @@ function CheckoutItem({ item }: { item: ReturnType<typeof useCartStore.getState>
   const { updateQuantity, removeItem } = useCartStore();
 
   return (
-    <div className="flex gap-4 py-5 border-b border-[#1E1E1E] last:border-0">
-      <div className="shrink-0 rounded-xl overflow-hidden bg-[#0D0D0D] border border-[#C9A84C]/10 flex items-center justify-center" style={{ width: 72, height: 72 }}>
+    <div className="flex gap-4 py-5 border-b border-(--color-divider) last:border-0">
+      <div className="shrink-0 rounded-xl overflow-hidden bg-(--color-subtle-bg) border border-(--color-border) flex items-center justify-center" style={{ width: 72, height: 72 }}>
         {item.image ? (
           <Image src={item.image} alt={item.name} width={72} height={72}
             className="w-full h-full object-cover" unoptimized />
         ) : (
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1" opacity="0.3">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1" opacity="0.3">
             <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" />
           </svg>
         )}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-[#F5F0E8] text-sm font-medium leading-snug line-clamp-2">{item.name}</p>
-        <p className="text-[#9A8C7A] text-xs mt-0.5">{item.presentation}</p>
+        <p className="text-(--color-text) text-sm font-medium leading-snug line-clamp-2">{item.name}</p>
+        <p className="text-(--color-muted) text-xs mt-0.5">{item.presentation}</p>
         <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center bg-[#0D0D0D] border border-[#1E1E1E] rounded-lg overflow-hidden">
+          <div className="flex items-center bg-(--color-subtle-bg) border border-(--color-border) rounded-lg overflow-hidden">
             <button onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-              className="w-8 h-8 flex items-center justify-center text-[#9A8C7A] hover:text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-all duration-150 cursor-pointer text-base font-light">−</button>
-            <span className="w-8 text-center text-[#F5F0E8] text-sm font-semibold">{item.quantity}</span>
+              className="w-8 h-8 flex items-center justify-center text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 transition-all duration-150 cursor-pointer text-base font-light">−</button>
+            <span className="w-8 text-center text-(--color-text) text-sm font-semibold">{item.quantity}</span>
             <button onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-              className="w-8 h-8 flex items-center justify-center text-[#9A8C7A] hover:text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-all duration-150 cursor-pointer text-base font-light">+</button>
+              className="w-8 h-8 flex items-center justify-center text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 transition-all duration-150 cursor-pointer text-base font-light">+</button>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#C9A84C] font-bold text-sm" style={{ fontFamily: "var(--font-playfair)" }}>
+            <span className="text-(--color-primary) font-bold text-sm" style={{ fontFamily: "var(--font-playfair)" }}>
               {fmt(item.price * item.quantity)}
             </span>
             <button onClick={() => removeItem(item.variantId)}
-              className="text-[#9A8C7A]/50 hover:text-red-400 transition-colors duration-150 cursor-pointer p-1" title="Eliminar">
+              className="text-(--color-muted)/50 hover:text-red-400 transition-colors duration-150 cursor-pointer p-1" title="Eliminar">
               <TrashIcon />
             </button>
           </div>
@@ -119,7 +119,7 @@ function CheckoutItem({ item }: { item: ReturnType<typeof useCartStore.getState>
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-[#9A8C7A] text-xs font-medium mb-1.5 uppercase tracking-wide">{label}</label>
+      <label className="block text-(--color-muted) text-xs font-medium mb-1.5 uppercase tracking-wide">{label}</label>
       {children}
       {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
     </div>
@@ -128,9 +128,9 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 
 function inputCls(hasError: boolean) {
   return [
-    "w-full bg-[#0D0D0D] border rounded-xl px-4 py-3 text-[#F5F0E8] text-sm placeholder:text-[#555]",
+    "w-full bg-(--color-input-bg) border rounded-xl px-4 py-3 text-(--color-text) text-sm placeholder:text-(--color-placeholder)",
     "focus:outline-none transition-all duration-200",
-    hasError ? "border-red-500/50 focus:border-red-500" : "border-[#1E1E1E] focus:border-[#C9A84C]/50",
+    hasError ? "border-red-500/50 focus:border-red-500" : "border-(--color-input-border) focus:border-(--color-primary)/50",
   ].join(" ");
 }
 
@@ -154,6 +154,61 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
+  // Nequi state
+  const [payMethod, setPayMethod] = useState<"wompi" | "nequi" | "card" | "pse">("wompi");
+  const [nequiPhone, setNequiPhone] = useState("");
+  const [nequiPhoneError, setNequiPhoneError] = useState("");
+  const [nequiLoading, setNequiLoading] = useState(false);
+  const [nequiStep, setNequiStep] = useState<"idle" | "waiting" | "approved" | "declined">("idle");
+  const [nequiError, setNequiError] = useState("");
+  const [nequiTxRef, setNequiTxRef] = useState<{ id: string; reference: string } | null>(null);
+
+  // Card state
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolder, setCardHolder] = useState("");
+  const [cardExp, setCardExp] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+  const [cardInstallments, setCardInstallments] = useState("1");
+  const [cardErrors, setCardErrors] = useState<{ number?: string; holder?: string; exp?: string; cvc?: string }>({});
+  const [cardLoading, setCardLoading] = useState(false);
+  const [cardStep, setCardStep] = useState<"idle" | "waiting" | "approved" | "declined">("idle");
+  const [cardError, setCardError] = useState("");
+  const [cardTxRef, setCardTxRef] = useState<{ id: string; reference: string } | null>(null);
+
+  // Wompi terms of acceptance (Habeas Data)
+  const [terms, setTerms] = useState<{ endUserPolicy: string; personalDataAuth: string } | null>(null);
+  const [acceptedPolicy, setAcceptedPolicy] = useState(false);
+  const [acceptedData, setAcceptedData] = useState(false);
+  const [termsError, setTermsError] = useState("");
+  const termsAccepted = acceptedPolicy && acceptedData;
+
+  useEffect(() => {
+    fetch("/api/checkout/acceptance")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.endUserPolicy && d.personalDataAuth) setTerms(d);
+      })
+      .catch(() => { /* ignore */ });
+  }, []);
+
+  // PSE state
+  const [pseInstitutions, setPseInstitutions] = useState<{ code: string; name: string }[]>([]);
+  const [pseBank, setPseBank] = useState("");
+  const [pseUserType, setPseUserType] = useState<"0" | "1">("0");
+  const [pseIdType, setPseIdType] = useState<"CC" | "CE" | "NIT" | "PP">("CC");
+  const [pseId, setPseId] = useState("");
+  const [pseErrors, setPseErrors] = useState<{ bank?: string; id?: string }>({});
+  const [pseLoading, setPseLoading] = useState(false);
+  const [pseError, setPseError] = useState("");
+
+  useEffect(() => {
+    if (payMethod !== "pse" || pseInstitutions.length > 0) return;
+    fetch("/api/checkout/pse/institutions")
+      .then((r) => r.json())
+      .then((d) => { if (Array.isArray(d.institutions)) setPseInstitutions(d.institutions); })
+      .catch(() => { /* ignore */ });
+  }, [payMethod, pseInstitutions.length]);
+
   const subtotal = totalPrice();
   const total = subtotal;
 
@@ -173,9 +228,19 @@ export default function CheckoutPage() {
     return Object.keys(errs).length === 0;
   };
 
+  const requireTerms = () => {
+    if (!termsAccepted) {
+      setTermsError("Debes aceptar ambos términos para continuar");
+      return false;
+    }
+    setTermsError("");
+    return true;
+  };
+
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!requireTerms()) return;
 
     setLoading(true);
     setApiError("");
@@ -231,21 +296,246 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleNequiPay = async () => {
+    if (!validate()) return;
+    if (!requireTerms()) return;
+
+    const cleaned = nequiPhone.replace(/\s|-/g, "");
+    if (!/^3\d{9}$/.test(cleaned)) {
+      setNequiPhoneError("Número inválido — ej: 3001234567");
+      return;
+    }
+
+    setNequiLoading(true);
+    setNequiError("");
+
+    try {
+      const res = await fetch("/api/checkout/nequi/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: cleaned,
+          amountInCents: total * 100,
+          customerEmail: form.email,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al iniciar pago Nequi");
+
+      localStorage.setItem("barril-pending-order", JSON.stringify({
+        reference: data.reference,
+        items,
+        total,
+        customer: form,
+        createdAt: new Date().toISOString(),
+      }));
+
+      setNequiTxRef({ id: data.transactionId, reference: data.reference });
+      setNequiStep("waiting");
+    } catch (err) {
+      setNequiError(err instanceof Error ? err.message : "Error inesperado");
+    } finally {
+      setNequiLoading(false);
+    }
+  };
+
+  // Poll Nequi transaction status
+  useEffect(() => {
+    if (nequiStep !== "waiting" || !nequiTxRef) return;
+
+    const poll = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/checkout/nequi/status/${nequiTxRef.id}`);
+        const { status } = await res.json();
+
+        if (status === "APPROVED") {
+          clearInterval(poll);
+          setNequiStep("approved");
+          setTimeout(() => {
+            window.location.href = `/checkout/result?id=${nequiTxRef.id}`;
+          }, 2000);
+        } else if (status === "DECLINED" || status === "ERROR" || status === "VOIDED") {
+          clearInterval(poll);
+          setNequiStep("declined");
+          setNequiError("El pago fue rechazado por Nequi. Verifica tu saldo e intenta de nuevo.");
+        }
+      } catch { /* keep polling on transient errors */ }
+    }, 5000);
+
+    return () => clearInterval(poll);
+  }, [nequiStep, nequiTxRef]);
+
+  const handleCardPay = async () => {
+    if (!validate()) return;
+    if (!requireTerms()) return;
+
+    const errs: typeof cardErrors = {};
+    const cleanedNumber = cardNumber.replace(/\s/g, "");
+    if (!/^\d{13,19}$/.test(cleanedNumber)) errs.number = "Número de tarjeta inválido";
+    if (cardHolder.trim().length < 5) errs.holder = "Nombre muy corto (mín. 5)";
+    const expMatch = cardExp.match(/^(\d{2})\s*\/\s*(\d{2})$/);
+    if (!expMatch) errs.exp = "Formato MM/AA";
+    if (!/^\d{3,4}$/.test(cardCvc)) errs.cvc = "CVC inválido";
+    setCardErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    setCardLoading(true);
+    setCardError("");
+
+    try {
+      const publicKey = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY!;
+      const wompiApi = process.env.NEXT_PUBLIC_WOMPI_API_URL ?? "https://sandbox.wompi.co/v1";
+
+      // 1) Tokenize card directly against Wompi (card data never touches our server)
+      const tokRes = await fetch(`${wompiApi}/tokens/cards`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${publicKey}`,
+        },
+        body: JSON.stringify({
+          number: cleanedNumber,
+          exp_month: expMatch![1],
+          exp_year: expMatch![2],
+          cvc: cardCvc,
+          card_holder: cardHolder.trim(),
+        }),
+      });
+
+      const tokData = await tokRes.json();
+      if (!tokRes.ok || tokData.status !== "CREATED") {
+        throw new Error(tokData?.error?.messages?.number?.[0] ?? tokData?.error?.reason ?? "No se pudo validar la tarjeta");
+      }
+
+      // 2) Create transaction on our server
+      const payRes = await fetch("/api/checkout/card/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cardToken: tokData.data.id,
+          amountInCents: total * 100,
+          customerEmail: form.email,
+          installments: Number(cardInstallments) || 1,
+        }),
+      });
+
+      const data = await payRes.json();
+      if (!payRes.ok) throw new Error(data.error || "Error al procesar el pago");
+
+      localStorage.setItem("barril-pending-order", JSON.stringify({
+        reference: data.reference,
+        items,
+        total,
+        customer: form,
+        createdAt: new Date().toISOString(),
+      }));
+
+      setCardTxRef({ id: data.transactionId, reference: data.reference });
+      setCardStep("waiting");
+    } catch (err) {
+      setCardError(err instanceof Error ? err.message : "Error inesperado");
+    } finally {
+      setCardLoading(false);
+    }
+  };
+
+  // Poll card transaction status (reuses the same Wompi tx status endpoint)
+  useEffect(() => {
+    if (cardStep !== "waiting" || !cardTxRef) return;
+
+    const poll = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/checkout/nequi/status/${cardTxRef.id}`);
+        const { status, statusMessage } = await res.json();
+
+        if (status === "APPROVED") {
+          clearInterval(poll);
+          setCardStep("approved");
+          setTimeout(() => {
+            window.location.href = `/checkout/result?id=${cardTxRef.id}`;
+          }, 2000);
+        } else if (status === "DECLINED" || status === "ERROR" || status === "VOIDED") {
+          clearInterval(poll);
+          setCardStep("declined");
+          setCardError(statusMessage || "El pago fue rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.");
+        }
+      } catch { /* keep polling on transient errors */ }
+    }, 3000);
+
+    return () => clearInterval(poll);
+  }, [cardStep, cardTxRef]);
+
+  const handlePsePay = async () => {
+    if (!validate()) return;
+    if (!requireTerms()) return;
+
+    const errs: typeof pseErrors = {};
+    if (!pseBank) errs.bank = "Selecciona tu banco";
+    const cleanedId = pseId.replace(/\D/g, "");
+    if (cleanedId.length < 5) errs.id = "Número de documento inválido";
+    setPseErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    setPseLoading(true);
+    setPseError("");
+
+    try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const reference = generateReference();
+
+      const res = await fetch("/api/checkout/pse/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amountInCents: total * 100,
+          customerEmail: form.email,
+          fullName: form.name,
+          phone: form.phone.replace(/\s|-/g, ""),
+          userType: pseUserType,
+          userLegalIdType: pseIdType,
+          userLegalId: cleanedId,
+          financialInstitutionCode: pseBank,
+          paymentDescription: `Pago Barril Market ${reference}`.slice(0, 64),
+          redirectUrl: `${siteUrl}/checkout/result`,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al iniciar pago PSE");
+
+      localStorage.setItem("barril-pending-order", JSON.stringify({
+        reference: data.reference,
+        items,
+        total,
+        customer: form,
+        createdAt: new Date().toISOString(),
+      }));
+
+      clearCart();
+      window.location.href = data.asyncPaymentUrl;
+    } catch (err) {
+      setPseError(err instanceof Error ? err.message : "Error inesperado");
+    } finally {
+      setPseLoading(false);
+    }
+  };
+
   // ── Empty cart ──────────────────────────────────────────────────────────────
   if (items.length === 0) {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4" style={{ fontFamily: "var(--font-inter)" }}>
+        <div className="min-h-screen bg-(--color-bg) flex items-center justify-center px-4" style={{ fontFamily: "var(--font-inter)" }}>
           <div className="text-center max-w-sm">
-            <div className="w-24 h-24 rounded-full bg-[#111111] border border-[#C9A84C]/20 flex items-center justify-center mx-auto mb-6">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="1.2" opacity="0.5">
+            <div className="w-24 h-24 rounded-full bg-(--color-surface) border border-(--color-primary)/20 flex items-center justify-center mx-auto mb-6">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.2" opacity="0.5">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
             </div>
-            <h2 className="text-[#F5F0E8] text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-playfair)" }}>Tu carrito está vacío</h2>
-            <p className="text-[#9A8C7A] text-sm mb-8">Agrega productos para continuar con tu pedido.</p>
-            <Link href="/" className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B8973D] text-[#111111] font-bold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer text-sm">
+            <h2 className="text-(--color-text) text-2xl font-bold mb-2" style={{ fontFamily: "var(--font-playfair)" }}>Tu carrito está vacío</h2>
+            <p className="text-(--color-muted) text-sm mb-8">Agrega productos para continuar con tu pedido.</p>
+            <Link href="/" className="inline-flex items-center gap-2 bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) font-bold px-6 py-3 rounded-xl transition-colors duration-200 cursor-pointer text-sm">
               Explorar productos
             </Link>
           </div>
@@ -257,18 +547,18 @@ export default function CheckoutPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-[#080808] pt-8 pb-20" style={{ fontFamily: "var(--font-inter)" }}>
+      <div className="min-h-screen bg-(--color-bg) pt-8 pb-20" style={{ fontFamily: "var(--font-inter)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Breadcrumb */}
-          <Link href="/" className="inline-flex items-center gap-1.5 text-[#9A8C7A] hover:text-[#C9A84C] text-sm mb-8 transition-colors duration-200 cursor-pointer">
+          <Link href="/" className="inline-flex items-center gap-1.5 text-(--color-muted) hover:text-(--color-primary) text-sm mb-8 transition-colors duration-200 cursor-pointer">
             <ChevronLeft /> Seguir comprando
           </Link>
 
           {/* Title */}
           <div className="mb-10">
-            <p className="text-[#C9A84C] text-xs font-semibold tracking-widest uppercase mb-1">Finalizar compra</p>
-            <h1 className="text-3xl font-bold text-[#F5F0E8]" style={{ fontFamily: "var(--font-playfair)" }}>
+            <p className="text-(--color-primary) text-xs font-semibold tracking-widest uppercase mb-1">Finalizar compra</p>
+            <h1 className="text-3xl font-bold text-(--color-text)" style={{ fontFamily: "var(--font-playfair)" }}>
               Resumen del pedido
             </h1>
           </div>
@@ -280,23 +570,23 @@ export default function CheckoutPage() {
               <div className="space-y-6">
 
                 {/* Items */}
-                <div className="bg-[#111111] rounded-2xl border border-[#C9A84C]/10 p-6">
+                <div className="bg-(--color-surface) rounded-2xl border border-(--color-primary)/10 p-6">
                   <div className="flex items-center justify-between mb-1">
-                    <h2 className="text-[#F5F0E8] font-semibold text-base">
+                    <h2 className="text-(--color-text) font-semibold text-base">
                       Productos ({items.reduce((s, i) => s + i.quantity, 0)})
                     </h2>
                     <button type="button" onClick={() => clearCart()}
-                      className="text-[#9A8C7A]/60 hover:text-red-400 text-xs transition-colors duration-150 cursor-pointer flex items-center gap-1.5">
+                      className="text-(--color-muted)/60 hover:text-red-400 text-xs transition-colors duration-150 cursor-pointer flex items-center gap-1.5">
                       <TrashIcon /> Vaciar
                     </button>
                   </div>
-                  <div className="h-px bg-[#1E1E1E] mb-1" />
+                  <div className="h-px bg-(--color-divider) mb-1" />
                   {items.map((item) => <CheckoutItem key={item.variantId} item={item} />)}
                 </div>
 
                 {/* Datos de entrega */}
-                <div className="bg-[#111111] rounded-2xl border border-[#C9A84C]/10 p-6">
-                  <h2 className="text-[#F5F0E8] font-semibold text-base mb-5">Datos de entrega</h2>
+                <div className="bg-(--color-surface) rounded-2xl border border-(--color-primary)/10 p-6">
+                  <h2 className="text-(--color-text) font-semibold text-base mb-5">Datos de entrega</h2>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Field label="Nombre completo *" error={errors.name}>
@@ -334,25 +624,25 @@ export default function CheckoutPage() {
               <div className="sticky top-28 space-y-4">
 
                 {/* Summary */}
-                <div className="bg-[#111111] rounded-2xl border border-[#C9A84C]/10 p-6">
-                  <h2 className="text-[#F5F0E8] font-semibold text-base mb-5">Resumen</h2>
+                <div className="bg-(--color-surface) rounded-2xl border border-(--color-primary)/10 p-6">
+                  <h2 className="text-(--color-text) font-semibold text-base mb-5">Resumen</h2>
 
                   <div className="space-y-3 mb-5">
                     <div className="flex justify-between text-sm">
-                      <span className="text-[#9A8C7A]">Subtotal</span>
-                      <span className="text-[#F5F0E8]">{fmt(subtotal)}</span>
+                      <span className="text-(--color-muted)">Subtotal</span>
+                      <span className="text-(--color-text)">{fmt(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-[#9A8C7A]">Envío</span>
-                      <span className="text-[#C9A84C] text-xs font-medium">A coordinar</span>
+                      <span className="text-(--color-muted)">Envío</span>
+                      <span className="text-(--color-primary) text-xs font-medium">A coordinar</span>
                     </div>
                   </div>
 
-                  <div className="h-px bg-linear-to-r from-transparent via-[#C9A84C]/30 to-transparent mb-5" />
+                  <div className="h-px bg-linear-to-r from-transparent via-(--color-primary)/30 to-transparent mb-5" />
 
                   <div className="flex justify-between items-baseline mb-6">
-                    <span className="text-[#F5F0E8] font-semibold">Total</span>
-                    <span className="text-[#C9A84C] text-2xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>
+                    <span className="text-(--color-text) font-semibold">Total</span>
+                    <span className="text-(--color-primary) text-2xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>
                       {fmt(total)}
                     </span>
                   </div>
@@ -364,32 +654,416 @@ export default function CheckoutPage() {
                     </div>
                   )}
 
-                  {/* Pay button */}
-                  <button type="submit" disabled={loading}
-                    className="w-full flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8973D] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-[#111111] font-bold py-4 rounded-xl transition-all duration-200 cursor-pointer text-sm shadow-lg shadow-[#C9A84C]/10">
-                    {loading ? <><SpinnerIcon /> Procesando...</> : <><LockIcon /> Pagar con Wompi</>}
-                  </button>
+                  {/* Dynamic payment section */}
+                  {cardStep === "waiting" ? (
+                    <div className="text-center py-6 space-y-4">
+                      <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center animate-pulse bg-(--color-primary)/20 border border-(--color-primary)/40">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2">
+                          <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-(--color-text) font-semibold text-sm">Procesando tu tarjeta</p>
+                        <p className="text-(--color-muted) text-xs mt-1">
+                          Autorizando cobro de <span className="text-(--color-text)">{fmt(total)}</span>
+                        </p>
+                      </div>
+                      <div className="flex justify-center"><SpinnerIcon /></div>
+                      <p className="text-[#9A8C7A] text-[11px]">No cierres esta ventana</p>
+                    </div>
+
+                  ) : cardStep === "approved" ? (
+                    <div className="text-center py-6 space-y-3">
+                      <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mx-auto">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </div>
+                      <p className="text-green-400 font-semibold text-sm">¡Pago aprobado!</p>
+                      <p className="text-(--color-muted) text-xs">Redirigiendo a tu confirmación...</p>
+                    </div>
+
+                  ) : cardStep === "declined" ? (
+                    <div className="space-y-3">
+                      <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3">
+                        <p className="text-red-400 text-xs">{cardError}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button"
+                          onClick={() => { setCardStep("idle"); setPayMethod("card"); setCardError(""); }}
+                          className="py-2.5 rounded-xl text-sm font-semibold text-(--color-on-primary) bg-(--color-primary) hover:bg-(--color-primary-hover) cursor-pointer">
+                          Reintentar
+                        </button>
+                        <button type="button"
+                          onClick={() => { setCardStep("idle"); setPayMethod("wompi"); setCardError(""); }}
+                          className="py-2.5 rounded-xl text-sm font-semibold text-(--color-text) bg-(--color-subtle-bg) border border-(--color-border) cursor-pointer">
+                          Otra forma
+                        </button>
+                      </div>
+                    </div>
+
+                  ) : nequiStep === "waiting" ? (
+                    <div className="text-center py-6 space-y-4">
+                      <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center animate-pulse"
+                        style={{ background: "linear-gradient(135deg, #DA0081 0%, #B5006C 100%)" }}>
+                        <svg width="28" height="28" viewBox="0 0 40 40" fill="none" className="shrink-0">
+                          <path d="M10 29V11l13 13.5V11h6v18L16 15.5V29H10Z" fill="white" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-(--color-text) font-semibold text-sm">Aprueba el pago en Nequi</p>
+                        <p className="text-(--color-muted) text-xs mt-1">
+                          Abre tu app y acepta la solicitud de <span className="text-(--color-text)">{fmt(total)}</span>
+                        </p>
+                      </div>
+                      <div className="flex justify-center"><SpinnerIcon /></div>
+                      <p className="text-[#9A8C7A] text-[11px]">Esta pantalla se actualizará automáticamente</p>
+                    </div>
+
+                  ) : nequiStep === "approved" ? (
+                    <div className="text-center py-6 space-y-3">
+                      <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mx-auto">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </div>
+                      <p className="text-green-400 font-semibold text-sm">¡Pago aprobado!</p>
+                      <p className="text-(--color-muted) text-xs">Redirigiendo a tu confirmación...</p>
+                    </div>
+
+                  ) : nequiStep === "declined" ? (
+                    <div className="space-y-3">
+                      <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3">
+                        <p className="text-red-400 text-xs">{nequiError}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button"
+                          onClick={() => { setNequiStep("idle"); setPayMethod("nequi"); setNequiError(""); }}
+                          className="py-2.5 rounded-xl text-sm font-semibold text-white cursor-pointer"
+                          style={{ background: "linear-gradient(135deg, #DA0081 0%, #B5006C 100%)" }}>
+                          Reintentar
+                        </button>
+                        <button type="button"
+                          onClick={() => { setNequiStep("idle"); setPayMethod("wompi"); setNequiError(""); }}
+                          className="py-2.5 rounded-xl text-sm font-semibold text-(--color-text) bg-(--color-subtle-bg) border border-(--color-border) cursor-pointer">
+                          Otra forma
+                        </button>
+                      </div>
+                    </div>
+
+                  ) : (
+                    <>
+                      {/* Habeas Data — acceptance required by Wompi */}
+                      <div className="mb-4 space-y-2.5 bg-(--color-subtle-bg) border border-(--color-border) rounded-xl p-3.5">
+                        <label className="flex items-start gap-2.5 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={acceptedPolicy}
+                            onChange={(e) => { setAcceptedPolicy(e.target.checked); if (e.target.checked) setTermsError(""); }}
+                            className="mt-0.5 w-4 h-4 shrink-0 accent-(--color-primary) cursor-pointer"
+                          />
+                          <span className="text-(--color-muted) text-[11px] leading-snug">
+                            Acepto los{" "}
+                            {terms ? (
+                              <a href={terms.endUserPolicy} target="_blank" rel="noopener noreferrer"
+                                className="text-(--color-primary) hover:underline">
+                                Términos y Condiciones de Uso
+                              </a>
+                            ) : (
+                              <span className="text-(--color-primary)/60">Términos y Condiciones de Uso</span>
+                            )}
+                            {" "}de Wompi.
+                          </span>
+                        </label>
+                        <label className="flex items-start gap-2.5 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={acceptedData}
+                            onChange={(e) => { setAcceptedData(e.target.checked); if (e.target.checked) setTermsError(""); }}
+                            className="mt-0.5 w-4 h-4 shrink-0 accent-(--color-primary) cursor-pointer"
+                          />
+                          <span className="text-(--color-muted) text-[11px] leading-snug">
+                            Autorizo el{" "}
+                            {terms ? (
+                              <a href={terms.personalDataAuth} target="_blank" rel="noopener noreferrer"
+                                className="text-(--color-primary) hover:underline">
+                                tratamiento de mis datos personales
+                              </a>
+                            ) : (
+                              <span className="text-(--color-primary)/60">tratamiento de mis datos personales</span>
+                            )}
+                            {" "}conforme a la Ley de Habeas Data.
+                          </span>
+                        </label>
+                        {termsError && (
+                          <p className="text-red-400 text-[11px] pt-0.5">{termsError}</p>
+                        )}
+                      </div>
+
+                      {/* Pay with Wompi button */}
+                      <button type="submit" disabled={loading}
+                        className="w-full flex items-center justify-center gap-2.5 bg-(--color-primary) hover:bg-(--color-primary-hover) active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-(--color-on-primary) font-bold py-4 rounded-xl transition-all duration-200 cursor-pointer text-sm shadow-lg shadow-(--color-primary)/10">
+                        {loading ? <><SpinnerIcon /> Procesando...</> : <><LockIcon /> Pagar con Wompi</>}
+                      </button>
+
+                      {/* Divider */}
+                      <div className="flex items-center gap-3 my-1">
+                        <div className="flex-1 h-px bg-(--color-divider)" />
+                        <span className="text-(--color-muted) text-[11px] shrink-0">o paga con</span>
+                        <div className="flex-1 h-px bg-(--color-divider)" />
+                      </div>
+
+                      {/* Card section */}
+                      {payMethod === "card" ? (
+                        <div className="space-y-3 mb-3">
+                          <Field label="Número de tarjeta" error={cardErrors.number}>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              autoComplete="cc-number"
+                              value={cardNumber}
+                              onChange={(e) => {
+                                const digits = e.target.value.replace(/\D/g, "").slice(0, 19);
+                                const grouped = digits.replace(/(.{4})/g, "$1 ").trim();
+                                setCardNumber(grouped);
+                                setCardErrors((p) => ({ ...p, number: "" }));
+                              }}
+                              placeholder="4242 4242 4242 4242"
+                              className={inputCls(!!cardErrors.number)}
+                              autoFocus
+                            />
+                          </Field>
+                          <Field label="Titular de la tarjeta" error={cardErrors.holder}>
+                            <input
+                              type="text"
+                              autoComplete="cc-name"
+                              value={cardHolder}
+                              onChange={(e) => { setCardHolder(e.target.value); setCardErrors((p) => ({ ...p, holder: "" })); }}
+                              placeholder="Como aparece en la tarjeta"
+                              className={inputCls(!!cardErrors.holder)}
+                            />
+                          </Field>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Field label="Vencimiento" error={cardErrors.exp}>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                autoComplete="cc-exp"
+                                value={cardExp}
+                                onChange={(e) => {
+                                  const d = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                  const formatted = d.length >= 3 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+                                  setCardExp(formatted);
+                                  setCardErrors((p) => ({ ...p, exp: "" }));
+                                }}
+                                placeholder="MM/AA"
+                                className={inputCls(!!cardErrors.exp)}
+                              />
+                            </Field>
+                            <Field label="CVC" error={cardErrors.cvc}>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                autoComplete="cc-csc"
+                                value={cardCvc}
+                                onChange={(e) => { setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4)); setCardErrors((p) => ({ ...p, cvc: "" })); }}
+                                placeholder="123"
+                                className={inputCls(!!cardErrors.cvc)}
+                              />
+                            </Field>
+                          </div>
+                          <Field label="Cuotas">
+                            <select
+                              value={cardInstallments}
+                              onChange={(e) => setCardInstallments(e.target.value)}
+                              className={inputCls(false) + " cursor-pointer"}
+                            >
+                              {[1, 2, 3, 6, 9, 12, 18, 24, 36].map((n) => (
+                                <option key={n} value={n}>{n} {n === 1 ? "cuota" : "cuotas"}</option>
+                              ))}
+                            </select>
+                          </Field>
+
+                          {cardError && (
+                            <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3">
+                              <p className="text-red-400 text-xs">{cardError}</p>
+                            </div>
+                          )}
+
+                          <button type="button" onClick={handleCardPay} disabled={cardLoading}
+                            className="w-full flex items-center justify-center gap-2.5 bg-(--color-primary) hover:bg-(--color-primary-hover) active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-(--color-on-primary) font-bold py-3.5 rounded-xl transition-all duration-200 cursor-pointer text-sm">
+                            {cardLoading ? (
+                              <><SpinnerIcon /> Procesando...</>
+                            ) : (
+                              <><LockIcon /> Pagar {fmt(total)}</>
+                            )}
+                          </button>
+                          <button type="button" onClick={() => setPayMethod("wompi")}
+                            className="w-full text-center text-(--color-muted) hover:text-(--color-text) text-xs transition-colors cursor-pointer py-1">
+                            ← Volver
+                          </button>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={() => setPayMethod("card")}
+                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-(--color-text) bg-(--color-subtle-bg) border border-(--color-primary)/30 hover:border-(--color-primary)/60 hover:bg-(--color-primary)/5 transition-all duration-200 cursor-pointer mb-3">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" className="shrink-0">
+                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                            <line x1="2" y1="10" x2="22" y2="10" />
+                          </svg>
+                          Pagar con tarjeta
+                        </button>
+                      )}
+
+                      {/* Nequi section */}
+                      {payMethod === "nequi" ? (
+                        <div className="space-y-3">
+                          <Field label="Número Nequi" error={nequiPhoneError}>
+                            <input
+                              type="tel"
+                              value={nequiPhone}
+                              onChange={(e) => { setNequiPhone(e.target.value); setNequiPhoneError(""); }}
+                              placeholder="3001234567"
+                              className={inputCls(!!nequiPhoneError)}
+                              autoFocus
+                            />
+                          </Field>
+                          <button type="button" onClick={handleNequiPay} disabled={nequiLoading}
+                            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ background: "linear-gradient(135deg, #DA0081 0%, #B5006C 100%)" }}>
+                            {nequiLoading ? (
+                              <><SpinnerIcon /> Procesando...</>
+                            ) : (
+                              <>
+                                <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className="shrink-0">
+                                  <rect width="40" height="40" rx="8" fill="rgba(255,255,255,0.15)" />
+                                  <path d="M10 29V11l13 13.5V11h6v18L16 15.5V29H10Z" fill="white" />
+                                </svg>
+                                Confirmar pago Nequi
+                              </>
+                            )}
+                          </button>
+                          <button type="button" onClick={() => setPayMethod("wompi")}
+                            className="w-full text-center text-(--color-muted) hover:text-(--color-text) text-xs transition-colors cursor-pointer py-1">
+                            ← Volver a Wompi
+                          </button>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={() => setPayMethod("nequi")}
+                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer relative overflow-hidden group"
+                          style={{ background: "linear-gradient(135deg, #DA0081 0%, #B5006C 100%)" }}>
+                          <span className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-all duration-200" />
+                          <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className="shrink-0" aria-hidden="true">
+                            <rect width="40" height="40" rx="8" fill="rgba(255,255,255,0.15)" />
+                            <path d="M10 29V11l13 13.5V11h6v18L16 15.5V29H10Z" fill="white" />
+                          </svg>
+                          <span className="relative tracking-wide">Pagar con Nequi</span>
+                        </button>
+                      )}
+
+                      {/* PSE section */}
+                      {payMethod === "pse" ? (
+                        <div className="space-y-3 mt-3">
+                          <Field label="Banco" error={pseErrors.bank}>
+                            <select
+                              value={pseBank}
+                              onChange={(e) => { setPseBank(e.target.value); setPseErrors((p) => ({ ...p, bank: "" })); }}
+                              className={inputCls(!!pseErrors.bank) + " cursor-pointer"}
+                              autoFocus
+                            >
+                              <option value="">{pseInstitutions.length === 0 ? "Cargando bancos..." : "Selecciona tu banco"}</option>
+                              {pseInstitutions.map((i) => (
+                                <option key={i.code} value={i.code}>{i.name}</option>
+                              ))}
+                            </select>
+                          </Field>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Field label="Tipo de persona">
+                              <select
+                                value={pseUserType}
+                                onChange={(e) => setPseUserType(e.target.value as "0" | "1")}
+                                className={inputCls(false) + " cursor-pointer"}
+                              >
+                                <option value="0">Natural</option>
+                                <option value="1">Jurídica</option>
+                              </select>
+                            </Field>
+                            <Field label="Tipo doc.">
+                              <select
+                                value={pseIdType}
+                                onChange={(e) => setPseIdType(e.target.value as "CC" | "CE" | "NIT" | "PP")}
+                                className={inputCls(false) + " cursor-pointer"}
+                              >
+                                <option value="CC">CC</option>
+                                <option value="CE">CE</option>
+                                <option value="NIT">NIT</option>
+                                <option value="PP">PP</option>
+                              </select>
+                            </Field>
+                          </div>
+                          <Field label="Número de documento" error={pseErrors.id}>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={pseId}
+                              onChange={(e) => { setPseId(e.target.value.replace(/\D/g, "").slice(0, 20)); setPseErrors((p) => ({ ...p, id: "" })); }}
+                              placeholder="1234567890"
+                              className={inputCls(!!pseErrors.id)}
+                            />
+                          </Field>
+
+                          {pseError && (
+                            <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3">
+                              <p className="text-red-400 text-xs">{pseError}</p>
+                            </div>
+                          )}
+
+                          <button type="button" onClick={handlePsePay} disabled={pseLoading}
+                            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ background: "linear-gradient(135deg, #0057A6 0%, #003C73 100%)" }}>
+                            {pseLoading ? (
+                              <><SpinnerIcon /> Redirigiendo a tu banco...</>
+                            ) : (
+                              <><LockIcon /> Pagar {fmt(total)} con PSE</>
+                            )}
+                          </button>
+                          <button type="button" onClick={() => setPayMethod("wompi")}
+                            className="w-full text-center text-(--color-muted) hover:text-(--color-text) text-xs transition-colors cursor-pointer py-1">
+                            ← Volver
+                          </button>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={() => setPayMethod("pse")}
+                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer mt-3"
+                          style={{ background: "linear-gradient(135deg, #0057A6 0%, #003C73 100%)" }}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="shrink-0">
+                            <path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" />
+                          </svg>
+                          <span className="tracking-wide">Pagar con PSE</span>
+                        </button>
+                      )}
+                    </>
+                  )}
 
                   {/* Wompi branding */}
-                  <div className="flex items-center justify-center gap-2 mt-4">
-                    <span className="text-[#9A8C7A] text-[11px]">Procesado por</span>
+                  <div className="flex items-center justify-center gap-2 mt-3">
+                    <span className="text-(--color-muted) text-[11px]">Procesado por</span>
                     <WompiLogo />
                   </div>
-                  <p className="text-[#9A8C7A] text-[11px] text-center mt-1">
+                  <p className="text-(--color-muted) text-[11px] text-center mt-1">
                     Pago seguro con tarjeta, PSE, Nequi o Bancolombia
                   </p>
                 </div>
 
                 {/* Trust badges */}
-                <div className="bg-[#111111] rounded-2xl border border-[#C9A84C]/10 p-5">
+                <div className="bg-(--color-surface) rounded-2xl border border-(--color-primary)/10 p-5">
                   <div className="space-y-3">
                     {[
                       { icon: <LockIcon />,   text: "Pago encriptado SSL" },
                       { icon: <ShieldIcon />, text: "Transacción 100% segura" },
                       { icon: <TruckIcon />,  text: "Envíos a todo Colombia" },
                     ].map(({ icon, text }) => (
-                      <div key={text} className="flex items-center gap-3 text-xs text-[#9A8C7A]">
-                        <span className="text-[#C9A84C]/70">{icon}</span>
+                      <div key={text} className="flex items-center gap-3 text-xs text-(--color-muted)">
+                        <span className="text-(--color-primary)/70">{icon}</span>
                         {text}
                       </div>
                     ))}
