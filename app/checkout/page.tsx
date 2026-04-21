@@ -151,11 +151,9 @@ export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCartStore();
   const [form, setForm] = useState<FormData>({ name: "", phone: "", email: "", city: "", address: "", notes: "" });
   const [errors, setErrors] = useState<Partial<FormData>>({});
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState("");
 
   // Nequi state
-  const [payMethod, setPayMethod] = useState<"wompi" | "nequi" | "card" | "pse">("wompi");
+  const [payMethod, setPayMethod] = useState<"card" | "nequi" | "pse">("card");
   const [nequiPhone, setNequiPhone] = useState("");
   const [nequiPhoneError, setNequiPhoneError] = useState("");
   const [nequiLoading, setNequiLoading] = useState(false);
@@ -183,7 +181,8 @@ export default function CheckoutPage() {
   const termsAccepted = acceptedPolicy && acceptedData;
 
   useEffect(() => {
-    fetch("/api/checkout/acceptance")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    fetch(`${apiUrl}/checkout/acceptance`)
       .then((r) => r.json())
       .then((d) => {
         if (d.endUserPolicy && d.personalDataAuth) setTerms(d);
@@ -203,7 +202,8 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (payMethod !== "pse" || pseInstitutions.length > 0) return;
-    fetch("/api/checkout/pse/institutions")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    fetch(`${apiUrl}/checkout/pse/institutions`)
       .then((r) => r.json())
       .then((d) => { if (Array.isArray(d.institutions)) setPseInstitutions(d.institutions); })
       .catch(() => { /* ignore */ });
@@ -237,65 +237,6 @@ export default function CheckoutPage() {
     return true;
   };
 
-  const handlePay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    if (!requireTerms()) return;
-
-    setLoading(true);
-    setApiError("");
-
-    try {
-      const reference = generateReference();
-      const amountInCents = total * 100;
-
-      // Get integrity signature from server
-      const res = await fetch("/api/checkout/signature", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reference, amountInCents }),
-      });
-
-      if (!res.ok) throw new Error("No se pudo generar la firma de pago");
-      const { signature } = await res.json();
-
-      // Save pending order to localStorage so result page can display it
-      localStorage.setItem("barril-pending-order", JSON.stringify({
-        reference,
-        items,
-        total,
-        customer: form,
-        createdAt: new Date().toISOString(),
-      }));
-
-      // Build Wompi checkout URL
-      const publicKey = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY!;
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      const redirectUrl = `${siteUrl}/checkout/result`;
-
-      const params = new URLSearchParams({
-        "public-key": publicKey,
-        currency: "COP",
-        "amount-in-cents": String(amountInCents),
-        reference,
-        "signature:integrity": signature,
-        "redirect-url": redirectUrl,
-        "customer-data:email": form.email,
-        "customer-data:full-name": form.name,
-        "customer-data:phone-number": form.phone,
-        "customer-data:legal-id": form.phone,
-        "customer-data:legal-id-type": "CC",
-      });
-
-      // Clear cart before redirect (Wompi handles the payment UI)
-      clearCart();
-      window.location.href = `https://checkout.wompi.co/p/?${params.toString()}`;
-    } catch (err) {
-      setApiError(err instanceof Error ? err.message : "Error inesperado");
-      setLoading(false);
-    }
-  };
-
   const handleNequiPay = async () => {
     if (!validate()) return;
     if (!requireTerms()) return;
@@ -310,13 +251,19 @@ export default function CheckoutPage() {
     setNequiError("");
 
     try {
-      const res = await fetch("/api/checkout/nequi/pay", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const res = await fetch(`${apiUrl}/checkout/nequi/pay`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone: cleaned,
           amountInCents: total * 100,
           customerEmail: form.email,
+          customerName: form.name,
+          customerPhone: form.phone,
+          customerAddress: form.address,
+          customerCity: form.city,
+          items,
         }),
       });
 
@@ -344,9 +291,10 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (nequiStep !== "waiting" || !nequiTxRef) return;
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`/api/checkout/nequi/status/${nequiTxRef.id}`);
+        const res = await fetch(`${apiUrl}/checkout/transactions/${nequiTxRef.id}/status`);
         const { status } = await res.json();
 
         if (status === "APPROVED") {
@@ -409,13 +357,19 @@ export default function CheckoutPage() {
       }
 
       // 2) Create transaction on our server
-      const payRes = await fetch("/api/checkout/card/pay", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const payRes = await fetch(`${apiUrl}/checkout/card/pay`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cardToken: tokData.data.id,
           amountInCents: total * 100,
           customerEmail: form.email,
+          customerName: form.name,
+          customerPhone: form.phone,
+          customerAddress: form.address,
+          customerCity: form.city,
+          items,
           installments: Number(cardInstallments) || 1,
         }),
       });
@@ -444,9 +398,10 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (cardStep !== "waiting" || !cardTxRef) return;
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`/api/checkout/nequi/status/${cardTxRef.id}`);
+        const res = await fetch(`${apiUrl}/checkout/transactions/${cardTxRef.id}/status`);
         const { status, statusMessage } = await res.json();
 
         if (status === "APPROVED") {
@@ -481,10 +436,11 @@ export default function CheckoutPage() {
     setPseError("");
 
     try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
       const reference = generateReference();
 
-      const res = await fetch("/api/checkout/pse/pay", {
+      const res = await fetch(`${apiUrl}/checkout/pse/pay`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -492,10 +448,13 @@ export default function CheckoutPage() {
           customerEmail: form.email,
           fullName: form.name,
           phone: form.phone.replace(/\s|-/g, ""),
+          customerAddress: form.address,
+          customerCity: form.city,
           userType: pseUserType,
           userLegalIdType: pseIdType,
           userLegalId: cleanedId,
           financialInstitutionCode: pseBank,
+          items,
           paymentDescription: `Pago Barril Market ${reference}`.slice(0, 64),
           redirectUrl: `${siteUrl}/checkout/result`,
         }),
@@ -563,7 +522,7 @@ export default function CheckoutPage() {
             </h1>
           </div>
 
-          <form id="checkout-form" onSubmit={handlePay} noValidate>
+          <form id="checkout-form" onSubmit={(e) => e.preventDefault()} noValidate>
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 items-start">
 
               {/* ── Left ─────────────────────────────────────────────────── */}
@@ -647,13 +606,6 @@ export default function CheckoutPage() {
                     </span>
                   </div>
 
-                  {/* Error */}
-                  {apiError && (
-                    <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3 mb-4">
-                      <p className="text-red-400 text-xs">{apiError}</p>
-                    </div>
-                  )}
-
                   {/* Dynamic payment section */}
                   {cardStep === "waiting" ? (
                     <div className="text-center py-6 space-y-4">
@@ -695,7 +647,7 @@ export default function CheckoutPage() {
                           Reintentar
                         </button>
                         <button type="button"
-                          onClick={() => { setCardStep("idle"); setPayMethod("wompi"); setCardError(""); }}
+                          onClick={() => { setCardStep("idle"); setPayMethod("nequi"); setCardError(""); }}
                           className="py-2.5 rounded-xl text-sm font-semibold text-(--color-text) bg-(--color-subtle-bg) border border-(--color-border) cursor-pointer">
                           Otra forma
                         </button>
@@ -744,7 +696,7 @@ export default function CheckoutPage() {
                           Reintentar
                         </button>
                         <button type="button"
-                          onClick={() => { setNequiStep("idle"); setPayMethod("wompi"); setNequiError(""); }}
+                          onClick={() => { setNequiStep("idle"); setPayMethod("card"); setNequiError(""); }}
                           className="py-2.5 rounded-xl text-sm font-semibold text-(--color-text) bg-(--color-subtle-bg) border border-(--color-border) cursor-pointer">
                           Otra forma
                         </button>
@@ -753,6 +705,62 @@ export default function CheckoutPage() {
 
                   ) : (
                     <>
+                      {/* Method selector — tabs */}
+                      <div className="mb-5">
+                        <p className="text-(--color-muted) text-[11px] font-semibold uppercase tracking-wider mb-2.5">Método de pago</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          {([
+                            {
+                              id: "card" as const,
+                              label: "Tarjeta",
+                              icon: (
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+                                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                                  <line x1="2" y1="10" x2="22" y2="10" />
+                                </svg>
+                              ),
+                            },
+                            {
+                              id: "nequi" as const,
+                              label: "Nequi",
+                              icon: (
+                                <svg width="20" height="20" viewBox="0 0 40 40" fill="none" className="shrink-0">
+                                  <path d="M10 29V11l13 13.5V11h6v18L16 15.5V29H10Z" fill="currentColor" />
+                                </svg>
+                              ),
+                            },
+                            {
+                              id: "pse" as const,
+                              label: "PSE",
+                              icon: (
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+                                  <path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" />
+                                </svg>
+                              ),
+                            },
+                          ]).map(({ id, label, icon }) => {
+                            const active = payMethod === id;
+                            return (
+                              <button
+                                key={id}
+                                type="button"
+                                onClick={() => setPayMethod(id)}
+                                className={[
+                                  "flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer border",
+                                  active
+                                    ? "bg-(--color-primary)/10 border-(--color-primary) text-(--color-primary) shadow-sm shadow-(--color-primary)/20"
+                                    : "bg-(--color-subtle-bg) border-(--color-border) text-(--color-muted) hover:text-(--color-text) hover:border-(--color-primary)/30",
+                                ].join(" ")}
+                                aria-pressed={active}
+                              >
+                                {icon}
+                                <span className="tracking-wide">{label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
                       {/* Habeas Data — acceptance required by Wompi */}
                       <div className="mb-4 space-y-2.5 bg-(--color-subtle-bg) border border-(--color-border) rounded-xl p-3.5">
                         <label className="flex items-start gap-2.5 cursor-pointer group">
@@ -800,22 +808,9 @@ export default function CheckoutPage() {
                         )}
                       </div>
 
-                      {/* Pay with Wompi button */}
-                      <button type="submit" disabled={loading}
-                        className="w-full flex items-center justify-center gap-2.5 bg-(--color-primary) hover:bg-(--color-primary-hover) active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-(--color-on-primary) font-bold py-4 rounded-xl transition-all duration-200 cursor-pointer text-sm shadow-lg shadow-(--color-primary)/10">
-                        {loading ? <><SpinnerIcon /> Procesando...</> : <><LockIcon /> Pagar con Wompi</>}
-                      </button>
-
-                      {/* Divider */}
-                      <div className="flex items-center gap-3 my-1">
-                        <div className="flex-1 h-px bg-(--color-divider)" />
-                        <span className="text-(--color-muted) text-[11px] shrink-0">o paga con</span>
-                        <div className="flex-1 h-px bg-(--color-divider)" />
-                      </div>
-
-                      {/* Card section */}
-                      {payMethod === "card" ? (
-                        <div className="space-y-3 mb-3">
+                      {/* Card form */}
+                      {payMethod === "card" && (
+                        <div className="space-y-3">
                           <Field label="Número de tarjeta" error={cardErrors.number}>
                             <input
                               type="text"
@@ -891,31 +886,18 @@ export default function CheckoutPage() {
                           )}
 
                           <button type="button" onClick={handleCardPay} disabled={cardLoading}
-                            className="w-full flex items-center justify-center gap-2.5 bg-(--color-primary) hover:bg-(--color-primary-hover) active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-(--color-on-primary) font-bold py-3.5 rounded-xl transition-all duration-200 cursor-pointer text-sm">
+                            className="w-full flex items-center justify-center gap-2.5 bg-(--color-primary) hover:bg-(--color-primary-hover) active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed text-(--color-on-primary) font-bold py-3.5 rounded-xl transition-all duration-200 cursor-pointer text-sm shadow-lg shadow-(--color-primary)/10">
                             {cardLoading ? (
                               <><SpinnerIcon /> Procesando...</>
                             ) : (
                               <><LockIcon /> Pagar {fmt(total)}</>
                             )}
                           </button>
-                          <button type="button" onClick={() => setPayMethod("wompi")}
-                            className="w-full text-center text-(--color-muted) hover:text-(--color-text) text-xs transition-colors cursor-pointer py-1">
-                            ← Volver
-                          </button>
                         </div>
-                      ) : (
-                        <button type="button" onClick={() => setPayMethod("card")}
-                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-(--color-text) bg-(--color-subtle-bg) border border-(--color-primary)/30 hover:border-(--color-primary)/60 hover:bg-(--color-primary)/5 transition-all duration-200 cursor-pointer mb-3">
-                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" className="shrink-0">
-                            <rect x="2" y="5" width="20" height="14" rx="2" />
-                            <line x1="2" y1="10" x2="22" y2="10" />
-                          </svg>
-                          Pagar con tarjeta
-                        </button>
                       )}
 
-                      {/* Nequi section */}
-                      {payMethod === "nequi" ? (
+                      {/* Nequi form */}
+                      {payMethod === "nequi" && (
                         <div className="space-y-3">
                           <Field label="Número Nequi" error={nequiPhoneError}>
                             <input
@@ -928,41 +910,25 @@ export default function CheckoutPage() {
                             />
                           </Field>
                           <button type="button" onClick={handleNequiPay} disabled={nequiLoading}
-                            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-pink-900/20"
                             style={{ background: "linear-gradient(135deg, #DA0081 0%, #B5006C 100%)" }}>
                             {nequiLoading ? (
                               <><SpinnerIcon /> Procesando...</>
                             ) : (
                               <>
-                                <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className="shrink-0">
-                                  <rect width="40" height="40" rx="8" fill="rgba(255,255,255,0.15)" />
+                                <svg width="20" height="20" viewBox="0 0 40 40" fill="none" className="shrink-0">
                                   <path d="M10 29V11l13 13.5V11h6v18L16 15.5V29H10Z" fill="white" />
                                 </svg>
-                                Confirmar pago Nequi
+                                Pagar {fmt(total)} con Nequi
                               </>
                             )}
                           </button>
-                          <button type="button" onClick={() => setPayMethod("wompi")}
-                            className="w-full text-center text-(--color-muted) hover:text-(--color-text) text-xs transition-colors cursor-pointer py-1">
-                            ← Volver a Wompi
-                          </button>
                         </div>
-                      ) : (
-                        <button type="button" onClick={() => setPayMethod("nequi")}
-                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer relative overflow-hidden group"
-                          style={{ background: "linear-gradient(135deg, #DA0081 0%, #B5006C 100%)" }}>
-                          <span className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-all duration-200" />
-                          <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className="shrink-0" aria-hidden="true">
-                            <rect width="40" height="40" rx="8" fill="rgba(255,255,255,0.15)" />
-                            <path d="M10 29V11l13 13.5V11h6v18L16 15.5V29H10Z" fill="white" />
-                          </svg>
-                          <span className="relative tracking-wide">Pagar con Nequi</span>
-                        </button>
                       )}
 
-                      {/* PSE section */}
-                      {payMethod === "pse" ? (
-                        <div className="space-y-3 mt-3">
+                      {/* PSE form */}
+                      {payMethod === "pse" && (
+                        <div className="space-y-3">
                           <Field label="Banco" error={pseErrors.bank}>
                             <select
                               value={pseBank}
@@ -1018,7 +984,7 @@ export default function CheckoutPage() {
                           )}
 
                           <button type="button" onClick={handlePsePay} disabled={pseLoading}
-                            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-blue-900/20"
                             style={{ background: "linear-gradient(135deg, #0057A6 0%, #003C73 100%)" }}>
                             {pseLoading ? (
                               <><SpinnerIcon /> Redirigiendo a tu banco...</>
@@ -1026,20 +992,7 @@ export default function CheckoutPage() {
                               <><LockIcon /> Pagar {fmt(total)} con PSE</>
                             )}
                           </button>
-                          <button type="button" onClick={() => setPayMethod("wompi")}
-                            className="w-full text-center text-(--color-muted) hover:text-(--color-text) text-xs transition-colors cursor-pointer py-1">
-                            ← Volver
-                          </button>
                         </div>
-                      ) : (
-                        <button type="button" onClick={() => setPayMethod("pse")}
-                          className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer mt-3"
-                          style={{ background: "linear-gradient(135deg, #0057A6 0%, #003C73 100%)" }}>
-                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="shrink-0">
-                            <path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" />
-                          </svg>
-                          <span className="tracking-wide">Pagar con PSE</span>
-                        </button>
                       )}
                     </>
                   )}

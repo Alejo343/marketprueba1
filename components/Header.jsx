@@ -20,8 +20,10 @@ const MoonIcon = () => (
   </svg>
 );
 
-const navLinks = [
+const regionLinks = [
   { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
+  { label: "Barril Market", href: "/region/barril-market" },
+  { label: "Casa de especias", href: "/region/casa-de-especias" },
   { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
   { label: "Colmena & café", href: "/region/colmena-y-cafe" },
   { label: "Despensa Gourmet", href: "/region/despensa-gourmet" },
@@ -29,35 +31,14 @@ const navLinks = [
   { label: "Rincón Italiano", href: "/region/rincon-italiano" },
 ];
 
-const SearchIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.35-4.35" />
-  </svg>
-);
+const mainNav = [
+  { label: "Productos", href: "/", hasDropdown: true },
+  { label: "Quienes somos", href: "/quienes-somos" },
+  { label: "Contáctanos", href: "/contactanos" },
+];
 
 const CartIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
     <line x1="3" y1="6" x2="21" y2="6" />
     <path d="M16 10a4 4 0 0 1-8 0" />
@@ -65,17 +46,7 @@ const CartIcon = () => (
 );
 
 const MenuIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <line x1="3" y1="6" x2="21" y2="6" />
     <line x1="3" y1="12" x2="21" y2="12" />
     <line x1="3" y1="18" x2="21" y2="18" />
@@ -83,19 +54,15 @@ const MenuIcon = () => (
 );
 
 const CloseIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+const ChevronDown = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
@@ -103,9 +70,10 @@ export default function Header() {
   const pathname = usePathname();
   const { toggleCart, totalItems } = useCartStore();
   const mounted = useIsMounted();
-  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [productsHover, setProductsHover] = useState(false);
+  const hoverTimeout = useRef(null);
 
   const { theme, toggleTheme } = useTheme();
   const itemCount = mounted ? totalItems() : 0;
@@ -128,14 +96,22 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  const openProducts = () => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    setProductsHover(true);
   };
+
+  const closeProducts = () => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    hoverTimeout.current = setTimeout(() => setProductsHover(false), 120);
+  };
+
+  const isRegionActive = pathname?.startsWith("/region/");
 
   return (
     <header className={`w-full fixed top-0 z-30 transition-transform duration-300 ease-in-out ${visible ? "translate-y-0" : "-translate-y-full"}`}>
       {/* Main bar */}
-      <div className="bg-(--color-bg)">
+      <div className="bg-(--color-bg) relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-[72px]">
 
@@ -157,35 +133,75 @@ export default function Header() {
               />
             </Link>
 
-            {/* Search - Desktop */}
-            <div className="hidden lg:flex flex-1 mx-8">
-              <form onSubmit={handleSearch} className="w-full">
-                <div className="flex items-center bg-(--color-input-bg) border border-(--color-input-border) rounded-lg px-4 py-2.5 gap-3 focus-within:border-(--color-primary)/70 transition-all duration-200">
-                  <span className="text-(--color-nav-text)/50 shrink-0">
-                    <SearchIcon />
-                  </span>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Busca productos artesanales y gourmet..."
-                    className="flex-1 bg-transparent text-(--color-nav-text) text-sm placeholder:text-(--color-placeholder) focus:outline-none"
-                  />
-                </div>
-              </form>
-            </div>
+            {/* Nav inline - Desktop (reemplaza la barra de busqueda) */}
+            <nav className="hidden lg:flex flex-1 items-center justify-center">
+              <ul className="flex items-center gap-2">
+                {mainNav.map((link) => {
+                  if (link.hasDropdown) {
+                    const showUnderline = productsHover || isRegionActive;
+                    return (
+                      <li
+                        key={link.href}
+                        className="relative"
+                        onMouseEnter={openProducts}
+                        onMouseLeave={closeProducts}
+                      >
+                        <Link
+                          href={link.href}
+                          className={`flex items-center gap-1.5 px-5 py-3 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
+                            showUnderline
+                              ? "text-(--color-primary)"
+                              : "text-(--color-nav-text) hover:text-(--color-primary)"
+                          }`}
+                          style={{ fontFamily: "var(--font-inter)" }}
+                        >
+                          {link.label}
+                          <span
+                            className={`transition-transform duration-200 ${
+                              productsHover ? "rotate-180" : ""
+                            }`}
+                          >
+                            <ChevronDown />
+                          </span>
+                        </Link>
+                        <span
+                          className={`absolute bottom-0 left-5 right-5 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
+                            showUnderline ? "scale-x-100" : "scale-x-0"
+                          }`}
+                        />
+                      </li>
+                    );
+                  }
+
+                  const isActive = pathname === link.href;
+                  return (
+                    <li key={link.href} className="relative group">
+                      <Link
+                        href={link.href}
+                        className={`block px-5 py-3 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
+                          isActive
+                            ? "text-(--color-primary)"
+                            : "text-(--color-nav-text) hover:text-(--color-primary)"
+                        }`}
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {link.label}
+                      </Link>
+                      <span
+                        className={`absolute bottom-0 left-5 right-5 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
+                          isActive
+                            ? "scale-x-100"
+                            : "scale-x-0 group-hover:scale-x-100"
+                        }`}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
 
             {/* Actions */}
             <div className="flex items-center gap-3 ml-auto">
-              {/* Mobile search toggle */}
-              <button
-                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-                className="lg:hidden flex items-center justify-center w-9 h-9 rounded text-(--color-nav-text) hover:bg-(--color-nav-text)/10 transition-colors duration-200 cursor-pointer"
-                aria-label="Buscar"
-              >
-                <SearchIcon />
-              </button>
-
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
@@ -214,68 +230,96 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile search */}
-        {mobileSearchOpen && (
-          <div className="lg:hidden px-4 pb-3">
-            <form onSubmit={handleSearch}>
-              <div className="flex items-center bg-(--color-input-bg) border border-(--color-input-border) rounded-lg px-4 py-2.5 gap-3 focus-within:border-(--color-primary)/70 transition-all duration-200">
-                <span className="text-(--color-nav-text)/50 shrink-0">
-                  <SearchIcon />
-                </span>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar productos..."
-                  className="flex-1 bg-transparent text-(--color-nav-text) text-sm placeholder:text-(--color-placeholder) focus:outline-none"
-                  autoFocus
-                />
-              </div>
-            </form>
+        {/* Productos dropdown - regions (desktop) */}
+        <div
+          onMouseEnter={openProducts}
+          onMouseLeave={closeProducts}
+          className={`hidden lg:block absolute left-0 right-0 top-full bg-(--color-bg) border-t border-(--color-nav-text)/10 shadow-lg transition-all duration-200 ${
+            productsHover
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 -translate-y-2 pointer-events-none"
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ul className="flex items-center justify-center flex-wrap">
+              {regionLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <li key={link.href} className="relative group">
+                    <Link
+                      href={link.href}
+                      className={`block px-4 py-3.5 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
+                        isActive
+                          ? "text-(--color-primary)"
+                          : "text-(--color-nav-text) hover:text-(--color-primary)"
+                      }`}
+                      style={{ fontFamily: "var(--font-inter)" }}
+                    >
+                      {link.label}
+                    </Link>
+                    <span
+                      className={`absolute bottom-0 left-4 right-4 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
+                        isActive
+                          ? "scale-x-100"
+                          : "scale-x-0 group-hover:scale-x-100"
+                      }`}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        )}
-      </div>
-
-      {/* Nav bar - Desktop */}
-      <nav className="hidden lg:block bg-(--color-bg) border-t border-(--color-nav-text)/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ul className="flex items-center justify-center">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <li key={link.href} className="relative group">
-                  <Link
-                    href={link.href}
-                    className={`block px-4 py-3.5 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
-                      isActive
-                        ? "text-(--color-primary)"
-                        : "text-(--color-nav-text) hover:text-(--color-primary)"
-                    }`}
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  >
-                    {link.label}
-                  </Link>
-                  {/* Gold underline */}
-                  <span
-                    className={`absolute bottom-0 left-4 right-4 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
-                      isActive
-                        ? "scale-x-100"
-                        : "scale-x-0 group-hover:scale-x-100"
-                    }`}
-                  />
-                </li>
-              );
-            })}
-          </ul>
         </div>
-      </nav>
+      </div>
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-(--color-bg) border-b border-(--color-nav-text)/10">
           <nav className="max-w-7xl mx-auto px-4 py-3">
             <ul className="flex flex-col">
-              {navLinks.map((link) => {
+              {mainNav.map((link) => {
+                if (link.hasDropdown) {
+                  return (
+                    <li key={link.href} className="border-b border-(--color-nav-text)/10">
+                      <button
+                        onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
+                        className="w-full flex items-center justify-between px-4 py-3.5 text-sm text-(--color-nav-text) hover:text-(--color-primary) transition-colors duration-200 cursor-pointer tracking-wide"
+                      >
+                        <span>{link.label}</span>
+                        <span
+                          className={`transition-transform duration-200 ${
+                            mobileProductsOpen ? "rotate-180" : ""
+                          }`}
+                        >
+                          <ChevronDown />
+                        </span>
+                      </button>
+                      {mobileProductsOpen && (
+                        <ul className="pb-2 pl-3">
+                          {regionLinks.map((r) => {
+                            const isActive = pathname === r.href;
+                            return (
+                              <li key={r.href}>
+                                <Link
+                                  href={r.href}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className={`flex items-center px-4 py-2.5 text-sm transition-colors duration-200 cursor-pointer tracking-wide ${
+                                    isActive
+                                      ? "text-(--color-primary) font-semibold"
+                                      : "text-(--color-nav-text)/80 hover:text-(--color-primary)"
+                                  }`}
+                                >
+                                  {r.label}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                }
+
                 const isActive = pathname === link.href;
                 return (
                   <li key={link.href}>
