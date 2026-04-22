@@ -16,11 +16,6 @@ function fmt(n: number) {
   }).format(n);
 }
 
-function generateReference() {
-  const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
-  return `BARRIL-${Date.now()}-${rand}`;
-}
-
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
 const TrashIcon = () => (
@@ -263,6 +258,7 @@ export default function CheckoutPage() {
           customerPhone: form.phone,
           customerAddress: form.address,
           customerCity: form.city,
+          notes: form.notes,
           items,
         }),
       });
@@ -294,14 +290,14 @@ export default function CheckoutPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`${apiUrl}/checkout/transactions/${nequiTxRef.id}/status`);
+        const res = await fetch(`${apiUrl}/checkout/orders/${nequiTxRef.reference}/status`);
         const { status } = await res.json();
 
         if (status === "APPROVED") {
           clearInterval(poll);
           setNequiStep("approved");
           setTimeout(() => {
-            window.location.href = `/checkout/result?id=${nequiTxRef.id}`;
+            window.location.href = `/checkout/result?reference=${nequiTxRef.reference}`;
           }, 2000);
         } else if (status === "DECLINED" || status === "ERROR" || status === "VOIDED") {
           clearInterval(poll);
@@ -369,6 +365,7 @@ export default function CheckoutPage() {
           customerPhone: form.phone,
           customerAddress: form.address,
           customerCity: form.city,
+          notes: form.notes,
           items,
           installments: Number(cardInstallments) || 1,
         }),
@@ -394,21 +391,21 @@ export default function CheckoutPage() {
     }
   };
 
-  // Poll card transaction status (reuses the same Wompi tx status endpoint)
+  // Poll card transaction status
   useEffect(() => {
     if (cardStep !== "waiting" || !cardTxRef) return;
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`${apiUrl}/checkout/transactions/${cardTxRef.id}/status`);
+        const res = await fetch(`${apiUrl}/checkout/orders/${cardTxRef.reference}/status`);
         const { status, statusMessage } = await res.json();
 
         if (status === "APPROVED") {
           clearInterval(poll);
           setCardStep("approved");
           setTimeout(() => {
-            window.location.href = `/checkout/result?id=${cardTxRef.id}`;
+            window.location.href = `/checkout/result?reference=${cardTxRef.reference}`;
           }, 2000);
         } else if (status === "DECLINED" || status === "ERROR" || status === "VOIDED") {
           clearInterval(poll);
@@ -438,7 +435,6 @@ export default function CheckoutPage() {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      const reference = generateReference();
 
       const res = await fetch(`${apiUrl}/checkout/pse/pay`, {
         method: "POST",
@@ -450,12 +446,13 @@ export default function CheckoutPage() {
           phone: form.phone.replace(/\s|-/g, ""),
           customerAddress: form.address,
           customerCity: form.city,
+          notes: form.notes,
           userType: pseUserType,
           userLegalIdType: pseIdType,
           userLegalId: cleanedId,
           financialInstitutionCode: pseBank,
           items,
-          paymentDescription: `Pago Barril Market ${reference}`.slice(0, 64),
+          paymentDescription: "Pago en Barril Market".slice(0, 64),
           redirectUrl: `${siteUrl}/checkout/result`,
         }),
       });

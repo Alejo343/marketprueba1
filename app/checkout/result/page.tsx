@@ -98,7 +98,7 @@ const STATUS_CONFIG: Record<NonNullable<TxStatus>, { icon: ReactElement; title: 
 
 function CheckoutResultContent() {
   const searchParams = useSearchParams();
-  const transactionId = searchParams?.get("id") ?? null;
+  const reference = searchParams?.get("reference") ?? null;
 
   const [status, setStatus] = useState<TxStatus>(null);
   const [loading, setLoading] = useState(true);
@@ -112,18 +112,19 @@ function CheckoutResultContent() {
       try { setOrder(JSON.parse(raw)); } catch { /* ignore */ }
     }
 
-    if (!transactionId) {
+    if (!reference) {
       // Hosted Wompi / PSE redirect — cart was already cleared before redirect.
-      // Ensure it's empty in case user landed here without tx id.
+      // Ensure it's empty in case user landed here without reference.
       clearCart();
       setLoading(false);
       return;
     }
 
-    // Verify transaction with Wompi API
+    // Verify order status
     const verify = async () => {
       try {
-        const res = await fetch(`/api/checkout/nequi/status/${transactionId}`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        const res = await fetch(`${apiUrl}/checkout/orders/${reference}/status`);
         if (!res.ok) throw new Error();
         const { status: txStatus } = await res.json();
         setStatus(txStatus ?? "PENDING");
@@ -139,7 +140,7 @@ function CheckoutResultContent() {
     };
 
     verify();
-  }, [transactionId, clearCart]);
+  }, [reference, clearCart]);
 
   const config = status ? STATUS_CONFIG[status] : null;
 
@@ -164,9 +165,9 @@ function CheckoutResultContent() {
                   {config.title}
                 </h1>
                 <p className="text-(--color-muted) text-sm leading-relaxed mb-2">{config.subtitle}</p>
-                {transactionId && (
+                {reference && (
                   <p className="text-(--color-muted) text-xs mt-3">
-                    ID de transacción: <span className="text-(--color-text) font-mono">{transactionId}</span>
+                    Referencia: <span className="text-(--color-text) font-mono">{reference}</span>
                   </p>
                 )}
               </>
