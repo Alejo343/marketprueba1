@@ -550,8 +550,21 @@ export default function CheckoutPage() {
                           className={inputCls(!!errors.name)} />
                       </Field>
                       <Field label="Teléfono / WhatsApp *" error={errors.phone}>
-                        <input type="tel" value={form.phone} onChange={update("phone")} placeholder="+57 300 000 0000"
-                          className={inputCls(!!errors.phone)} />
+                        <div className="relative flex items-center">
+                          <span className="absolute left-4 text-(--color-muted) text-sm pointer-events-none select-none">+57</span>
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            value={form.phone.startsWith("57") ? form.phone.slice(2) : form.phone}
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                              setForm((prev) => ({ ...prev, phone: "57" + digits }));
+                              if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
+                            }}
+                            placeholder="3001234567"
+                            className={inputCls(!!errors.phone) + " pl-14"}
+                          />
+                        </div>
                       </Field>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
