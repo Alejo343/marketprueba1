@@ -107,34 +107,57 @@ function CheckoutResultContent() {
 
   useEffect(() => {
     // Load saved order
+    let savedRef: string | null = null;
     const raw = localStorage.getItem("barril-pending-order");
     if (raw) {
-      try { setOrder(JSON.parse(raw)); } catch { /* ignore */ }
+      try {
+        const parsed = JSON.parse(raw);
+        setOrder(parsed);
+        savedRef = parsed.reference ?? null;
+      } catch { /* ignore */ }
     }
 
-    if (!reference) {
-      // Hosted Wompi / PSE redirect — cart was already cleared before redirect.
-      // Ensure it's empty in case user landed here without reference.
+    const ref = reference ?? savedRef;
+
+    if (!ref) {
       clearCart();
       setLoading(false);
       return;
     }
 
-    // Verify order status
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+
+    // PSE is async — poll until a final status or timeout (2 min)
+    let attempts = 0;
+    const MAX_ATTEMPTS = 24; // 24 × 5s = 2 min
+
     const verify = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-        const res = await fetch(`${apiUrl}/checkout/orders/${reference}/status`);
+        const res = await fetch(`${apiUrl}/checkout/orders/${ref}/status`);
         if (!res.ok) throw new Error();
         const { status: txStatus } = await res.json();
-        setStatus(txStatus ?? "PENDING");
-        if (txStatus === "APPROVED") {
-          clearCart();
-          localStorage.removeItem("barril-pending-order");
+
+        const finalStatuses = ["APPROVED", "DECLINED", "VOIDED", "ERROR"];
+        if (finalStatuses.includes(txStatus)) {
+          setStatus(txStatus);
+          if (txStatus === "APPROVED") {
+            clearCart();
+            localStorage.removeItem("barril-pending-order");
+          }
+          setLoading(false);
+          return;
+        }
+
+        // Still PENDING — keep polling if under limit
+        attempts++;
+        if (attempts < MAX_ATTEMPTS) {
+          setTimeout(verify, 5000);
+        } else {
+          setStatus("PENDING");
+          setLoading(false);
         }
       } catch {
         setStatus("PENDING");
-      } finally {
         setLoading(false);
       }
     };
