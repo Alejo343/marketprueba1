@@ -43,7 +43,7 @@ export async function getRegions(): Promise<ApiResponse<Region>> {
 }
 
 export async function getProductVariantsByRegion(regionId: number) {
-  const res = await fetch(`${BASE_URL}/regions/${regionId}/variants?per_page=500`);
+  const res = await fetch(`${BASE_URL}/regions/${regionId}/variants?include=product.brand,product.media&per_page=500`);
   if (!res.ok) throw new Error("Error al obtener variantes por región");
   return res.json();
 }
