@@ -140,6 +140,12 @@ interface FormData {
   notes: string;
 }
 
+interface DeliveryZone {
+  id: number;
+  name: string;
+  price_cents: number;
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function CheckoutPage() {
@@ -204,12 +210,47 @@ export default function CheckoutPage() {
       .catch(() => { /* ignore */ });
   }, [payMethod, pseInstitutions.length]);
 
+  // Delivery zone state
+  const [deliveryZone, setDeliveryZone] = useState<DeliveryZone | null>(null);
+  const [deliveryCostCents, setDeliveryCostCents] = useState<number | null>(null);
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+  const [deliveryError, setDeliveryError] = useState("");
+
+  const detectDeliveryZone = async () => {
+    if (!form.address.trim() || !form.city.trim()) return;
+    setDeliveryLoading(true);
+    setDeliveryError("");
+    try {
+      const res = await fetch("/api/checkout/delivery-zone/detect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: `${form.address}, ${form.city}` }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "No se pudo calcular el envío");
+      setDeliveryZone(data.zone);
+      setDeliveryCostCents(data.delivery_cost_cents);
+    } catch (err) {
+      setDeliveryError(err instanceof Error ? err.message : "Error calculando envío");
+      setDeliveryZone(null);
+      setDeliveryCostCents(null);
+    } finally {
+      setDeliveryLoading(false);
+    }
+  };
+
   const subtotal = totalPrice();
-  const total = subtotal;
+  const deliveryCost = deliveryCostCents !== null ? deliveryCostCents / 100 : 0;
+  const total = subtotal + deliveryCost;
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+    if (field === "address" || field === "city") {
+      setDeliveryZone(null);
+      setDeliveryCostCents(null);
+      setDeliveryError("");
+    }
   };
 
   const validate = () => {
@@ -260,6 +301,8 @@ export default function CheckoutPage() {
           customerCity: form.city,
           notes: form.notes,
           items,
+          deliveryZoneId: deliveryZone?.id ?? null,
+          deliveryCostCents: deliveryCostCents ?? 0,
         }),
       });
 
@@ -368,6 +411,8 @@ export default function CheckoutPage() {
           notes: form.notes,
           items,
           installments: Number(cardInstallments) || 1,
+          deliveryZoneId: deliveryZone?.id ?? null,
+          deliveryCostCents: deliveryCostCents ?? 0,
         }),
       });
 
@@ -454,6 +499,8 @@ export default function CheckoutPage() {
           items,
           paymentDescription: "Pago en Barril Market".slice(0, 64),
           redirectUrl: `${siteUrl}/checkout/result`,
+          deliveryZoneId: deliveryZone?.id ?? null,
+          deliveryCostCents: deliveryCostCents ?? 0,
         }),
       });
 
@@ -573,12 +620,12 @@ export default function CheckoutPage() {
                           className={inputCls(!!errors.email)} />
                       </Field>
                       <Field label="Ciudad / Municipio *" error={errors.city}>
-                        <input type="text" value={form.city} onChange={update("city")} placeholder="Bogotá"
+                        <input type="text" value={form.city} onChange={update("city")} onBlur={detectDeliveryZone} placeholder="Bogotá"
                           className={inputCls(!!errors.city)} />
                       </Field>
                     </div>
                     <Field label="Dirección de entrega *" error={errors.address}>
-                      <input type="text" value={form.address} onChange={update("address")} placeholder="Calle, número, barrio"
+                      <input type="text" value={form.address} onChange={update("address")} onBlur={detectDeliveryZone} placeholder="Calle, número, barrio"
                         className={inputCls(!!errors.address)} />
                     </Field>
                     <Field label="Notas adicionales" error={errors.notes}>
@@ -601,9 +648,30 @@ export default function CheckoutPage() {
                       <span className="text-(--color-muted)">Subtotal</span>
                       <span className="text-(--color-text)">{fmt(subtotal)}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between items-start text-sm">
                       <span className="text-(--color-muted)">Envío</span>
-                      <span className="text-(--color-primary) text-xs font-medium">A coordinar</span>
+                      <div className="text-right">
+                        {deliveryLoading ? (
+                          <span className="flex items-center gap-1.5 text-(--color-muted) text-xs">
+                            <SpinnerIcon /> Calculando...
+                          </span>
+                        ) : deliveryZone ? (
+                          <div>
+                            <span className="text-(--color-primary) font-semibold text-sm">{fmt(deliveryCostCents! / 100)}</span>
+                            <p className="text-(--color-muted) text-[11px] mt-0.5">{deliveryZone.name}</p>
+                          </div>
+                        ) : deliveryError ? (
+                          <div className="text-right">
+                            <span className="text-(--color-muted) text-xs">No disponible</span>
+                            <button type="button" onClick={detectDeliveryZone}
+                              className="block text-(--color-primary) text-[11px] hover:underline cursor-pointer mt-0.5">
+                              Reintentar
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-(--color-muted) text-xs">Ingresa tu dirección</span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
