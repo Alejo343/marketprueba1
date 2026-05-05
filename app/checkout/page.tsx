@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { useCartStore } from "@/store/cartStore";
+
+const MapPickerModal = dynamic(() => import("@/components/checkout/MapPickerModal"), {
+  ssr: false,
+  loading: () => null,
+});
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -152,6 +158,7 @@ export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCartStore();
   const [form, setForm] = useState<FormData>({ name: "", phone: "", email: "", city: "", address: "", notes: "" });
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [mapError, setMapError] = useState("");
 
   // Nequi state
   const [payMethod, setPayMethod] = useState<"card" | "nequi" | "pse">("card");
@@ -210,26 +217,35 @@ export default function CheckoutPage() {
       .catch(() => { /* ignore */ });
   }, [payMethod, pseInstitutions.length]);
 
+  // Map state
+  const [mapCoords, setMapCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [showMapPicker, setShowMapPicker] = useState(false);
+
   // Delivery zone state
   const [deliveryZone, setDeliveryZone] = useState<DeliveryZone | null>(null);
   const [deliveryCostCents, setDeliveryCostCents] = useState<number | null>(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
   const [deliveryError, setDeliveryError] = useState("");
 
-  const detectDeliveryZone = async () => {
-    if (!form.address.trim() || !form.city.trim()) return;
+  const detectDeliveryZone = async (coords?: { lat: number; lng: number }) => {
+    const effectiveCoords = coords ?? mapCoords;
+    if (!effectiveCoords && (!form.address.trim() || !form.city.trim())) return;
     setDeliveryLoading(true);
     setDeliveryError("");
     try {
+      const body = effectiveCoords
+        ? { lat: effectiveCoords.lat, lng: effectiveCoords.lng }
+        : { address: `${form.address}, ${form.city}` };
       const res = await fetch("/api/checkout/delivery-zone/detect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: `${form.address}, ${form.city}` }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo calcular el envío");
       setDeliveryZone(data.zone);
-      setDeliveryCostCents(data.delivery_cost_cents);
+      const cost = Number(data.delivery_cost_cents);
+      setDeliveryCostCents(isNaN(cost) ? null : cost);
     } catch (err) {
       setDeliveryError(err instanceof Error ? err.message : "Error calculando envío");
       setDeliveryZone(null);
@@ -247,9 +263,11 @@ export default function CheckoutPage() {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
     if (field === "address" || field === "city") {
+      setMapCoords(null);
       setDeliveryZone(null);
       setDeliveryCostCents(null);
       setDeliveryError("");
+      setMapError("");
     }
   };
 
@@ -261,6 +279,11 @@ export default function CheckoutPage() {
     if (!form.city.trim()) errs.city = "Ciudad requerida";
     if (!form.address.trim()) errs.address = "Dirección requerida";
     setErrors(errs);
+    if (!mapCoords) {
+      setMapError("Debes confirmar tu ubicación en el mapa para calcular el envío");
+      return false;
+    }
+    setMapError("");
     return Object.keys(errs).length === 0;
   };
 
@@ -303,6 +326,7 @@ export default function CheckoutPage() {
           items,
           deliveryZoneId: deliveryZone?.id ?? null,
           deliveryCostCents: deliveryCostCents ?? 0,
+          deliveryCoords: mapCoords ?? null,
         }),
       });
 
@@ -413,6 +437,7 @@ export default function CheckoutPage() {
           installments: Number(cardInstallments) || 1,
           deliveryZoneId: deliveryZone?.id ?? null,
           deliveryCostCents: deliveryCostCents ?? 0,
+          deliveryCoords: mapCoords ?? null,
         }),
       });
 
@@ -501,6 +526,7 @@ export default function CheckoutPage() {
           redirectUrl: `${siteUrl}/checkout/result`,
           deliveryZoneId: deliveryZone?.id ?? null,
           deliveryCostCents: deliveryCostCents ?? 0,
+          deliveryCoords: mapCoords ?? null,
         }),
       });
 
@@ -620,14 +646,55 @@ export default function CheckoutPage() {
                           className={inputCls(!!errors.email)} />
                       </Field>
                       <Field label="Ciudad / Municipio *" error={errors.city}>
-                        <input type="text" value={form.city} onChange={update("city")} onBlur={detectDeliveryZone} placeholder="Bogotá"
+                        <input type="text" value={form.city} onChange={update("city")} placeholder="Bogotá"
                           className={inputCls(!!errors.city)} />
                       </Field>
                     </div>
                     <Field label="Dirección de entrega *" error={errors.address}>
-                      <input type="text" value={form.address} onChange={update("address")} onBlur={detectDeliveryZone} placeholder="Calle, número, barrio"
+                      <input type="text" value={form.address} onChange={update("address")} placeholder="Calle, número, barrio"
                         className={inputCls(!!errors.address)} />
                     </Field>
+
+                    {/* Map confirmation — required */}
+                    <div>
+                      <label className="block text-(--color-muted) text-xs font-medium mb-1.5 uppercase tracking-wide">
+                        Confirmar ubicación en mapa <span className="text-red-400">*</span>
+                      </label>
+                      {mapCoords ? (
+                        <div className="flex items-center justify-between bg-green-900/20 border border-green-500/30 rounded-xl px-4 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2">
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                            </svg>
+                            <div>
+                              <p className="text-green-400 text-xs font-medium">Ubicación confirmada</p>
+                              <p className="text-(--color-muted) text-[11px] font-mono mt-0.5">
+                                {mapCoords.lat.toFixed(5)}, {mapCoords.lng.toFixed(5)}
+                              </p>
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => setShowMapPicker(true)}
+                            className="text-(--color-muted) text-xs hover:text-(--color-primary) transition-colors cursor-pointer">
+                            Editar
+                          </button>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={() => { setShowMapPicker(true); setMapError(""); }}
+                          className={[
+                            "w-full flex items-center justify-center gap-2 text-sm py-3 rounded-xl transition-all duration-200 cursor-pointer",
+                            mapError
+                              ? "border border-red-500/50 text-red-400 bg-red-900/10 hover:bg-red-900/20"
+                              : "border border-(--color-primary)/40 hover:border-(--color-primary)/70 text-(--color-primary) bg-(--color-primary)/5 hover:bg-(--color-primary)/10",
+                          ].join(" ")}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+                          </svg>
+                          Abrir mapa y confirmar dirección
+                        </button>
+                      )}
+                      {mapError && <p className="text-red-400 text-xs mt-1">{mapError}</p>}
+                    </div>
+
                     <Field label="Notas adicionales" error={errors.notes}>
                       <textarea value={form.notes} onChange={update("notes")} placeholder="Instrucciones especiales..."
                         rows={3} className={inputCls(false) + " resize-none"} />
@@ -663,25 +730,40 @@ export default function CheckoutPage() {
                         ) : deliveryError ? (
                           <div className="text-right">
                             <span className="text-(--color-muted) text-xs">No disponible</span>
-                            <button type="button" onClick={detectDeliveryZone}
+                            <button type="button" onClick={() => detectDeliveryZone()}
                               className="block text-(--color-primary) text-[11px] hover:underline cursor-pointer mt-0.5">
                               Reintentar
                             </button>
                           </div>
+                        ) : mapCoords && !deliveryZone ? (
+                          <span className="text-amber-400 text-xs font-medium">Por confirmar</span>
                         ) : (
-                          <span className="text-(--color-muted) text-xs">Ingresa tu dirección</span>
+                          <span className="text-(--color-muted) text-xs">Confirma tu ubicación</span>
                         )}
                       </div>
                     </div>
                   </div>
 
+                  {mapCoords && !deliveryZone && !deliveryLoading && !deliveryError && (
+                    <div className="bg-amber-900/20 border border-amber-500/30 rounded-xl px-4 py-3 mb-5">
+                      <p className="text-amber-300 text-xs leading-relaxed">
+                        Una vez procesado tu pedido, te enviaremos por WhatsApp el valor del envío a tu zona.
+                      </p>
+                    </div>
+                  )}
+
                   <div className="h-px bg-linear-to-r from-transparent via-(--color-primary)/30 to-transparent mb-5" />
 
                   <div className="flex justify-between items-baseline mb-6">
                     <span className="text-(--color-text) font-semibold">Total</span>
-                    <span className="text-(--color-primary) text-2xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>
-                      {fmt(total)}
-                    </span>
+                    <div className="text-right">
+                      <span className="text-(--color-primary) text-2xl font-bold" style={{ fontFamily: "var(--font-playfair)" }}>
+                        {fmt(total)}
+                      </span>
+                      {mapCoords && !deliveryZone && !deliveryLoading && (
+                        <p className="text-(--color-muted) text-[11px] mt-0.5">+ envío por confirmar</p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Dynamic payment section */}
@@ -1106,6 +1188,16 @@ export default function CheckoutPage() {
           </form>
         </div>
       </div>
+
+      {showMapPicker && (
+        <MapPickerModal
+          address={form.address}
+          city={form.city}
+          initialCoords={mapCoords}
+          onConfirm={(coords) => { setMapCoords(coords); setMapError(""); setShowMapPicker(false); detectDeliveryZone(coords); }}
+          onClose={() => setShowMapPicker(false)}
+        />
+      )}
     </>
   );
 }

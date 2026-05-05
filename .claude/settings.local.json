@@ -4,7 +4,11 @@
       "Bash(npx ctx7 *)",
       "Bash(python3 *)",
       "Bash(python \"C:\\\\Users\\\\Webmaster\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"ecommerce checkout cart summary dark luxury premium\" --design-system -p \"Barril Market Checkout\")",
-      "mcp__context7__resolve-library-id"
+      "mcp__context7__resolve-library-id",
+      "Bash(npm install *)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(p.dependencies['leaflet'], p.dependencies['react-leaflet']\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(timeout 20 npm run dev)"
     ]
   }
 }
