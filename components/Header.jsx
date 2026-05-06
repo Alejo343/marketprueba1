@@ -22,13 +22,27 @@ const MoonIcon = () => (
 
 const regionLinks = [
   { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
+  { label: "Agua", href: "/region/agua" },
+  { label: "Aguardiente", href: "/region/aguardiente" },
   { label: "Barril Market", href: "/region/barril-market" },
   { label: "Casa de especias", href: "/region/casa-de-especias" },
+  { label: "Cervezas", href: "/region/cervezas" },
   { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
   { label: "Colmena & café", href: "/region/colmena-y-cafe" },
   { label: "Despensa Gourmet", href: "/region/despensa-gourmet" },
+  { label: "Energizantes e Hidratantes", href: "/region/energizantes-e-hidratantes" },
   { label: "Escencia Nikkei", href: "/region/escencia-nikkei" },
+  { label: "Espumosos", href: "/region/espumosos" },
   { label: "Rincón Italiano", href: "/region/rincon-italiano" },
+  { label: "Ron", href: "/region/ron" },
+  { label: "Sabores del mundo", href: "/region/sabores-del-mundo" },
+  { label: "THE MARKET Signature", href: "/region/the-market-signature" },
+  { label: "Tequila & Mezacal", href: "/region/tequila-y-mezacal" },
+  { label: "Whisky", href: "/region/whisky" },
+  { label: "Licores del mundo", href: "/region/licores-del-mundo" },
+  { label: "Vino blanco", href: "/region/vino-blanco" },
+  { label: "Vino rosado", href: "/region/vino-rosado" },
+  { label: "Vino tinto", href: "/region/vino-tinto" },
 ];
 
 const mainNav = [
