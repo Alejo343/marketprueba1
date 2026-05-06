@@ -13,6 +13,7 @@ type TxStatus = "APPROVED" | "DECLINED" | "VOIDED" | "ERROR" | "PENDING" | null;
 interface PendingOrder {
   reference: string;
   items: {
+    variantId: number;
     name: string;
     presentation: string;
     quantity: number;
@@ -23,6 +24,7 @@ interface PendingOrder {
     name: string;
     email: string;
     phone: string;
+    identification: string;
     city: string;
     address: string;
   };
@@ -198,11 +200,30 @@ function CheckoutResultContent() {
 
         const finalStatuses = ["APPROVED", "DECLINED", "VOIDED", "ERROR"];
         if (finalStatuses.includes(txStatus)) {
-          setStatus(txStatus);
           if (txStatus === "APPROVED") {
+            const raw = localStorage.getItem("barril-pending-order");
+            if (raw) {
+              try {
+                const o: PendingOrder = JSON.parse(raw);
+                fetch("/api/sales", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    channel: "online",
+                    items: o.items.map((i) => ({ type: "variant", id: i.variantId, quantity: i.quantity })),
+                    customer: {
+                      identification: o.customer.identification,
+                      name: o.customer.name,
+                      email: o.customer.email,
+                    },
+                  }),
+                }).catch(() => { /* no bloquear la UX si falla */ });
+              } catch { /* ignorar */ }
+            }
             clearCart();
             localStorage.removeItem("barril-pending-order");
           }
+          setStatus(txStatus);
           setLoading(false);
           return;
         }

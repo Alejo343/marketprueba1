@@ -141,6 +141,7 @@ interface FormData {
   name: string;
   phone: string;
   email: string;
+  identification: string;
   city: string;
   address: string;
   notes: string;
@@ -156,7 +157,7 @@ interface DeliveryZone {
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCartStore();
-  const [form, setForm] = useState<FormData>({ name: "", phone: "", email: "", city: "", address: "", notes: "" });
+  const [form, setForm] = useState<FormData>({ name: "", phone: "", email: "", identification: "", city: "", address: "", notes: "" });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [mapError, setMapError] = useState("");
 
@@ -203,8 +204,7 @@ export default function CheckoutPage() {
   const [pseBank, setPseBank] = useState("");
   const [pseUserType, setPseUserType] = useState<"0" | "1">("0");
   const [pseIdType, setPseIdType] = useState<"CC" | "CE" | "NIT" | "PP">("CC");
-  const [pseId, setPseId] = useState("");
-  const [pseErrors, setPseErrors] = useState<{ bank?: string; id?: string }>({});
+  const [pseErrors, setPseErrors] = useState<{ bank?: string }>({});
   const [pseLoading, setPseLoading] = useState(false);
   const [pseError, setPseError] = useState("");
 
@@ -276,6 +276,8 @@ export default function CheckoutPage() {
     if (!form.name.trim()) errs.name = "Nombre requerido";
     if (!form.phone.trim()) errs.phone = "Teléfono requerido";
     if (!form.email.trim()) errs.email = "Email requerido";
+    if (!form.identification.trim()) errs.identification = "Cédula / NIT requerido";
+    else if (form.identification.replace(/\D/g, "").length < 5) errs.identification = "Mín. 5 dígitos";
     if (!form.city.trim()) errs.city = "Ciudad requerida";
     if (!form.address.trim()) errs.address = "Dirección requerida";
     setErrors(errs);
@@ -494,8 +496,6 @@ export default function CheckoutPage() {
 
     const errs: typeof pseErrors = {};
     if (!pseBank) errs.bank = "Selecciona tu banco";
-    const cleanedId = pseId.replace(/\D/g, "");
-    if (cleanedId.length < 5) errs.id = "Número de documento inválido";
     setPseErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
@@ -519,7 +519,7 @@ export default function CheckoutPage() {
           notes: form.notes,
           userType: pseUserType,
           userLegalIdType: pseIdType,
-          userLegalId: cleanedId,
+          userLegalId: form.identification.replace(/\D/g, ""),
           financialInstitutionCode: pseBank,
           items,
           paymentDescription: "Pago en Barril Market".slice(0, 64),
@@ -645,11 +645,21 @@ export default function CheckoutPage() {
                         <input type="email" value={form.email} onChange={update("email")} placeholder="tu@email.com"
                           className={inputCls(!!errors.email)} />
                       </Field>
-                      <Field label="Ciudad / Municipio *" error={errors.city}>
-                        <input type="text" value={form.city} onChange={update("city")} placeholder="Bogotá"
-                          className={inputCls(!!errors.city)} />
+                      <Field label="Cédula / NIT *" error={errors.identification}>
+                        <input type="text" inputMode="numeric" value={form.identification}
+                          onChange={(e) => {
+                            const v = e.target.value.replace(/\D/g, "").slice(0, 20);
+                            setForm((prev) => ({ ...prev, identification: v }));
+                            if (errors.identification) setErrors((prev) => ({ ...prev, identification: "" }));
+                          }}
+                          placeholder="1234567890"
+                          className={inputCls(!!errors.identification)} />
                       </Field>
                     </div>
+                    <Field label="Ciudad / Municipio *" error={errors.city}>
+                      <input type="text" value={form.city} onChange={update("city")} placeholder="Bogotá"
+                        className={inputCls(!!errors.city)} />
+                    </Field>
                     <Field label="Dirección de entrega *" error={errors.address}>
                       <input type="text" value={form.address} onChange={update("address")} placeholder="Calle, número, barrio"
                         className={inputCls(!!errors.address)} />
@@ -1126,16 +1136,6 @@ export default function CheckoutPage() {
                               </select>
                             </Field>
                           </div>
-                          <Field label="Número de documento" error={pseErrors.id}>
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              value={pseId}
-                              onChange={(e) => { setPseId(e.target.value.replace(/\D/g, "").slice(0, 20)); setPseErrors((p) => ({ ...p, id: "" })); }}
-                              placeholder="1234567890"
-                              className={inputCls(!!pseErrors.id)}
-                            />
-                          </Field>
 
                           {pseError && (
                             <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3">
