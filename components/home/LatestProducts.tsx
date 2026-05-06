@@ -11,11 +11,11 @@ function Skeleton() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-primary)]/10 animate-pulse">
-          <div className="aspect-square bg-[var(--color-surface)]" />
+        <div key={i} className="bg-(--color-surface) rounded-2xl overflow-hidden border border-(--color-primary)/10 animate-pulse">
+          <div className="aspect-square bg-(--color-surface)" />
           <div className="p-4 space-y-2">
-            <div className="h-3 bg-[var(--color-surface)] rounded w-3/4" />
-            <div className="h-3 bg-[var(--color-surface)] rounded w-1/2" />
+            <div className="h-3 bg-(--color-surface) rounded w-3/4" />
+            <div className="h-3 bg-(--color-surface) rounded w-1/2" />
           </div>
         </div>
       ))}
@@ -25,15 +25,15 @@ function Skeleton() {
 
 export default function LatestProducts({ variants }: Props) {
   return (
-    <section className="py-12 bg-[var(--color-bg)]">
+    <section className="py-12 bg-(--color-bg)">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <span className="text-[var(--color-primary)] text-xs font-semibold tracking-widest uppercase block mb-2">
+            <span className="text-(--color-primary) text-xs font-semibold tracking-widest uppercase block mb-2">
               Recién llegados
             </span>
             <h2
-              className="text-[2rem] font-bold text-[var(--color-text)]"
+              className="text-[2rem] font-bold text-(--color-text)"
               style={{ fontFamily: "var(--font-playfair)" }}
             >
               Últimos productos
@@ -41,7 +41,7 @@ export default function LatestProducts({ variants }: Props) {
           </div>
           <Link
             href="/"
-            className="hidden sm:flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] text-sm font-medium transition-colors duration-200 cursor-pointer"
+            className="hidden sm:flex items-center gap-2 text-(--color-primary) hover:text-(--color-primary-hover) text-sm font-medium transition-colors duration-200 cursor-pointer"
           >
             Ver todos <ArrowIcon />
           </Link>
@@ -52,14 +52,14 @@ export default function LatestProducts({ variants }: Props) {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {variants.map((variant) => {
-              const img = variant.primary_image?.url ?? variant.product?.media?.[0]?.url;
+              const img = variant.primary_image?.url;
               return (
                 <Link
                   key={variant.id}
                   href={`/products/${variant.product_id}`}
-                  className="group bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-primary)]/10 hover:border-[var(--color-primary)]/35 transition-all duration-300 cursor-pointer"
+                  className="group bg-(--color-surface) rounded-2xl overflow-hidden border border-(--color-primary)/10 hover:border-(--color-primary)/35 transition-all duration-300 cursor-pointer"
                 >
-                  <div className="relative aspect-square bg-[var(--color-subtle-bg)] overflow-hidden">
+                  <div className="relative aspect-square bg-(--color-subtle-bg) overflow-hidden">
                     {img ? (
                       <img
                         src={img}
@@ -68,32 +68,32 @@ export default function LatestProducts({ variants }: Props) {
                       />
                     ) : (
                       <div
-                        className="w-full h-full flex items-center justify-center text-[var(--color-primary)]/20 text-5xl font-bold"
+                        className="w-full h-full flex items-center justify-center text-(--color-primary)/20 text-5xl font-bold"
                         style={{ fontFamily: "var(--font-playfair)" }}
                       >
                         {variant.product?.name?.[0] ?? "B"}
                       </div>
                     )}
                     {variant.has_sale && (
-                      <span className="absolute top-3 left-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                      <span className="absolute top-3 left-3 bg-(--color-primary) text-(--color-on-primary) text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
                         Oferta
                       </span>
                     )}
                   </div>
                   <div className="p-4">
-                    <p className="text-[var(--color-text)] text-sm font-medium leading-snug mb-1 line-clamp-2">
+                    <p className="text-(--color-text) text-sm font-medium leading-snug mb-1 line-clamp-2">
                       {variant.product?.name}
                     </p>
-                    <p className="text-[var(--color-muted)] text-xs mb-3">{variant.presentation}</p>
+                    <p className="text-(--color-muted) text-xs mb-3">{variant.presentation}</p>
                     <div className="flex items-baseline gap-2">
                       <span
-                        className="text-[var(--color-primary)] font-bold text-base"
+                        className="text-(--color-primary) font-bold text-base"
                         style={{ fontFamily: "var(--font-playfair)" }}
                       >
                         {formatPrice(variant.final_price)}
                       </span>
                       {variant.has_sale && variant.price !== variant.final_price && (
-                        <span className="text-[var(--color-muted)] text-xs line-through">
+                        <span className="text-(--color-muted) text-xs line-through">
                           {formatPrice(variant.price)}
                         </span>
                       )}

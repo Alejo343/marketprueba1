@@ -244,7 +244,7 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo calcular el envío");
       setDeliveryZone(data.zone);
-      const cost = Number(data.delivery_cost_cents);
+      const cost = Number(data.delivery_cost_cents ?? data.zone?.price_cents);
       setDeliveryCostCents(isNaN(cost) ? null : cost);
     } catch (err) {
       setDeliveryError(err instanceof Error ? err.message : "Error calculando envío");

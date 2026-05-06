@@ -71,7 +71,7 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
 function VariantCard({ variant, category }: { variant: ProductVariant; category: string }) {
   const { addItem } = useCartStore();
   const [hovered, setHovered] = useState(false);
-  const img = variant.primary_image?.url ?? variant.product?.media?.[0]?.url;
+  const img = variant.primary_image?.url;
   const discount = variant.has_sale && variant.sale_price
     ? Math.round(((variant.price - variant.sale_price) / variant.price) * 100)
     : 0;
