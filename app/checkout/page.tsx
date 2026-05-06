@@ -137,11 +137,15 @@ function inputCls(hasError: boolean) {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+type DocType = "CC" | "CE" | "NIT" | "PP" | "PPN";
+
 interface FormData {
   name: string;
   phone: string;
   email: string;
+  identificationType: DocType;
   identification: string;
+  businessName: string;
   city: string;
   address: string;
   notes: string;
@@ -157,7 +161,7 @@ interface DeliveryZone {
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCartStore();
-  const [form, setForm] = useState<FormData>({ name: "", phone: "", email: "", identification: "", city: "", address: "", notes: "" });
+  const [form, setForm] = useState<FormData>({ name: "", phone: "", email: "", identificationType: "CC", identification: "", businessName: "", city: "", address: "", notes: "" });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [mapError, setMapError] = useState("");
 
@@ -203,7 +207,6 @@ export default function CheckoutPage() {
   const [pseInstitutions, setPseInstitutions] = useState<{ code: string; name: string }[]>([]);
   const [pseBank, setPseBank] = useState("");
   const [pseUserType, setPseUserType] = useState<"0" | "1">("0");
-  const [pseIdType, setPseIdType] = useState<"CC" | "CE" | "NIT" | "PP">("CC");
   const [pseErrors, setPseErrors] = useState<{ bank?: string }>({});
   const [pseLoading, setPseLoading] = useState(false);
   const [pseError, setPseError] = useState("");
@@ -276,8 +279,10 @@ export default function CheckoutPage() {
     if (!form.name.trim()) errs.name = "Nombre requerido";
     if (!form.phone.trim()) errs.phone = "Teléfono requerido";
     if (!form.email.trim()) errs.email = "Email requerido";
-    if (!form.identification.trim()) errs.identification = "Cédula / NIT requerido";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errs.email = "Email inválido";
+    if (!form.identification.trim()) errs.identification = `${form.identificationType} requerido`;
     else if (form.identification.replace(/\D/g, "").length < 5) errs.identification = "Mín. 5 dígitos";
+    if (form.identificationType === "NIT" && !form.businessName.trim()) errs.businessName = "Razón social requerida";
     if (!form.city.trim()) errs.city = "Ciudad requerida";
     if (!form.address.trim()) errs.address = "Dirección requerida";
     setErrors(errs);
@@ -324,6 +329,9 @@ export default function CheckoutPage() {
           customerPhone: form.phone,
           customerAddress: form.address,
           customerCity: form.city,
+          customerIdentificationType: form.identificationType,
+          customerIdentification: form.identification.replace(/\D/g, ""),
+          customerBusinessName: form.businessName.trim() || null,
           notes: form.notes,
           items,
           deliveryZoneId: deliveryZone?.id ?? null,
@@ -434,6 +442,9 @@ export default function CheckoutPage() {
           customerPhone: form.phone,
           customerAddress: form.address,
           customerCity: form.city,
+          customerIdentificationType: form.identificationType,
+          customerIdentification: form.identification.replace(/\D/g, ""),
+          customerBusinessName: form.businessName.trim() || null,
           notes: form.notes,
           items,
           installments: Number(cardInstallments) || 1,
@@ -518,8 +529,10 @@ export default function CheckoutPage() {
           customerCity: form.city,
           notes: form.notes,
           userType: pseUserType,
-          userLegalIdType: pseIdType,
+          userLegalIdType: form.identificationType,
           userLegalId: form.identification.replace(/\D/g, ""),
+          customerIdentificationType: form.identificationType,
+          customerBusinessName: form.businessName.trim() || null,
           financialInstitutionCode: pseBank,
           items,
           paymentDescription: "Pago en Barril Market".slice(0, 64),
@@ -645,17 +658,49 @@ export default function CheckoutPage() {
                         <input type="email" value={form.email} onChange={update("email")} placeholder="tu@email.com"
                           className={inputCls(!!errors.email)} />
                       </Field>
-                      <Field label="Cédula / NIT *" error={errors.identification}>
-                        <input type="text" inputMode="numeric" value={form.identification}
-                          onChange={(e) => {
-                            const v = e.target.value.replace(/\D/g, "").slice(0, 20);
-                            setForm((prev) => ({ ...prev, identification: v }));
-                            if (errors.identification) setErrors((prev) => ({ ...prev, identification: "" }));
-                          }}
-                          placeholder="1234567890"
-                          className={inputCls(!!errors.identification)} />
+                      <Field label="Documento de identidad *" error={errors.identification}>
+                        <div className="flex gap-2">
+                          <select
+                            value={form.identificationType}
+                            onChange={(e) => setForm((prev) => ({ ...prev, identificationType: e.target.value as DocType, businessName: "" }))}
+                            className="bg-(--color-input-bg) border border-(--color-input-border) focus:border-(--color-primary)/50 rounded-xl px-3 py-3 text-(--color-text) text-sm focus:outline-none transition-all duration-200 cursor-pointer shrink-0"
+                            style={{ minWidth: "4.5rem" }}
+                          >
+                            <option value="CC">CC</option>
+                            <option value="CE">CE</option>
+                            <option value="NIT">NIT</option>
+                            <option value="PP">PP</option>
+                            <option value="PPN">PPN</option>
+                          </select>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={form.identification}
+                            onChange={(e) => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 20);
+                              setForm((prev) => ({ ...prev, identification: v }));
+                              if (errors.identification) setErrors((prev) => ({ ...prev, identification: "" }));
+                            }}
+                            placeholder={form.identificationType === "NIT" ? "900123456" : "1234567890"}
+                            className={inputCls(!!errors.identification) + " flex-1 min-w-0"}
+                          />
+                        </div>
                       </Field>
                     </div>
+                    {form.identificationType === "NIT" && (
+                      <Field label="Razón social *" error={errors.businessName}>
+                        <input
+                          type="text"
+                          value={form.businessName}
+                          onChange={(e) => {
+                            setForm((prev) => ({ ...prev, businessName: e.target.value }));
+                            if (errors.businessName) setErrors((prev) => ({ ...prev, businessName: "" }));
+                          }}
+                          placeholder="Nombre de la empresa o persona jurídica"
+                          className={inputCls(!!errors.businessName)}
+                        />
+                      </Field>
+                    )}
                     <Field label="Ciudad / Municipio *" error={errors.city}>
                       <input type="text" value={form.city} onChange={update("city")} placeholder="Bogotá"
                         className={inputCls(!!errors.city)} />
@@ -1112,29 +1157,19 @@ export default function CheckoutPage() {
                               ))}
                             </select>
                           </Field>
-                          <div className="grid grid-cols-2 gap-3">
-                            <Field label="Tipo de persona">
-                              <select
-                                value={pseUserType}
-                                onChange={(e) => setPseUserType(e.target.value as "0" | "1")}
-                                className={inputCls(false) + " cursor-pointer"}
-                              >
-                                <option value="0">Natural</option>
-                                <option value="1">Jurídica</option>
-                              </select>
-                            </Field>
-                            <Field label="Tipo doc.">
-                              <select
-                                value={pseIdType}
-                                onChange={(e) => setPseIdType(e.target.value as "CC" | "CE" | "NIT" | "PP")}
-                                className={inputCls(false) + " cursor-pointer"}
-                              >
-                                <option value="CC">CC</option>
-                                <option value="CE">CE</option>
-                                <option value="NIT">NIT</option>
-                                <option value="PP">PP</option>
-                              </select>
-                            </Field>
+                          <Field label="Tipo de persona">
+                            <select
+                              value={pseUserType}
+                              onChange={(e) => setPseUserType(e.target.value as "0" | "1")}
+                              className={inputCls(false) + " cursor-pointer"}
+                            >
+                              <option value="0">Natural</option>
+                              <option value="1">Jurídica</option>
+                            </select>
+                          </Field>
+                          <div className="bg-(--color-subtle-bg) border border-(--color-border) rounded-xl px-4 py-2.5 text-xs text-(--color-muted)">
+                            Documento: <span className="text-(--color-text) font-medium">{form.identificationType} {form.identification || "—"}</span>
+                            {form.businessName && <> · <span className="text-(--color-text) font-medium">{form.businessName}</span></>}
                           </div>
 
                           {pseError && (

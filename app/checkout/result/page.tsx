@@ -24,7 +24,9 @@ interface PendingOrder {
     name: string;
     email: string;
     phone: string;
+    identificationType: string;
     identification: string;
+    businessName: string;
     city: string;
     address: string;
   };
@@ -213,7 +215,7 @@ function CheckoutResultContent() {
                     items: o.items.map((i) => ({ type: "variant", id: i.variantId, quantity: i.quantity })),
                     customer: {
                       identification: o.customer.identification,
-                      name: o.customer.name,
+                      name: o.customer.businessName?.trim() || o.customer.name,
                       email: o.customer.email,
                     },
                   }),
