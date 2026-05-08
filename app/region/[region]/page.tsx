@@ -4,6 +4,8 @@ import ProductListView from "@/components/ProductListView";
 import { getRegions, getProductVariantsByRegion } from "@/lib/api";
 import { Region, ProductVariant } from "@/types";
 
+export const revalidate = 300;
+
 interface PageProps {
   params: Promise<{
     region: string;
