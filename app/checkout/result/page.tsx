@@ -212,6 +212,7 @@ function CheckoutResultContent() {
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
                     channel: "online",
+                    order_reference: o.reference,
                     items: o.items.map((i) => ({ type: "variant", id: i.variantId, quantity: i.quantity })),
                     customer: {
                       identification: o.customer.identification,
