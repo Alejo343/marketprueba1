@@ -68,6 +68,18 @@ export interface ApiResponse<T> {
   data: T[];
 }
 
+export interface FeaturedProduct {
+  id: number;
+  name: string;
+  sale_type: string;
+  sale_type_label?: string;
+  active: boolean;
+  category?: { id: number; name: string } | null;
+  brand?: Brand | null;
+  primary_image: Media | null;
+  variants?: ProductVariant[];
+}
+
 export interface Region {
   id: number;
   name: string;

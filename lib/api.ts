@@ -4,6 +4,7 @@ import {
   Product,
   Category,
   Region,
+  FeaturedProduct,
 } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -48,17 +49,14 @@ export async function getProductVariantsByRegion(regionId: number) {
   return res.json();
 }
 
-// TEMPORAL: selección aleatoria hasta que el backend exponga un endpoint de destacados.
-// Para quitar esto: reemplazar el body por una llamada al nuevo endpoint real.
-export async function getFeaturedVariants(count = 8): Promise<ProductVariant[]> {
-  const res = await fetch("/api/product-variants");
-  if (!res.ok) throw new Error("Error al obtener variantes destacadas");
+export async function getFeaturedProducts(regionId?: number): Promise<FeaturedProduct[]> {
+  const url = regionId
+    ? `/api/featured-products?region_id=${regionId}`
+    : `/api/featured-products`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Error al obtener productos destacados");
   const json = await res.json();
-  const all: ProductVariant[] = json.data ?? [];
-  return all
-    .filter((v) => v.primary_image !== null)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, count);
+  return json.data ?? [];
 }
 
 // Obtiene todas las variantes de un producto por su ID

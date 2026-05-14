@@ -10,7 +10,11 @@
       "Bash(npx tsc *)",
       "Bash(timeout 20 npm run dev)",
       "Bash(Get-Content \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\next.config.ts\" -ErrorAction SilentlyContinue)",
-      "Bash(Get-Content \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\next.config.js\" -ErrorAction SilentlyContinue)"
+      "Bash(Get-Content \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\next.config.js\" -ErrorAction SilentlyContinue)",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\app\\\\api\\\\featured-products\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\app\\\\api\\\\regions\")",
+      "Bash(Write-Output \"dirs created\")"
     ]
   }
 }
