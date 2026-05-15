@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { useIsMounted } from "@/hooks/useIsMounted";
@@ -80,35 +80,53 @@ const ChevronDown = () => (
   </svg>
 );
 
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+);
+
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { toggleCart, totalItems } = useCartStore();
   const mounted = useIsMounted();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
   const [productsHover, setProductsHover] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const hoverTimeout = useRef(null);
+  const searchInputRef = useRef(null);
 
   const { theme, toggleTheme } = useTheme();
   const itemCount = mounted ? totalItems() : 0;
-  const [visible, setVisible] = useState(true);
-  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY <= 10) {
-        setVisible(true);
-      } else if (currentY > lastScrollY.current) {
-        setVisible(false);
-      } else {
-        setVisible(true);
+    if (searchOpen) {
+      const t = setTimeout(() => searchInputRef.current?.focus(), 300);
+      return () => clearTimeout(t);
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handleKey = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeSearch();
+        setProductsHover(false);
       }
-      lastScrollY.current = currentY;
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [searchOpen]);
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
 
   const openProducts = () => {
     if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
@@ -123,11 +141,11 @@ export default function Header() {
   const isRegionActive = pathname?.startsWith("/region/");
 
   return (
-    <header className={`w-full fixed top-0 z-30 transition-transform duration-300 ease-in-out ${visible ? "translate-y-0" : "-translate-y-full"}`}>
+    <header className="w-full fixed top-0 z-30">
       {/* Main bar */}
       <div className="bg-(--color-bg) relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-[72px]">
+          <div className="flex items-center gap-4 h-18">
 
             {/* Mobile menu button */}
             <button
@@ -147,75 +165,145 @@ export default function Header() {
               />
             </Link>
 
-            {/* Nav inline - Desktop (reemplaza la barra de busqueda) */}
-            <nav className="hidden lg:flex flex-1 items-center justify-center">
-              <ul className="flex items-center gap-2">
-                {mainNav.map((link) => {
-                  if (link.hasDropdown) {
-                    const showUnderline = productsHover || isRegionActive;
+            {/* Nav inline - Desktop */}
+            <div className="hidden lg:flex flex-1 items-center justify-center relative min-w-0">
+
+              {/* Nav links */}
+              <nav
+                className="flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden"
+                style={{
+                  maxWidth: searchOpen ? "0px" : "800px",
+                  opacity: searchOpen ? 0 : 1,
+                  pointerEvents: searchOpen ? "none" : "auto",
+                }}
+              >
+                <ul className="flex items-center gap-2 whitespace-nowrap">
+                  {mainNav.map((link) => {
+                    if (link.hasDropdown) {
+                      const showUnderline = productsHover || isRegionActive;
+                      return (
+                        <li
+                          key={link.href}
+                          className="relative"
+                          onMouseEnter={openProducts}
+                          onMouseLeave={closeProducts}
+                        >
+                          <Link
+                            href={link.href}
+                            className={`flex items-center gap-1.5 px-5 py-3 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
+                              showUnderline
+                                ? "text-(--color-primary)"
+                                : "text-(--color-nav-text) hover:text-(--color-primary)"
+                            }`}
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          >
+                            {link.label}
+                            <span
+                              className={`transition-transform duration-200 ${
+                                productsHover ? "rotate-180" : ""
+                              }`}
+                            >
+                              <ChevronDown />
+                            </span>
+                          </Link>
+                          <span
+                            className={`absolute bottom-0 left-5 right-5 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
+                              showUnderline ? "scale-x-100" : "scale-x-0"
+                            }`}
+                          />
+                        </li>
+                      );
+                    }
+
+                    const isActive = pathname === link.href;
                     return (
-                      <li
-                        key={link.href}
-                        className="relative"
-                        onMouseEnter={openProducts}
-                        onMouseLeave={closeProducts}
-                      >
+                      <li key={link.href} className="relative group">
                         <Link
                           href={link.href}
-                          className={`flex items-center gap-1.5 px-5 py-3 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
-                            showUnderline
+                          className={`block px-5 py-3 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
+                            isActive
                               ? "text-(--color-primary)"
                               : "text-(--color-nav-text) hover:text-(--color-primary)"
                           }`}
                           style={{ fontFamily: "var(--font-inter)" }}
                         >
                           {link.label}
-                          <span
-                            className={`transition-transform duration-200 ${
-                              productsHover ? "rotate-180" : ""
-                            }`}
-                          >
-                            <ChevronDown />
-                          </span>
                         </Link>
                         <span
                           className={`absolute bottom-0 left-5 right-5 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
-                            showUnderline ? "scale-x-100" : "scale-x-0"
+                            isActive
+                              ? "scale-x-100"
+                              : "scale-x-0 group-hover:scale-x-100"
                           }`}
                         />
                       </li>
                     );
-                  }
+                  })}
+                </ul>
+              </nav>
 
-                  const isActive = pathname === link.href;
-                  return (
-                    <li key={link.href} className="relative group">
-                      <Link
-                        href={link.href}
-                        className={`block px-5 py-3 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
-                          isActive
-                            ? "text-(--color-primary)"
-                            : "text-(--color-nav-text) hover:text-(--color-primary)"
-                        }`}
-                        style={{ fontFamily: "var(--font-inter)" }}
-                      >
-                        {link.label}
-                      </Link>
-                      <span
-                        className={`absolute bottom-0 left-5 right-5 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
-                          isActive
-                            ? "scale-x-100"
-                            : "scale-x-0 group-hover:scale-x-100"
-                        }`}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
+              {/* Search bar expandable */}
+              <div
+                className="absolute inset-0 flex items-center px-4 transition-all duration-300 ease-in-out"
+                style={{
+                  opacity: searchOpen ? 1 : 0,
+                  pointerEvents: searchOpen ? "auto" : "none",
+                  transform: searchOpen ? "scaleX(1)" : "scaleX(0.9)",
+                  transformOrigin: "center",
+                }}
+              >
+                <div className="flex items-center w-full max-w-lg mx-auto border border-(--color-primary)/40 rounded-lg bg-(--color-nav) px-3 gap-2.5 transition-all duration-300">
+                  <span className="text-(--color-primary)/70 shrink-0">
+                    <SearchIcon />
+                  </span>
+                  <input
+                    ref={searchInputRef}
+                    type="search"
+                    autoComplete="off"
+                    placeholder="Buscar productos, marcas, categorías..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const q = e.currentTarget.value.trim();
+                        if (q) {
+                          router.push(`/search?q=${encodeURIComponent(q)}`);
+                          closeSearch();
+                        }
+                      }
+                    }}
+                    className="flex-1 bg-transparent py-2.5 text-sm text-(--color-nav-text) placeholder:text-(--color-nav-text)/40 outline-none [&::-webkit-search-cancel-button]:hidden"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                    tabIndex={searchOpen ? 0 : -1}
+                    aria-hidden={!searchOpen}
+                  />
+                  <button
+                    onClick={closeSearch}
+                    className="shrink-0 flex items-center justify-center w-6 h-6 rounded text-(--color-nav-text)/50 hover:text-(--color-primary) transition-colors duration-200 cursor-pointer"
+                    aria-label="Cerrar búsqueda"
+                  >
+                    <CloseIcon />
+                  </button>
+                </div>
+              </div>
+
+            </div>
 
             {/* Actions */}
             <div className="flex items-center gap-3 ml-auto">
+              {/* Search toggle - desktop only */}
+              <button
+                onClick={() => searchOpen ? closeSearch() : setSearchOpen(true)}
+                className={`hidden lg:flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200 cursor-pointer ${
+                  searchOpen
+                    ? "text-(--color-primary) bg-(--color-primary)/10"
+                    : "text-(--color-nav-text) hover:text-(--color-primary) hover:bg-(--color-nav-text)/10"
+                }`}
+                aria-label={searchOpen ? "Cerrar búsqueda" : "Abrir búsqueda"}
+              >
+                {searchOpen ? <CloseIcon /> : <SearchIcon />}
+              </button>
+
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}

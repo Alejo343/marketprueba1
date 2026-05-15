@@ -17,7 +17,8 @@ export default function BottomCTA() {
           experiencias únicas
         </h2>
         <p className="text-[var(--color-muted)] text-base mb-8 leading-relaxed">
-          Cada producto en Barril Market es elegido por su calidad, origen y sabor. Descubre lo mejor del mercado gourmet colombiano.
+          Cada producto en Barril Market es elegido por su calidad, origen y
+          sabor. Descubre lo mejor del mercado gourmet colombiano.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <Link
@@ -28,7 +29,7 @@ export default function BottomCTA() {
           </Link>
           <span className="text-[var(--color-muted)] text-sm">
             o llámanos al{" "}
-            <span className="text-[var(--color-primary)]">+57 300 000 0000</span>
+            <span className="text-[var(--color-primary)]">315 592 79 44</span>
           </span>
         </div>
       </div>

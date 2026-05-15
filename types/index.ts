@@ -68,6 +68,22 @@ export interface ApiResponse<T> {
   data: T[];
 }
 
+export interface FeaturedProductVariant {
+  id: number;
+  product_id: number;
+  presentation: string;
+  sku: string;
+  barcode: string | null;
+  price: number;
+  sale_price: number | null;
+  final_price: number;
+  has_sale: boolean;
+  stock: number;
+  min_stock: number;
+  low_stock: boolean;
+  in_stock: boolean;
+}
+
 export interface FeaturedProduct {
   id: number;
   name: string;
@@ -77,7 +93,7 @@ export interface FeaturedProduct {
   category?: { id: number; name: string } | null;
   brand?: Brand | null;
   primary_image: Media | null;
-  variants?: ProductVariant[];
+  variants?: FeaturedProductVariant[];
 }
 
 export interface Region {

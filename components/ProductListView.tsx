@@ -168,8 +168,6 @@ const PER_PAGE = 12;
 export default function ProductListView({ variants, regionName, regionSlug }: Props) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
-  const [priceMin, setPriceMin] = useState(0);
-  const [priceMax, setPriceMax] = useState(() => Math.max(...variants.map((v) => v.price), 0));
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [onlySale, setOnlySale] = useState(false);
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());

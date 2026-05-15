@@ -5,7 +5,7 @@ export async function GET(request: Request) {
   const regionId = searchParams.get("region_id");
 
   const url = new URL(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/featured-products`,
+    `${process.env.NEXT_PUBLIC_API_URL}/featured-products`,
   );
   if (regionId) url.searchParams.set("region_id", regionId);
 
