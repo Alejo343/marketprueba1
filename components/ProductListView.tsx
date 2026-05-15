@@ -175,6 +175,8 @@ export default function ProductListView({ variants, regionName, regionSlug }: Pr
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const absoluteMax = useMemo(() => Math.max(...variants.map((v) => v.price), 0), [variants]);
+  const [priceMin, setPriceMin] = useState(0);
+  const [priceMax, setPriceMax] = useState(Infinity);
   const brands = useMemo(() => {
     const set = new Set<string>();
     variants.forEach((v) => { if (v.product?.brand?.name) set.add(v.product.brand.name); });
