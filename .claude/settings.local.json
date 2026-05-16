@@ -14,7 +14,12 @@
       "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\app\\\\api\\\\featured-products\")",
       "Bash(Out-Null)",
       "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\David\\\\Documents\\\\pruebas\\\\prueba1\\\\app\\\\api\\\\regions\")",
-      "Bash(Write-Output \"dirs created\")"
+      "Bash(Write-Output \"dirs created\")",
+      "Bash(ls \"C:\\\\Users\\\\David\\\\Documents\\\\banner\\\\banner\")",
+      "Read(//c/Users/David/Documents/banner/banner/**)",
+      "Bash(cp -r \"C:/Users/David/Documents/banner/banner/public/imagenes/tipo3\" \"C:/Users/David/Documents/pruebas/prueba1/public/images/hero-tipo3\")",
+      "Bash(cp \"C:/Users/David/Documents/banner/banner/public/imagenes/fondo1.png\" \"C:/Users/David/Documents/pruebas/prueba1/public/images/hero-fondo.png\")",
+      "Bash(cp \"C:/Users/David/Documents/banner/banner/public/imagenes/tipo2/titulo2-v1.png\" \"C:/Users/David/Documents/pruebas/prueba1/public/images/hero-titulo.png\")"
     ]
   }
 }

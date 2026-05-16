@@ -23,7 +23,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-(--color-bg) pt-30" style={{ fontFamily: "var(--font-inter)" }}>
+    <div className="min-h-screen bg-(--color-bg)" style={{ fontFamily: "var(--font-inter)" }}>
       <Header />
       <HeroSection />
       <TrustBar />

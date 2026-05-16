@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "thebarrilmarket.com",
+        hostname: "themarketgourmet.com.co",
       },
     ],
   },
