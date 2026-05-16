@@ -75,8 +75,8 @@ export default function HeroSection() {
       />
       <div className={s.content}>
         <img
-          src="/images/hero-titulo.png"
-          alt="Gourmet título"
+          src="/logov2w.webp"
+          alt="Barril Market"
           className={s.titleImg}
         />
         <p className={s.sub}>

@@ -31,7 +31,7 @@
 
 /* ── TÍTULO ── */
 .titleImg {
-  width: clamp(240px, 42vw, 500px);
+  width: clamp(160px, 28vw, 320px);
   height: auto;
   margin-top: -2.5rem;
   animation: slideUpFade 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
