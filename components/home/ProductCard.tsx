@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import type { ProductVariant } from "@/types";
 import { CartIcon } from "./icons";
@@ -14,17 +13,12 @@ export function formatPrice(n: number) {
 }
 
 export default function ProductCard({ variant }: { variant: ProductVariant }) {
-  const [hovered, setHovered] = useState(false);
   const name = variant.product?.name ?? "";
   const image = variant.primary_image?.url ?? "";
 
   return (
     <Link href={`/products/${variant.product_id}`}>
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="group bg-[var(--color-surface)] rounded-2xl overflow-hidden border border-[var(--color-primary)]/10 hover:border-[var(--color-primary)]/35 transition-all duration-300 cursor-pointer"
-      >
+      <div className="group bg-(--color-surface) rounded-2xl overflow-hidden border border-(--color-primary)/10 hover:border-(--color-primary)/35 transition-all duration-300 cursor-pointer">
         <div className="relative aspect-square bg-[var(--color-subtle-bg)] overflow-hidden">
           <img
             src={image}
@@ -36,9 +30,7 @@ export default function ProductCard({ variant }: { variant: ProductVariant }) {
               Oferta
             </span>
           )}
-          <div
-            className={`absolute inset-x-0 bottom-0 p-3 transition-all duration-300 ${hovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}
-          >
+          <div className="absolute inset-x-0 bottom-0 p-3 transition-all duration-300 opacity-100 translate-y-0 sm:opacity-0 sm:translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0">
             <button className="w-full flex items-center justify-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] py-2.5 rounded-xl text-sm font-semibold transition-colors duration-200 cursor-pointer">
               <CartIcon /> Agregar al carrito
             </button>
