@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import s from "./HeroSection.module.css";
 
-const PASTELS = ["#f5dfc0", "#c0d5f5", "#c0f5dc", "#f5c0d5", "#f5f0c0"];
+const PASTELS = [
+  "rgba(201,168,76,0.07)",
+  "rgba(201,168,76,0.03)",
+  "rgba(201,168,76,0.07)",
+  "rgba(201,168,76,0.03)",
+  "rgba(201,168,76,0.07)",
+];
 
 interface FranjaItem {
   label: string;
@@ -58,9 +64,9 @@ const cards = [
     logo: "/images/hero-tipo3/elemento3-logo.png",
     titulo: "/images/hero-tipo3/elemento3-titulo.png",
     franjas: [
-      { label: "Licores", href: "#" },
-      { label: "Agua", href: "#" },
-      { label: "Energizantes", href: "#" },
+      { label: "Cava & licores", href: "#" },
+      { label: "Bebidas", href: "#" },
+      { label: "Sangrias & mojito The Market", href: "#" },
     ],
   },
   {
@@ -82,9 +88,21 @@ const cards = [
 
 export default function HeroSection() {
   const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [overlayPos, setOverlayPos] = useState<{ left: number; width: number } | null>(null);
+
   const touchOrigin = useRef<{ x: number; y: number } | null>(null);
   const didScroll = useRef(false);
   const elementosRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!activeCard) return;
@@ -94,6 +112,7 @@ export default function HeroSection() {
         !elementosRef.current.contains(e.target as Node)
       ) {
         setActiveCard(null);
+        setOverlayPos(null);
       }
     };
     document.addEventListener("touchstart", close);
@@ -103,6 +122,52 @@ export default function HeroSection() {
       document.removeEventListener("mousedown", close);
     };
   }, [activeCard]);
+
+  const scheduleHide = useCallback(() => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    leaveTimer.current = setTimeout(() => {
+      setActiveCard(null);
+      setOverlayPos(null);
+    }, 80);
+  }, []);
+
+  const cancelHide = useCallback(() => {
+    if (leaveTimer.current) {
+      clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+  }, []);
+
+  const handleMouseEnter = useCallback((img: string, idx: number) => {
+    cancelHide();
+    const section = sectionRef.current;
+    const card = cardRefs.current[idx];
+    if (!section || !card) return;
+    const sR = section.getBoundingClientRect();
+    const cR = card.getBoundingClientRect();
+    setOverlayPos({ left: cR.left - sR.left, width: cR.width });
+    setActiveCard(img);
+  }, [cancelHide]);
+
+  // Cuando el cursor sale de la tarjeta, sólo ocultar si NO fue al overlay
+  const handleCardMouseLeave = useCallback((e: React.MouseEvent) => {
+    const to = e.relatedTarget as Node | null;
+    if (to && overlayRef.current && overlayRef.current.contains(to)) return;
+    scheduleHide();
+  }, [scheduleHide]);
+
+  // El overlay cancela el hide cuando recibe el cursor
+  const handleOverlayMouseEnter = useCallback(() => {
+    cancelHide();
+  }, [cancelHide]);
+
+  // El overlay oculta si el cursor sale y NO va a una tarjeta
+  const handleOverlayMouseLeave = useCallback((e: React.MouseEvent) => {
+    const to = e.relatedTarget as Node | null;
+    const toCard = cardRefs.current.some(r => r && (r === to || r.contains(to)));
+    if (toCard) return;
+    scheduleHide();
+  }, [scheduleHide]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchOrigin.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -129,12 +194,38 @@ export default function HeroSection() {
     }
   };
 
+  const activeCardData = activeCard
+    ? cards.find((c) => c.img === activeCard) ?? null
+    : null;
+
   return (
-    <section className={s.section}>
+    <section className={s.section} ref={sectionRef as React.RefObject<HTMLElement>}>
       <div
         className={s.heroBg}
         style={{ backgroundImage: 'url("/images/hero-fondo.png")' }}
       />
+
+      {/* Desktop: overlay de columna completa, altura = 100% de la sección */}
+      <div
+        ref={overlayRef}
+        className={`${s.sectionOverlay}${activeCardData && overlayPos ? ` ${s.sectionOverlayActive}` : ""}`}
+        style={overlayPos ? { left: overlayPos.left, width: overlayPos.width } : {}}
+        onMouseEnter={handleOverlayMouseEnter}
+        onMouseLeave={handleOverlayMouseLeave}
+      >
+        {activeCardData?.franjas.map(({ label, href }, i) => (
+          <a
+            key={label}
+            href={href}
+            className={s.franja}
+            style={{ background: PASTELS[i % PASTELS.length] }}
+            onClick={(e) => e.preventDefault()}
+          >
+            {label}
+          </a>
+        ))}
+      </div>
+
       <div className={s.content}>
         <img src="/logov2w.webp" alt="Barril Market" className={s.titleImg} />
         <p className={s.sub}>
@@ -143,12 +234,15 @@ export default function HeroSection() {
           del buen sabor
         </p>
         <div className={s.elementos} ref={elementosRef}>
-          {cards.map((card) => {
+          {cards.map((card, index) => {
             const isActive = activeCard === card.img;
             return (
               <div
                 key={card.img}
+                ref={(el) => { cardRefs.current[index] = el; }}
                 className={`${s.card}${isActive ? ` ${s.cardActive}` : ""}`}
+                onMouseEnter={() => handleMouseEnter(card.img, index)}
+                onMouseLeave={handleCardMouseLeave}
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd(card.img)}
@@ -158,8 +252,8 @@ export default function HeroSection() {
                     className={s.circulo}
                     style={{ backgroundImage: `url("${card.img}")` }}
                   />
+                  {/* OvalFranjas sólo activo en móvil */}
                   <OvalFranjas items={card.franjas} />
-                  {/* Indicador de tap — sólo en móvil */}
                   <div className={s.tapHint}>
                     <svg
                       viewBox="0 0 16 16"

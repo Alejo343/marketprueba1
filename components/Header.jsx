@@ -8,41 +8,88 @@ import { useIsMounted } from "@/hooks/useIsMounted";
 import { useTheme } from "@/components/ThemeProvider";
 
 const SunIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <circle cx="12" cy="12" r="4" />
     <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
   </svg>
 );
 
 const MoonIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
 
-const regionLinks = [
-  { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
-  { label: "Agua", href: "/region/agua" },
-  { label: "Aguardiente", href: "/region/aguardiente" },
-  { label: "Barril Market", href: "/region/barril-market" },
-  { label: "Casa de especias", href: "/region/casa-de-especias" },
-  { label: "Cervezas", href: "/region/cervezas" },
-  { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
-  { label: "Colmena & café", href: "/region/colmena-y-cafe" },
-  { label: "Despensa Gourmet", href: "/region/despensa-gourmet" },
-  { label: "Energizantes e Hidratantes", href: "/region/energizantes-e-hidratantes" },
-  { label: "Escencia Nikkei", href: "/region/escencia-nikkei" },
-  { label: "Espumosos", href: "/region/espumosos" },
-  { label: "Rincón Italiano", href: "/region/rincon-italiano" },
-  { label: "Ron", href: "/region/ron" },
-  { label: "Sabores del mundo", href: "/region/sabores-del-mundo" },
-  { label: "THE MARKET Signature", href: "/region/the-market-signature" },
-  { label: "Tequila & Mezacal", href: "/region/tequila-y-mezacal" },
-  { label: "Whisky", href: "/region/whisky" },
-  { label: "Licores del mundo", href: "/region/licores-del-mundo" },
-  { label: "Vino blanco", href: "/region/vino-blanco" },
-  { label: "Vino rosado", href: "/region/vino-rosado" },
-  { label: "Vino tinto", href: "/region/vino-tinto" },
+const navCategories = [
+  {
+    label: "Vaca Santa Carnes Premium",
+    href: "/region/vaca-santa",
+    items: [
+      { label: "Wagyu", href: "#" },
+      { label: "Angus", href: "#" },
+      { label: "Cerdo y chorizos", href: "#" },
+      { label: "Nuestros cortes", href: "#" },
+    ],
+  },
+  {
+    label: "Barril Market",
+    href: "/region/barril-market",
+    items: [
+      { label: "Barilles", href: "#" },
+      { label: "Accesorios", href: "#" },
+    ],
+  },
+  {
+    label: "Licores & Bebidas",
+    href: "/region/licores",
+    items: [
+      { label: "Cava & licores", href: "#" },
+      { label: "Bebidas", href: "#" },
+      { label: "Sangrias & mojito The Market", href: "#" },
+    ],
+  },
+  {
+    label: "Nuestros Productos",
+    href: "/region/nuestros-productos",
+    items: [
+      { label: "Market Signature", href: "#" },
+      { label: "Casa de especias", href: "#" },
+      { label: "Cocina Mexicana", href: "#" },
+      { label: "Colmena & Cafe", href: "#" },
+      { label: "Despensa Gourmet", href: "#" },
+      { label: "Escencia nikkei", href: "#" },
+      { label: "Rincon italiano", href: "#" },
+      { label: "Sabores del mundo", href: "#" },
+    ],
+  },
+  {
+    label: "Recomnedados",
+    href: "/region/nuestros-productos",
+  },
+  {
+    label: "Boxes & Regalos",
+    href: "/region/nuestros-productos",
+  },
 ];
 
 const mainNav = [
@@ -52,7 +99,17 @@ const mainNav = [
 ];
 
 const CartIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
     <line x1="3" y1="6" x2="21" y2="6" />
     <path d="M16 10a4 4 0 0 1-8 0" />
@@ -60,7 +117,17 @@ const CartIcon = () => (
 );
 
 const MenuIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="3" y1="6" x2="21" y2="6" />
     <line x1="3" y1="12" x2="21" y2="12" />
     <line x1="3" y1="18" x2="21" y2="18" />
@@ -68,20 +135,50 @@ const MenuIcon = () => (
 );
 
 const CloseIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
 const ChevronDown = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 const SearchIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <circle cx="11" cy="11" r="8" />
     <path d="m21 21-4.35-4.35" />
   </svg>
@@ -94,6 +191,7 @@ export default function Header() {
   const mounted = useIsMounted();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [mobileOpenCategory, setMobileOpenCategory] = useState(null);
   const [productsHover, setProductsHover] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -146,7 +244,6 @@ export default function Header() {
       <div className="bg-(--color-bg) relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 h-18">
-
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -159,7 +256,7 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" className="shrink-0 flex items-center">
               <img
-                src={theme === "dark" ? "/logov2w.webp" : "/logov2b.webp"}
+                src="/logov2w.webp"
                 alt="Barril Market"
                 className="h-14 w-auto"
               />
@@ -167,7 +264,6 @@ export default function Header() {
 
             {/* Nav inline - Desktop */}
             <div className="hidden lg:flex flex-1 items-center justify-center relative min-w-0">
-
               {/* Nav links */}
               <nav
                 className="flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden"
@@ -286,14 +382,15 @@ export default function Header() {
                   </button>
                 </div>
               </div>
-
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-3 ml-auto">
               {/* Search toggle - desktop only */}
               <button
-                onClick={() => searchOpen ? closeSearch() : setSearchOpen(true)}
+                onClick={() =>
+                  searchOpen ? closeSearch() : setSearchOpen(true)
+                }
                 className={`hidden lg:flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200 cursor-pointer ${
                   searchOpen
                     ? "text-(--color-primary) bg-(--color-primary)/10"
@@ -308,8 +405,14 @@ export default function Header() {
               <button
                 onClick={toggleTheme}
                 className="flex items-center justify-center w-9 h-9 rounded-lg text-(--color-nav-text) hover:text-(--color-primary) hover:bg-(--color-nav-text)/10 transition-colors duration-200 cursor-pointer"
-                aria-label={mounted && theme === "dark" ? "Activar tema claro" : "Activar tema oscuro"}
-                title={mounted && theme === "dark" ? "Tema claro" : "Tema oscuro"}
+                aria-label={
+                  mounted && theme === "dark"
+                    ? "Activar tema claro"
+                    : "Activar tema oscuro"
+                }
+                title={
+                  mounted && theme === "dark" ? "Tema claro" : "Tema oscuro"
+                }
               >
                 {mounted && theme === "dark" ? <SunIcon /> : <MoonIcon />}
               </button>
@@ -332,44 +435,62 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Productos dropdown - regions (desktop) */}
+        {/* Productos dropdown (desktop) */}
         <div
           onMouseEnter={openProducts}
           onMouseLeave={closeProducts}
-          className={`hidden lg:block absolute left-0 right-0 top-full bg-(--color-bg) border-t border-(--color-nav-text)/10 shadow-lg transition-all duration-200 ${
+          className={`hidden lg:block absolute left-0 right-0 top-full transition-all duration-200 ${
             productsHover
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ul className="flex items-center justify-center flex-wrap">
-              {regionLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <li key={link.href} className="relative group">
-                    <Link
-                      href={link.href}
-                      className={`block px-4 py-3.5 text-xs tracking-widest uppercase font-medium transition-colors duration-200 cursor-pointer ${
-                        isActive
-                          ? "text-(--color-primary)"
-                          : "text-(--color-nav-text) hover:text-(--color-primary)"
-                      }`}
-                      style={{ fontFamily: "var(--font-inter)" }}
-                    >
-                      {link.label}
-                    </Link>
-                    <span
-                      className={`absolute bottom-0 left-4 right-4 h-px bg-(--color-primary) transition-transform duration-200 origin-center ${
-                        isActive
-                          ? "scale-x-100"
-                          : "scale-x-0 group-hover:scale-x-100"
-                      }`}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="bg-(--color-bg) border-t border-(--color-nav-text)/10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-center">
+                {navCategories.map((cat) => {
+                  const catActive = pathname?.startsWith(cat.href);
+                  return (
+                    <div key={cat.label} className="relative group">
+                      <Link
+                        href={cat.href ?? "#"}
+                        className={`block px-6 py-3.5 text-xs tracking-widest uppercase font-semibold transition-colors duration-200 cursor-pointer ${
+                          catActive
+                            ? "text-(--color-primary)"
+                            : "text-(--color-nav-text) hover:text-(--color-primary)"
+                        }`}
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {cat.label}
+                      </Link>
+                      {cat.items?.length > 0 && (
+                        <div className="absolute left-0 top-full opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-10">
+                          <div className="bg-(--color-bg) border border-t-0 border-(--color-nav-text)/15 shadow-xl rounded-b-lg py-2 min-w-44">
+                            {cat.items.map((item) => {
+                              const itemActive = pathname === item.href;
+                              return (
+                                <Link
+                                  key={item.label}
+                                  href={item.href}
+                                  className={`block px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-200 cursor-pointer ${
+                                    itemActive
+                                      ? "text-(--color-primary)"
+                                      : "text-(--color-nav-text) hover:text-(--color-primary) hover:bg-(--color-primary)/5"
+                                  }`}
+                                  style={{ fontFamily: "var(--font-inter)" }}
+                                >
+                                  {item.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -382,41 +503,66 @@ export default function Header() {
               {mainNav.map((link) => {
                 if (link.hasDropdown) {
                   return (
-                    <li key={link.href} className="border-b border-(--color-nav-text)/10">
+                    <li
+                      key={link.href}
+                      className="border-b border-(--color-nav-text)/10"
+                    >
                       <button
-                        onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
+                        onClick={() => {
+                          setMobileProductsOpen(!mobileProductsOpen);
+                          setMobileOpenCategory(null);
+                        }}
                         className="w-full flex items-center justify-between px-4 py-3.5 text-sm text-(--color-nav-text) hover:text-(--color-primary) transition-colors duration-200 cursor-pointer tracking-wide"
                       >
                         <span>{link.label}</span>
                         <span
-                          className={`transition-transform duration-200 ${
-                            mobileProductsOpen ? "rotate-180" : ""
-                          }`}
+                          className={`transition-transform duration-200 ${mobileProductsOpen ? "rotate-180" : ""}`}
                         >
                           <ChevronDown />
                         </span>
                       </button>
                       {mobileProductsOpen && (
-                        <ul className="pb-2 pl-3">
-                          {regionLinks.map((r) => {
-                            const isActive = pathname === r.href;
-                            return (
-                              <li key={r.href}>
-                                <Link
-                                  href={r.href}
-                                  onClick={() => setMobileMenuOpen(false)}
-                                  className={`flex items-center px-4 py-2.5 text-sm transition-colors duration-200 cursor-pointer tracking-wide ${
-                                    isActive
-                                      ? "text-(--color-primary) font-semibold"
-                                      : "text-(--color-nav-text)/80 hover:text-(--color-primary)"
-                                  }`}
+                        <div className="pb-2">
+                          {navCategories.map((cat) => (
+                            <div
+                              key={cat.href}
+                              className="border-t border-(--color-nav-text)/5"
+                            >
+                              <button
+                                onClick={() =>
+                                  setMobileOpenCategory(
+                                    mobileOpenCategory === cat.href
+                                      ? null
+                                      : cat.href,
+                                  )
+                                }
+                                className="w-full flex items-center justify-between px-6 py-2.5 text-xs tracking-widest uppercase font-semibold text-(--color-nav-text) hover:text-(--color-primary) transition-colors duration-200 cursor-pointer"
+                              >
+                                <span>{cat.label}</span>
+                                <span
+                                  className={`transition-transform duration-200 ${mobileOpenCategory === cat.href ? "rotate-180" : ""}`}
                                 >
-                                  {r.label}
-                                </Link>
-                              </li>
-                            );
-                          })}
-                        </ul>
+                                  <ChevronDown />
+                                </span>
+                              </button>
+                              {mobileOpenCategory === cat.href && (
+                                <ul className="pb-1 pl-4">
+                                  {cat.items.map((item) => (
+                                    <li key={item.label}>
+                                      <Link
+                                        href={item.href}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-4 py-2 text-sm text-(--color-nav-text)/70 hover:text-(--color-primary) transition-colors duration-200 cursor-pointer"
+                                      >
+                                        {item.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </li>
                   );
