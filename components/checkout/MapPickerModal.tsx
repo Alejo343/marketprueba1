@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -50,6 +50,25 @@ export default function MapPickerModal({ address, city, initialCoords, onConfirm
   );
   const [loading, setLoading] = useState(!initialCoords);
   const [geocodeWarn, setGeocodeWarn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState(false);
+
+  const handleSearch = useCallback(async () => {
+    const query = searchQuery.trim();
+    if (!query) return;
+    setSearching(true);
+    setSearchError(false);
+    const result = await geocode([query, city, "Colombia"].filter(Boolean).join(", "));
+    setSearching(false);
+    if (result) {
+      setCoords(result);
+      mapRef.current?.setView(result, ZOOM);
+      markerRef.current?.setLatLng(result);
+    } else {
+      setSearchError(true);
+    }
+  }, [searchQuery, city]);
 
   // Init map once
   useEffect(() => {
@@ -66,7 +85,7 @@ export default function MapPickerModal({ address, city, initialCoords, onConfirm
       zoomControl: true,
     });
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 19,
     }).addTo(map);
@@ -157,6 +176,66 @@ export default function MapPickerModal({ address, city, initialCoords, onConfirm
             </span>
           </div>
         )}
+
+        {/* Search bar */}
+        <div className="px-5 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
+          <form
+            onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+            className="flex gap-2"
+          >
+            <div className="relative flex-1">
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="#9A8C7A" strokeWidth="2"
+              >
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setSearchError(false); }}
+                placeholder="Buscar dirección en el mapa..."
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg outline-none"
+                style={{
+                  background: "#0D0D0D",
+                  border: `1px solid ${searchError ? "rgba(239,68,68,0.5)" : "#1E1E1E"}`,
+                  color: "#F5F0E8",
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = searchError ? "rgba(239,68,68,0.5)" : "#1E1E1E"; }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={searching || !searchQuery.trim()}
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer shrink-0"
+              style={{
+                background: searching || !searchQuery.trim() ? "#1E1E1E" : "#C9A84C",
+                color: searching || !searchQuery.trim() ? "#9A8C7A" : "#080808",
+              }}
+              onMouseEnter={(e) => {
+                if (!searching && searchQuery.trim())
+                  (e.currentTarget as HTMLElement).style.background = "#B8973D";
+              }}
+              onMouseLeave={(e) => {
+                if (!searching && searchQuery.trim())
+                  (e.currentTarget as HTMLElement).style.background = "#C9A84C";
+              }}
+            >
+              {searching ? (
+                <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+              ) : "Buscar"}
+            </button>
+          </form>
+          {searchError && (
+            <p className="text-red-400 text-xs mt-1.5">
+              No se encontró la dirección — intenta ser más específico.
+            </p>
+          )}
+        </div>
 
         {/* Map area */}
         <div className="relative flex-1" style={{ minHeight: 380 }}>
