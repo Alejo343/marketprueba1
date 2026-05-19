@@ -413,7 +413,7 @@ export default function CheckoutPage() {
       if (!res.ok)
         throw new Error(data.error || "No se pudo calcular el envío");
       setDeliveryZone(data.zone);
-      const cost = Number(data.delivery_cost_cents ?? data.zone?.price_cents);
+      const cost = Number(data.price_cents ?? data.delivery_cost_cents ?? data.zone?.price_cents);
       setDeliveryCostCents(isNaN(cost) ? null : cost);
       setDeliveryVariantId(data.product_variant_id ?? null);
     } catch (err) {
