@@ -19,7 +19,10 @@ function OvalFranjas({ items }: { items: FranjaItem[] }) {
           href={href}
           className={s.franja}
           style={{ background: PASTELS[i % PASTELS.length] }}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           onTouchEnd={(e) => e.stopPropagation()}
         >
           {label}
@@ -35,10 +38,10 @@ const cards = [
     logo: "/images/hero-tipo3/elemento1-logo.png",
     titulo: "/images/hero-tipo3/elemento1-titulo.png",
     franjas: [
-      { label: "G.R USDA CHOICE",    href: "#" },
-      { label: "Wagyu",              href: "#" },
-      { label: "C.H.B UPPER CHOICE", href: "#" },
-      { label: "Wagyu Puro",         href: "#" },
+      { label: "Wagyu", href: "#" },
+      { label: "Angus", href: "#" },
+      { label: "Cerdo y chorizos", href: "#" },
+      { label: "Nuestros cortes", href: "#" },
     ],
   },
   {
@@ -46,7 +49,7 @@ const cards = [
     logo: "/images/hero-tipo3/elemento2-logo.png",
     titulo: "/images/hero-tipo3/elemento2-titulo.png",
     franjas: [
-      { label: "Utensilios", href: "#" },
+      { label: "Barilles", href: "#" },
       { label: "Accesorios", href: "#" },
     ],
   },
@@ -55,8 +58,8 @@ const cards = [
     logo: "/images/hero-tipo3/elemento3-logo.png",
     titulo: "/images/hero-tipo3/elemento3-titulo.png",
     franjas: [
-      { label: "Licores",      href: "#" },
-      { label: "Agua",         href: "#" },
+      { label: "Licores", href: "#" },
+      { label: "Agua", href: "#" },
       { label: "Energizantes", href: "#" },
     ],
   },
@@ -65,8 +68,14 @@ const cards = [
     logo: "/images/hero-tipo3/elemento4-logo.png",
     titulo: "/images/hero-tipo3/elemento4-titulo.png",
     franjas: [
-      { label: "Especias", href: "#" },
-      { label: "Salsas",   href: "#" },
+      { label: "Market Signature", href: "#" },
+      { label: "Casa de especias", href: "#" },
+      { label: "Cocina Mexicana", href: "#" },
+      { label: "Colmena & Cafe", href: "#" },
+      { label: "Despensa Gourmet", href: "#" },
+      { label: "Escencia nikkei", href: "#" },
+      { label: "Rincon italiano", href: "#" },
+      { label: "Sabores del mundo", href: "#" },
     ],
   },
 ];
@@ -80,7 +89,10 @@ export default function HeroSection() {
   useEffect(() => {
     if (!activeCard) return;
     const close = (e: TouchEvent | MouseEvent) => {
-      if (elementosRef.current && !elementosRef.current.contains(e.target as Node)) {
+      if (
+        elementosRef.current &&
+        !elementosRef.current.contains(e.target as Node)
+      ) {
         setActiveCard(null);
       }
     };
@@ -124,11 +136,7 @@ export default function HeroSection() {
         style={{ backgroundImage: 'url("/images/hero-fondo.png")' }}
       />
       <div className={s.content}>
-        <img
-          src="/logov2w.webp"
-          alt="Barril Market"
-          className={s.titleImg}
-        />
+        <img src="/logov2w.webp" alt="Barril Market" className={s.titleImg} />
         <p className={s.sub}>
           Productos selectos para los verdaderos apasionados
           <br />
@@ -153,14 +161,30 @@ export default function HeroSection() {
                   <OvalFranjas items={card.franjas} />
                   {/* Indicador de tap — sólo en móvil */}
                   <div className={s.tapHint}>
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5} style={{ width: 11, height: 11 }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2 8s2.5-4.5 6-4.5S14 8 14 8s-2.5 4.5-6 4.5S2 8 2 8z" />
-                      <circle cx="8" cy="8" r="1.6" fill="currentColor" stroke="none" />
+                    <svg
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                      style={{ width: 11, height: 11 }}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2 8s2.5-4.5 6-4.5S14 8 14 8s-2.5 4.5-6 4.5S2 8 2 8z"
+                      />
+                      <circle
+                        cx="8"
+                        cy="8"
+                        r="1.6"
+                        fill="currentColor"
+                        stroke="none"
+                      />
                     </svg>
                     <span>ver</span>
                   </div>
                 </div>
-                <img src={card.logo}   className={s.cardLogo}   alt="" />
+                <img src={card.logo} className={s.cardLogo} alt="" />
                 <img src={card.titulo} className={s.cardTitulo} alt="" />
               </div>
             );
