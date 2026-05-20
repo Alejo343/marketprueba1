@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import { getProductVariantsByProductId } from "@/lib/api";
+import { RESTRICTED_REGIONS } from "@/lib/restrictedRegions";
 import { Media } from "@/types";
 
 interface PageProps {
@@ -62,7 +63,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {/* Product layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16">
             <ProductGallery images={images} productName={product.name} />
-            <ProductInfo variants={variants} />
+            <ProductInfo variants={variants} showDisclaimer={RESTRICTED_REGIONS.includes(categorySlug)} />
           </div>
 
           {/* Gold divider */}

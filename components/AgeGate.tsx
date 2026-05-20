@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { RESTRICTED_REGIONS } from "@/lib/restrictedRegions";
 
 const STORAGE_KEY = "barril-age-verified";
-
-// Agrega aquí los slugs de región que requieren verificación de edad
-export const RESTRICTED_REGIONS: string[] = ["cigarros-y-vapos"];
 
 const MONTHS = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -113,7 +111,7 @@ export default function AgeGate({ regionSlug }: AgeGateProps) {
               className="object-contain"
               unoptimized
             />
-            <div className="w-16 h-[1px]" style={{ background: "linear-gradient(to right, transparent, #C9A84C, transparent)" }} />
+            <div className="w-16 h-px" style={{ background: "linear-gradient(to right, transparent, #C9A84C, transparent)" }} />
           </div>
 
           {!denied ? (

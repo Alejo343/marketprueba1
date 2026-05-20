@@ -66,11 +66,15 @@ const RefreshIcon = () => (
   </svg>
 );
 
+const DISCLAIMER =
+  "Prohíbase el expendio de bebidas embriagantes a menores de edad (Ley 124 de 1994). El exceso de alcohol es perjudicial para la salud (Ley 30 de 1986). Los productos con nicotina contienen sustancias altamente adictivas y su venta está restringida exclusivamente a mayores de 18 años. Al navegar en este sitio web usted acepta nuestros Términos y Condiciones y confirma que es mayor de edad.";
+
 interface ProductInfoProps {
   variants: ProductVariant[];
+  showDisclaimer?: boolean;
 }
 
-export default function ProductInfo({ variants }: ProductInfoProps) {
+export default function ProductInfo({ variants, showDisclaimer }: ProductInfoProps) {
   const [selected, setSelected] = useState<ProductVariant>(variants[0]);
   const [qty, setQty] = useState(1);
   const [isFav, setIsFav] = useState(false);
@@ -111,33 +115,33 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
       <div className="flex items-center gap-2">
         {product.brand ? (
           <>
-            <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest">
+            <span className="text-(--color-primary) text-[10px] font-bold uppercase tracking-widest">
               {product.brand.name}
             </span>
-            <span className="w-px h-3 bg-[var(--color-primary)]/20" />
+            <span className="w-px h-3 bg-(--color-primary)/20" />
           </>
         ) : null}
-        <span className="text-[var(--color-muted)] text-[10px] uppercase tracking-wider">
+        <span className="text-(--color-muted) text-[10px] uppercase tracking-wider">
           {product.sale_type_label}
         </span>
       </div>
 
       {/* Product name */}
       <h1
-        className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] leading-tight"
+        className="text-3xl sm:text-4xl font-bold text-(--color-text) leading-tight"
         style={{ fontFamily: "var(--font-playfair)" }}
       >
         {product.name}
       </h1>
 
       {/* Gold divider */}
-      <div className="h-px bg-linear-to-r from-[var(--color-primary)]/40 via-[var(--color-primary)]/10 to-transparent" />
+      <div className="h-px bg-linear-to-r from-(--color-primary)/40 via-(--color-primary)/10 to-transparent" />
 
       {/* Price */}
       {isWhatsAppOnly ? (
         <div className="flex items-center gap-2">
           <span
-            className="text-2xl font-semibold text-[var(--color-muted)]"
+            className="text-2xl font-semibold text-(--color-muted)"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             Precio según corte y peso
@@ -146,16 +150,16 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
       ) : (
         <div className="flex items-baseline gap-3 flex-wrap">
           <span
-            className="text-4xl font-bold text-[var(--color-primary)]"
+            className="text-4xl font-bold text-(--color-primary)"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             {fmt(selected.final_price)}
           </span>
           {selected.has_sale && selected.sale_price && (
             <>
-              <span className="text-[var(--color-muted)] text-lg line-through">{fmt(selected.price)}</span>
+              <span className="text-(--color-muted) text-lg line-through">{fmt(selected.price)}</span>
               {discount && (
-                <span className="bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                <span className="bg-(--color-primary) text-(--color-on-primary) text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
                   -{discount}%
                 </span>
               )}
@@ -166,7 +170,7 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
 
       {/* Description */}
       {product.description && (
-        <p className="text-[var(--color-muted)] text-sm leading-relaxed">{product.description}</p>
+        <p className="text-(--color-muted) text-sm leading-relaxed">{product.description}</p>
       )}
 
       {/* Variant selector */}
@@ -199,7 +203,7 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
           >
             <WhatsAppIcon /> Consultar por WhatsApp
           </a>
-          <p className="text-[var(--color-muted)] text-xs text-center">
+          <p className="text-(--color-muted) text-xs text-center">
             Este producto requiere consulta previa con la tienda
           </p>
         </div>
@@ -211,10 +215,10 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
             disabled={!selected.in_stock}
             className={`flex-1 h-12 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
               !selected.in_stock
-                ? "bg-[var(--color-subtle-bg)] text-[var(--color-placeholder)] cursor-not-allowed"
+                ? "bg-(--color-subtle-bg) text-(--color-placeholder) cursor-not-allowed"
                 : added
                 ? "bg-emerald-700 text-white"
-                : "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_28px_rgba(201,168,76,0.35)]"
+                : "bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_28px_rgba(201,168,76,0.35)]"
             }`}
           >
             {added ? (
@@ -227,8 +231,8 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
             onClick={() => setIsFav(!isFav)}
             className={`w-12 h-12 shrink-0 flex items-center justify-center rounded-xl border transition-all duration-200 cursor-pointer ${
               isFav
-                ? "border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                : "border-[var(--color-divider)] bg-[var(--color-on-primary)] text-[var(--color-muted)] hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]"
+                ? "border-(--color-primary) bg-(--color-primary)/10 text-(--color-primary)"
+                : "border-(--color-divider) bg-(--color-on-primary) text-(--color-muted) hover:border-(--color-primary)/40 hover:text-(--color-primary)"
             }`}
             aria-label={isFav ? "Quitar de favoritos" : "Añadir a favoritos"}
           >
@@ -246,17 +250,47 @@ export default function ProductInfo({ variants }: ProductInfoProps) {
         ].map((item) => (
           <div
             key={item.label}
-            className="flex flex-col items-center gap-1.5 bg-[var(--color-surface)] border border-[var(--color-divider)] rounded-xl py-3"
+            className="flex flex-col items-center gap-1.5 bg-(--color-surface) border border-(--color-divider) rounded-xl py-3"
           >
-            <span className="text-[var(--color-primary)]/60">{item.icon}</span>
-            <span className="text-[var(--color-muted)] text-[10px] font-medium text-center">{item.label}</span>
+            <span className="text-(--color-primary)/60">{item.icon}</span>
+            <span className="text-(--color-muted) text-[10px] font-medium text-center">{item.label}</span>
           </div>
         ))}
       </div>
 
       {/* SKU */}
       {selected.sku && (
-        <p className="text-[var(--color-placeholder)] text-xs">SKU: {selected.sku}</p>
+        <p className="text-(--color-placeholder) text-xs">SKU: {selected.sku}</p>
+      )}
+
+      {/* Disclaimer legal */}
+      {showDisclaimer && (
+        <div
+          className="rounded-xl px-4 py-3.5 flex gap-3 items-start"
+          style={{
+            background: "rgba(201,168,76,0.04)",
+            border: "1px solid rgba(201,168,76,0.18)",
+          }}
+        >
+          <svg
+            className="shrink-0 mt-0.5"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#C9A84C"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="text-[10px] leading-relaxed" style={{ color: "rgba(154,140,122,0.85)" }}>
+            {DISCLAIMER}
+          </p>
+        </div>
       )}
     </div>
   );
