@@ -26,8 +26,10 @@ function OvalFranjas({ items }: { items: FranjaItem[] }) {
           className={s.franja}
           style={{ background: PASTELS[i % PASTELS.length] }}
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+            if (href === "#") {
+              e.preventDefault();
+              e.stopPropagation();
+            }
           }}
           onTouchEnd={(e) => e.stopPropagation()}
         >
@@ -55,8 +57,8 @@ const cards = [
     logo: "/images/hero-tipo3/elemento2-logo.png",
     titulo: "/images/hero-tipo3/elemento2-titulo.png",
     franjas: [
-      { label: "Barilles", href: "#" },
-      { label: "Accesorios", href: "#" },
+      { label: "Barilles", href: "/region/barriles" },
+      { label: "Accesorios", href: "/region/barril-market" },
     ],
   },
   {
@@ -64,9 +66,9 @@ const cards = [
     logo: "/images/hero-tipo3/elemento3-logo.png",
     titulo: "/images/hero-tipo3/elemento3-titulo.png",
     franjas: [
-      { label: "Cava & licores", href: "#" },
-      { label: "Bebidas", href: "#" },
-      { label: "Sangrias & mojito The Market", href: "#" },
+      { label: "Cava & licores", href: "/region/cava-y-licores" },
+      { label: "Bebidas", href: "/region/bebidas" },
+      { label: "Sangrias & mojito The Market", href: "/region/sangrias-y-mojito-the-market" },
     ],
   },
   {
@@ -74,14 +76,14 @@ const cards = [
     logo: "/images/hero-tipo3/elemento4-logo.png",
     titulo: "/images/hero-tipo3/elemento4-titulo.png",
     franjas: [
-      { label: "Market Signature", href: "#" },
-      { label: "Casa de especias", href: "#" },
-      { label: "Cocina Mexicana", href: "#" },
-      { label: "Colmena & Cafe", href: "#" },
-      { label: "Despensa Gourmet", href: "#" },
-      { label: "Escencia nikkei", href: "#" },
-      { label: "Rincon italiano", href: "#" },
-      { label: "Sabores del mundo", href: "#" },
+      { label: "Market Signature", href: "/region/the-market-signature" },
+      { label: "Casa de especias", href: "/region/casa-de-especias" },
+      { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
+      { label: "Colmena & Cafe", href: "/region/colmena-y-cafe" },
+      { label: "Despensa Gourmet", href: "/region/despensa-gourmet" },
+      { label: "Escencia nikkei", href: "/region/escencia-nikkei" },
+      { label: "Rincon italiano", href: "/region/rincon-italiano" },
+      { label: "Sabores del mundo", href: "/region/sabores-del-mundo" },
     ],
   },
 ];
@@ -107,10 +109,10 @@ export default function HeroSection() {
   useEffect(() => {
     if (!activeCard) return;
     const close = (e: TouchEvent | MouseEvent) => {
-      if (
-        elementosRef.current &&
-        !elementosRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as Node;
+      const insideCards = elementosRef.current?.contains(target);
+      const insideOverlay = overlayRef.current?.contains(target);
+      if (!insideCards && !insideOverlay) {
         setActiveCard(null);
         setOverlayPos(null);
       }
@@ -164,7 +166,7 @@ export default function HeroSection() {
   // El overlay oculta si el cursor sale y NO va a una tarjeta
   const handleOverlayMouseLeave = useCallback((e: React.MouseEvent) => {
     const to = e.relatedTarget as Node | null;
-    const toCard = cardRefs.current.some(r => r && (r === to || r.contains(to)));
+    const toCard = to instanceof Node && cardRefs.current.some(r => r && (r === to || r.contains(to)));
     if (toCard) return;
     scheduleHide();
   }, [scheduleHide]);
@@ -180,15 +182,23 @@ export default function HeroSection() {
     if (dy > 8) didScroll.current = true;
   };
 
+  const onTouchCancel = () => {
+    touchOrigin.current = null;
+    didScroll.current = false;
+  };
+
   const onTouchEnd = (img: string) => (e: React.TouchEvent) => {
     if (!touchOrigin.current || didScroll.current) {
       touchOrigin.current = null;
       return;
     }
-    const dx = Math.abs(e.changedTouches[0].clientX - touchOrigin.current.x);
-    const dy = Math.abs(e.changedTouches[0].clientY - touchOrigin.current.y);
+    const touch = e.changedTouches[0];
+    const dx = Math.abs(touch.clientX - touchOrigin.current.x);
+    const dy = Math.abs(touch.clientY - touchOrigin.current.y);
     touchOrigin.current = null;
     if (dx < 15 && dy < 15) {
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (el?.closest("a")) return;
       e.preventDefault();
       setActiveCard((prev) => (prev === img ? null : img));
     }
@@ -199,7 +209,7 @@ export default function HeroSection() {
     : null;
 
   return (
-    <section className={s.section} ref={sectionRef as React.RefObject<HTMLElement>}>
+    <section className={s.section} ref={sectionRef}>
       <div
         className={s.heroBg}
         style={{ backgroundImage: 'url("/images/hero-fondo.png")' }}
@@ -219,7 +229,7 @@ export default function HeroSection() {
             href={href}
             className={s.franja}
             style={{ background: PASTELS[i % PASTELS.length] }}
-            onClick={(e) => e.preventDefault()}
+            onClick={(e) => { if (href === "#") e.preventDefault(); }}
           >
             {label}
           </a>
@@ -245,6 +255,7 @@ export default function HeroSection() {
                 onMouseLeave={handleCardMouseLeave}
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
+                onTouchCancel={onTouchCancel}
                 onTouchEnd={onTouchEnd(card.img)}
               >
                 <div className={s.circuloWrap}>

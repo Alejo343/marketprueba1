@@ -99,7 +99,7 @@
   }
 }
 
-/* ── OVAL (sólo móvil — en desktop se oculta) ── */
+/* ── OVAL (sólo touch/móvil — oculto por defecto) ── */
 .oval {
   position: absolute;
   top: 50%;
@@ -118,14 +118,14 @@
   transition:
     transform 0.42s cubic-bezier(0.34, 1.45, 0.64, 1),
     opacity 0.28s ease;
-  display: flex;
+  display: none;
   flex-direction: column;
 }
 
-/* En desktop, el oval no se usa (reemplazado por sectionOverlay) */
-@media (hover: hover) {
+/* En dispositivos touch (sin hover real), el oval es el mecanismo de interacción */
+@media (hover: none) {
   .oval {
-    display: none;
+    display: flex;
   }
 }
 
@@ -188,7 +188,7 @@
 .franja:hover {
   background: rgba(201, 168, 76, 0.14);
   color: #C9A84C;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.14em;
 }
 
 /* ── CARD LOGO + TÍTULO ── */
@@ -210,6 +210,13 @@
   display: block;
   position: relative;
   z-index: 1;
+}
+
+/* ── TABLET ── */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .cardLogo {
+    margin-top: -1.75rem;
+  }
 }
 
 /* ── STAGGERED CARD ANIMATIONS ── */
@@ -318,7 +325,7 @@
 
   /* ── OVAL → RECTÁNGULO (móvil) ── */
   .oval {
-    display: flex; /* restaurar en móvil */
+    display: flex;
     border-radius: 14px;
     height: 100%;
     width: 100%;
