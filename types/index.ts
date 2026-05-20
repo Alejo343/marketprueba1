@@ -98,6 +98,7 @@ export interface FeaturedProduct {
 
 export interface Region {
   id: number;
+  parent_id: number | null;
   name: string;
   description: string | null;
   active: boolean;

@@ -46,10 +46,11 @@ const cards = [
     logo: "/images/hero-tipo3/elemento1-logo.png",
     titulo: "/images/hero-tipo3/elemento1-titulo.png",
     franjas: [
-      { label: "Wagyu", href: "#" },
-      { label: "Angus", href: "#" },
-      { label: "Cerdo y chorizos", href: "#" },
-      { label: "Nuestros cortes", href: "#" },
+      { label: "Wagyu", href: "/region/wagyu" },
+      { label: "Angus", href: "/region/angus" },
+      { label: "Cerdo y chorizos", href: "/region/cerdo-y-corizos" },
+      { label: "Nuestros cortes", href: "/region/nuestros-cortes" },
+      { label: "Carnes maduradas y seleccionadas nacional", href: "/region/carnes-maduradas-y-seleccionadas-nacional" },
     ],
   },
   {
@@ -68,7 +69,11 @@ const cards = [
     franjas: [
       { label: "Cava & licores", href: "/region/cava-y-licores" },
       { label: "Bebidas", href: "/region/bebidas" },
-      { label: "Sangrias & mojito The Market", href: "/region/sangrias-y-mojito-the-market" },
+      {
+        label: "Sangrias & mojito The Market",
+        href: "/region/sangrias-y-mojito-the-market",
+      },
+      { label: "Cigarros y Vapos", href: "/region/cigarros-y-vapos" },
     ],
   },
   {
@@ -76,7 +81,7 @@ const cards = [
     logo: "/images/hero-tipo3/elemento4-logo.png",
     titulo: "/images/hero-tipo3/elemento4-titulo.png",
     franjas: [
-      { label: "Market Signature", href: "/region/the-market-signature" },
+      { label: "The Market Signature", href: "/region/the-market-signature" },
       { label: "Casa de especias", href: "/region/casa-de-especias" },
       { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
       { label: "Colmena & Cafe", href: "/region/colmena-y-cafe" },
@@ -84,13 +89,17 @@ const cards = [
       { label: "Escencia nikkei", href: "/region/escencia-nikkei" },
       { label: "Rincon italiano", href: "/region/rincon-italiano" },
       { label: "Sabores del mundo", href: "/region/sabores-del-mundo" },
+      { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
     ],
   },
 ];
 
 export default function HeroSection() {
   const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [overlayPos, setOverlayPos] = useState<{ left: number; width: number } | null>(null);
+  const [overlayPos, setOverlayPos] = useState<{
+    left: number;
+    width: number;
+  } | null>(null);
 
   const touchOrigin = useRef<{ x: number; y: number } | null>(null);
   const didScroll = useRef(false);
@@ -140,23 +149,29 @@ export default function HeroSection() {
     }
   }, []);
 
-  const handleMouseEnter = useCallback((img: string, idx: number) => {
-    cancelHide();
-    const section = sectionRef.current;
-    const card = cardRefs.current[idx];
-    if (!section || !card) return;
-    const sR = section.getBoundingClientRect();
-    const cR = card.getBoundingClientRect();
-    setOverlayPos({ left: cR.left - sR.left, width: cR.width });
-    setActiveCard(img);
-  }, [cancelHide]);
+  const handleMouseEnter = useCallback(
+    (img: string, idx: number) => {
+      cancelHide();
+      const section = sectionRef.current;
+      const card = cardRefs.current[idx];
+      if (!section || !card) return;
+      const sR = section.getBoundingClientRect();
+      const cR = card.getBoundingClientRect();
+      setOverlayPos({ left: cR.left - sR.left, width: cR.width });
+      setActiveCard(img);
+    },
+    [cancelHide],
+  );
 
   // Cuando el cursor sale de la tarjeta, sólo ocultar si NO fue al overlay
-  const handleCardMouseLeave = useCallback((e: React.MouseEvent) => {
-    const to = e.relatedTarget as Node | null;
-    if (to && overlayRef.current && overlayRef.current.contains(to)) return;
-    scheduleHide();
-  }, [scheduleHide]);
+  const handleCardMouseLeave = useCallback(
+    (e: React.MouseEvent) => {
+      const to = e.relatedTarget as Node | null;
+      if (to && overlayRef.current && overlayRef.current.contains(to)) return;
+      scheduleHide();
+    },
+    [scheduleHide],
+  );
 
   // El overlay cancela el hide cuando recibe el cursor
   const handleOverlayMouseEnter = useCallback(() => {
@@ -164,12 +179,17 @@ export default function HeroSection() {
   }, [cancelHide]);
 
   // El overlay oculta si el cursor sale y NO va a una tarjeta
-  const handleOverlayMouseLeave = useCallback((e: React.MouseEvent) => {
-    const to = e.relatedTarget as Node | null;
-    const toCard = to instanceof Node && cardRefs.current.some(r => r && (r === to || r.contains(to)));
-    if (toCard) return;
-    scheduleHide();
-  }, [scheduleHide]);
+  const handleOverlayMouseLeave = useCallback(
+    (e: React.MouseEvent) => {
+      const to = e.relatedTarget as Node | null;
+      const toCard =
+        to instanceof Node &&
+        cardRefs.current.some((r) => r && (r === to || r.contains(to)));
+      if (toCard) return;
+      scheduleHide();
+    },
+    [scheduleHide],
+  );
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchOrigin.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -205,7 +225,7 @@ export default function HeroSection() {
   };
 
   const activeCardData = activeCard
-    ? cards.find((c) => c.img === activeCard) ?? null
+    ? (cards.find((c) => c.img === activeCard) ?? null)
     : null;
 
   return (
@@ -219,7 +239,9 @@ export default function HeroSection() {
       <div
         ref={overlayRef}
         className={`${s.sectionOverlay}${activeCardData && overlayPos ? ` ${s.sectionOverlayActive}` : ""}`}
-        style={overlayPos ? { left: overlayPos.left, width: overlayPos.width } : {}}
+        style={
+          overlayPos ? { left: overlayPos.left, width: overlayPos.width } : {}
+        }
         onMouseEnter={handleOverlayMouseEnter}
         onMouseLeave={handleOverlayMouseLeave}
       >
@@ -229,7 +251,9 @@ export default function HeroSection() {
             href={href}
             className={s.franja}
             style={{ background: PASTELS[i % PASTELS.length] }}
-            onClick={(e) => { if (href === "#") e.preventDefault(); }}
+            onClick={(e) => {
+              if (href === "#") e.preventDefault();
+            }}
           >
             {label}
           </a>
@@ -249,7 +273,9 @@ export default function HeroSection() {
             return (
               <div
                 key={card.img}
-                ref={(el) => { cardRefs.current[index] = el; }}
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
                 className={`${s.card}${isActive ? ` ${s.cardActive}` : ""}`}
                 onMouseEnter={() => handleMouseEnter(card.img, index)}
                 onMouseLeave={handleCardMouseLeave}

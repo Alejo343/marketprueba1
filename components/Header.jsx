@@ -45,10 +45,11 @@ const navCategories = [
     label: "Vaca Santa Carnes Premium",
     href: "/region/vaca-santa",
     items: [
-      { label: "Wagyu", href: "#" },
-      { label: "Angus", href: "#" },
-      { label: "Cerdo y chorizos", href: "#" },
-      { label: "Nuestros cortes", href: "#" },
+      { label: "Wagyu", href: "/region/wagyu" },
+      { label: "Angus", href: "/region/angus" },
+      { label: "Cerdo y chorizos", href: "/region/cerdo-y-corizos" },
+      { label: "Nuestros cortes", href: "/region/nuestros-cortes" },
+      { label: "Carnes maduradas y seleccionadas nacional", href: "/region/carnes-maduradas-y-seleccionadas-nacional" },
     ],
   },
   {
@@ -65,14 +66,18 @@ const navCategories = [
     items: [
       { label: "Cava & licores", href: "/region/cava-y-licores" },
       { label: "Bebidas", href: "/region/bebidas" },
-      { label: "Sangrias & mojito The Market", href: "/region/sangrias-y-mojito-the-market" },
+      {
+        label: "Sangrias & mojito The Market",
+        href: "/region/sangrias-y-mojito-the-market",
+      },
+      { label: "Cigarros y Vapos", href: "/region/cigarros-y-vapos" },
     ],
   },
   {
     label: "Nuestros Productos",
     href: "/region/nuestros-productos",
     items: [
-      { label: "Market Signature", href: "/region/the-market-signature" },
+      { label: "The Market Signature", href: "/region/the-market-signature" },
       { label: "Casa de especias", href: "/region/casa-de-especias" },
       { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
       { label: "Colmena & Cafe", href: "/region/colmena-y-cafe" },
@@ -80,6 +85,7 @@ const navCategories = [
       { label: "Escencia nikkei", href: "/region/escencia-nikkei" },
       { label: "Rincon italiano", href: "/region/rincon-italiano" },
       { label: "Sabores del mundo", href: "/region/sabores-del-mundo" },
+      { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
     ],
   },
   {

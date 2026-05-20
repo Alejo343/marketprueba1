@@ -1,7 +1,17 @@
-export default function RegionLayout({
-  children,
-}: {
+import AgeGate from "@/components/AgeGate";
+
+interface RegionLayoutProps {
   children: React.ReactNode;
-}) {
-  return <div className="category-page">{children}</div>;
+  params: Promise<{ region: string }>;
+}
+
+export default async function RegionLayout({ children, params }: RegionLayoutProps) {
+  const { region } = await params;
+
+  return (
+    <div className="category-page">
+      <AgeGate regionSlug={region} />
+      {children}
+    </div>
+  );
 }
