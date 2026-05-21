@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ProductVariant } from "@/types";
 import { useCartStore } from "@/store/cartStore";
+import { useAddToCartAnimation } from "@/hooks/useAddToCartAnimation";
 import VariantSelector from "./VariantSelector";
 import QtyControl from "./QtyControl";
 
@@ -80,6 +81,8 @@ export default function ProductInfo({ variants, showDisclaimer }: ProductInfoPro
   const [isFav, setIsFav] = useState(false);
   const [added, setAdded] = useState(false);
   const { addItem, updateQuantity, openCart } = useCartStore();
+  const addBtnRef = useRef<HTMLButtonElement>(null);
+  const triggerAnimation = useAddToCartAnimation();
 
   const product = selected.product;
   const discount =
@@ -94,6 +97,7 @@ export default function ProductInfo({ variants, showDisclaimer }: ProductInfoPro
   }
 
   function handleAddToCart() {
+    triggerAnimation(addBtnRef.current);
     addItem({
       variantId: selected.id,
       productId: selected.product_id,
@@ -211,6 +215,7 @@ export default function ProductInfo({ variants, showDisclaimer }: ProductInfoPro
         <div className="flex items-center gap-3">
           <QtyControl value={qty} onChange={setQty} min={1} max={selected.stock} />
           <button
+            ref={addBtnRef}
             onClick={handleAddToCart}
             disabled={!selected.in_stock}
             className={`flex-1 h-12 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${

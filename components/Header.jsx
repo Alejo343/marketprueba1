@@ -89,12 +89,12 @@ const navCategories = [
     ],
   },
   {
-    label: "Recomnedados",
-    href: "/region/nuestros-productos",
+    label: "Recomendados",
+    href: "/region/recomendados",
   },
   {
     label: "Boxes & Regalos",
-    href: "/region/nuestros-productos",
+    href: "/region/boxes-regalos",
   },
 ];
 
@@ -425,6 +425,7 @@ export default function Header() {
 
               {/* Cart button */}
               <button
+                id="header-cart-btn"
                 onClick={toggleCart}
                 className="relative flex items-center gap-2 bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer"
                 aria-label="Abrir carrito"

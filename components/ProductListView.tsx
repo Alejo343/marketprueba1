@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
+import { useAddToCartAnimation } from "@/hooks/useAddToCartAnimation";
 import { ProductVariant } from "@/types";
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
@@ -88,6 +89,8 @@ function FilterSection({ title, children, badge }: { title: string; children: Re
 function VariantCard({ variant, category }: { variant: ProductVariant; category: string }) {
   const { addItem } = useCartStore();
   const [added, setAdded] = useState(false);
+  const addBtnRef = useRef<HTMLButtonElement>(null);
+  const triggerAnimation = useAddToCartAnimation();
   const img = variant.primary_image?.url;
   const discount = variant.has_sale && variant.sale_price
     ? Math.round(((variant.price - variant.sale_price) / variant.price) * 100)
@@ -95,6 +98,7 @@ function VariantCard({ variant, category }: { variant: ProductVariant; category:
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
+    triggerAnimation(addBtnRef.current);
     addItem({
       variantId: variant.id,
       productId: variant.product_id,
@@ -148,7 +152,7 @@ function VariantCard({ variant, category }: { variant: ProductVariant; category:
         {/* Quick add */}
         {variant.in_stock && (
           <div className="absolute inset-x-3 bottom-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-            <button onClick={handleAdd}
+            <button ref={addBtnRef} onClick={handleAdd}
               className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all duration-200 ${added
                 ? "bg-green-500/18 text-green-400 border border-green-500/30"
                 : "bg-(--color-primary) hover:bg-(--color-primary-hover) text-black"}`}>
