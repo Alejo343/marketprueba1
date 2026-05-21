@@ -209,7 +209,7 @@ const SORT_OPTIONS = [
 
 const PER_PAGE = 12;
 
-export default function ProductListView({ variants, regionName, regionSlug }: Props) {
+export default function ProductListView({ variants = [], regionName, regionSlug }: Props) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [onlyInStock, setOnlyInStock] = useState(false);

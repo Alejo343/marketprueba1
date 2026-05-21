@@ -56,10 +56,10 @@ export default async function RegionPage({ params }: PageProps) {
     const childResults = await Promise.all(
       childRegions.map((child: Region) => getProductVariantsByRegion(child.id))
     );
-    variants = childResults.flatMap((res) => res.data);
+    variants = childResults.flatMap((res) => res.data ?? []);
   } else {
     const variantsRes = await getProductVariantsByRegion(matchedRegion.id);
-    variants = variantsRes.data;
+    variants = variantsRes.data ?? [];
   }
 
   return (

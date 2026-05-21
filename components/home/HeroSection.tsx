@@ -14,12 +14,13 @@ const PASTELS = [
 interface FranjaItem {
   label: string;
   href: string;
+  icon?: string;
 }
 
 function OvalFranjas({ items }: { items: FranjaItem[] }) {
   return (
     <div className={s.oval}>
-      {items.map(({ label, href }, i) => (
+      {items.map(({ label, href, icon }, i) => (
         <a
           key={label}
           href={href}
@@ -33,7 +34,10 @@ function OvalFranjas({ items }: { items: FranjaItem[] }) {
           }}
           onTouchEnd={(e) => e.stopPropagation()}
         >
-          {label}
+          {icon && (
+            <img src={icon} alt="" className={s.franjaIcon} draggable={false} />
+          )}
+          <span>{label}</span>
         </a>
       ))}
     </div>
@@ -46,11 +50,21 @@ const cards = [
     logo: "/images/hero-tipo3/elemento1-logo.png",
     titulo: "/images/hero-tipo3/elemento1-titulo.png",
     franjas: [
+      // { label: "Wagyu", href: "/region/wagyu", icon: "/svgs/carnes%20maduradas.svg" },
+      // { label: "Angus", href: "/region/angus", icon: "/svgs/carnes%20maduradas.svg" },
       { label: "Wagyu", href: "/region/wagyu" },
       { label: "Angus", href: "/region/angus" },
       { label: "Cerdo y chorizos", href: "/region/cerdo-y-corizos" },
-      { label: "Nuestros cortes", href: "/region/nuestros-cortes" },
-      { label: "Carnes maduradas y seleccionadas nacional", href: "/region/carnes-maduradas-y-seleccionadas-nacional" },
+      {
+        label: "Nuestros cortes",
+        href: "/region/nuestros-cortes",
+        icon: "/svgs/nuestros%20cortes.svg",
+      },
+      {
+        label: "Carnes maduradas y seleccionadas nacional",
+        href: "/region/carnes-maduradas-y-seleccionadas-nacional",
+        icon: "/svgs/carnes%20maduradas.svg",
+      },
     ],
   },
   {
@@ -58,8 +72,16 @@ const cards = [
     logo: "/images/hero-tipo3/elemento2-logo.png",
     titulo: "/images/hero-tipo3/elemento2-titulo.png",
     franjas: [
-      { label: "Barilles", href: "/region/barriles" },
-      { label: "Accesorios", href: "/region/barril-market" },
+      {
+        label: "Barilles",
+        href: "/region/barriles",
+        icon: "/svgs/drum-smoke-icon-v2.svg",
+      },
+      {
+        label: "Accesorios",
+        href: "/region/barril-market",
+        icon: "/svgs/accesorios%20y%20vitrinas.svg",
+      },
     ],
   },
   {
@@ -67,13 +89,22 @@ const cards = [
     logo: "/images/hero-tipo3/elemento3-logo.png",
     titulo: "/images/hero-tipo3/elemento3-titulo.png",
     franjas: [
-      { label: "Cava & licores", href: "/region/cava-y-licores" },
-      { label: "Bebidas", href: "/region/bebidas" },
+      {
+        label: "Cava & licores",
+        href: "/region/cava-y-licores",
+        icon: "/svgs/cava%20y%20licores.svg",
+      },
+      { label: "Bebidas", href: "/region/bebidas", icon: "/svgs/bebidas.svg" },
       {
         label: "Sangrias & mojito The Market",
         href: "/region/sangrias-y-mojito-the-market",
+        icon: "/svgs/sangria%20y%20mojito.svg",
       },
-      { label: "Cigarros y Vapos", href: "/region/cigarros-y-vapos" },
+      {
+        label: "Cigarros y Vapos",
+        href: "/region/cigarros-y-vapos",
+        icon: "/svgs/vape.svg",
+      },
     ],
   },
   {
@@ -81,15 +112,51 @@ const cards = [
     logo: "/images/hero-tipo3/elemento4-logo.png",
     titulo: "/images/hero-tipo3/elemento4-titulo.png",
     franjas: [
-      { label: "The Market Signature", href: "/region/the-market-signature" },
-      { label: "Casa de especias", href: "/region/casa-de-especias" },
-      { label: "Cocina Mexicana", href: "/region/cocina-mexicana" },
-      { label: "Colmena & Cafe", href: "/region/colmena-y-cafe" },
-      { label: "Despensa Gourmet", href: "/region/despensa-gourmet" },
-      { label: "Escencia nikkei", href: "/region/escencia-nikkei" },
-      { label: "Rincon italiano", href: "/region/rincon-italiano" },
-      { label: "Sabores del mundo", href: "/region/sabores-del-mundo" },
-      { label: "Accesorios y vitrinas", href: "/region/accesorios-y-vitrinas" },
+      {
+        label: "The Market Signature",
+        href: "/region/the-market-signature",
+        icon: "/svgs/sabores%20del%20mundo.svg",
+      },
+      {
+        label: "Casa de especias",
+        href: "/region/casa-de-especias",
+        icon: "/svgs/especias.svg",
+      },
+      {
+        label: "Cocina Mexicana",
+        href: "/region/cocina-mexicana",
+        icon: "/svgs/mexico.svg",
+      },
+      {
+        label: "Colmena & Cafe",
+        href: "/region/colmena-y-cafe",
+        icon: "/svgs/colmena%20y%20cafe.svg",
+      },
+      {
+        label: "Despensa Gourmet",
+        href: "/region/despensa-gourmet",
+        icon: "/svgs/gourmet.svg",
+      },
+      {
+        label: "Escencia nikkei",
+        href: "/region/escencia-nikkei",
+        icon: "/svgs/nikkei.svg",
+      },
+      {
+        label: "Rincon italiano",
+        href: "/region/rincon-italiano",
+        icon: "/svgs/italiano.svg",
+      },
+      {
+        label: "Sabores del mundo",
+        href: "/region/sabores-del-mundo",
+        icon: "/svgs/sabores%20del%20mundo.svg",
+      },
+      {
+        label: "Accesorios y vitrinas",
+        href: "/region/accesorios-y-vitrinas",
+        icon: "/svgs/accesorios%20y%20vitrinas.svg",
+      },
     ],
   },
 ];
@@ -245,7 +312,7 @@ export default function HeroSection() {
         onMouseEnter={handleOverlayMouseEnter}
         onMouseLeave={handleOverlayMouseLeave}
       >
-        {activeCardData?.franjas.map(({ label, href }, i) => (
+        {activeCardData?.franjas.map(({ label, href, icon }, i) => (
           <a
             key={label}
             href={href}
@@ -255,7 +322,15 @@ export default function HeroSection() {
               if (href === "#") e.preventDefault();
             }}
           >
-            {label}
+            {icon && (
+              <img
+                src={icon}
+                alt=""
+                className={s.franjaIcon}
+                draggable={false}
+              />
+            )}
+            <span>{label}</span>
           </a>
         ))}
       </div>

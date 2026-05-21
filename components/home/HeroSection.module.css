@@ -167,6 +167,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
   text-decoration: none;
   color: #F5F0E8;
   font-family: var(--font-inter), sans-serif;
@@ -176,7 +177,7 @@
   text-transform: uppercase;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
   text-align: center;
-  padding: 0 0.5rem;
+  padding: 0 0.75rem;
   border-bottom: 1px solid rgba(201, 168, 76, 0.12);
   transition: background 0.18s ease, color 0.18s ease, letter-spacing 0.18s ease;
 }
@@ -189,6 +190,20 @@
   background: rgba(201, 168, 76, 0.14);
   color: #C9A84C;
   letter-spacing: 0.14em;
+}
+
+.franjaIcon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: brightness(0) invert(1) opacity(0.82);
+  transition: filter 0.18s ease;
+  pointer-events: none;
+}
+
+.franja:hover .franjaIcon {
+  filter: brightness(0) saturate(100%) invert(72%) sepia(36%) saturate(700%) hue-rotate(6deg) brightness(96%) contrast(90%);
 }
 
 /* ── CARD LOGO + TÍTULO ── */
@@ -354,8 +369,14 @@
   .franja {
     font-size: 0.6rem;
     letter-spacing: 0.04em;
-    padding: 0 0.25rem;
+    padding: 0 0.4rem;
     text-align: center;
+    gap: 0.35rem;
+  }
+
+  .franjaIcon {
+    width: 13px;
+    height: 13px;
   }
 
   .cardLogo {

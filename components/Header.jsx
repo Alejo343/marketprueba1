@@ -460,7 +460,7 @@ export default function Header() {
                     <div key={cat.label} className="relative group">
                       <Link
                         href={cat.href ?? "#"}
-                        className={`block px-6 py-3.5 text-xs tracking-widest uppercase font-semibold transition-colors duration-200 cursor-pointer ${
+                        className={`flex items-center gap-1.5 px-6 py-3.5 text-xs tracking-widest uppercase font-semibold transition-colors duration-200 cursor-pointer ${
                           catActive
                             ? "text-(--color-primary)"
                             : "text-(--color-nav-text) hover:text-(--color-primary)"
@@ -468,6 +468,11 @@ export default function Header() {
                         style={{ fontFamily: "var(--font-inter)" }}
                       >
                         {cat.label}
+                        {cat.items?.length > 0 && (
+                          <span className="transition-transform duration-200 group-hover:rotate-180">
+                            <ChevronDown />
+                          </span>
+                        )}
                       </Link>
                       {cat.items?.length > 0 && (
                         <div className="absolute left-0 top-full opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-10">
@@ -534,24 +539,34 @@ export default function Header() {
                               key={cat.href}
                               className="border-t border-(--color-nav-text)/5"
                             >
-                              <button
+                              <div
+                                className="w-full flex items-center justify-between px-6 py-2.5 cursor-pointer"
                                 onClick={() =>
+                                  cat.items?.length > 0 &&
                                   setMobileOpenCategory(
-                                    mobileOpenCategory === cat.href
-                                      ? null
-                                      : cat.href,
+                                    mobileOpenCategory === cat.href ? null : cat.href,
                                   )
                                 }
-                                className="w-full flex items-center justify-between px-6 py-2.5 text-xs tracking-widest uppercase font-semibold text-(--color-nav-text) hover:text-(--color-primary) transition-colors duration-200 cursor-pointer"
                               >
-                                <span>{cat.label}</span>
-                                <span
-                                  className={`transition-transform duration-200 ${mobileOpenCategory === cat.href ? "rotate-180" : ""}`}
+                                <Link
+                                  href={cat.href}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setMobileMenuOpen(false);
+                                  }}
+                                  className="text-xs tracking-widest uppercase font-semibold text-(--color-nav-text) hover:text-(--color-primary) transition-colors duration-200"
                                 >
-                                  <ChevronDown />
-                                </span>
-                              </button>
-                              {mobileOpenCategory === cat.href && (
+                                  {cat.label}
+                                </Link>
+                                {cat.items?.length > 0 && (
+                                  <span
+                                    className={`ml-2 transition-transform duration-200 block text-(--color-nav-text) ${mobileOpenCategory === cat.href ? "rotate-180" : ""}`}
+                                  >
+                                    <ChevronDown />
+                                  </span>
+                                )}
+                              </div>
+                              {mobileOpenCategory === cat.href && cat.items?.length > 0 && (
                                 <ul className="pb-1 pl-4">
                                   {cat.items.map((item) => (
                                     <li key={item.label}>

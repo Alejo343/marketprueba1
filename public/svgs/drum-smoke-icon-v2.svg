@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" width="200" height="170">
+
+  <!-- Handle arch -->
+  <path d="M82,50 Q100,10 118,50" fill="none" stroke="#C9A84C" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Handle posts (connect arch to lid) -->
+  <rect x="79" y="49" width="7" height="13" fill="#C9A84C" rx="1"/>
+  <rect x="114" y="49" width="7" height="13" fill="#C9A84C" rx="1"/>
+
+  <!-- Lid (slightly wider than body) -->
+  <rect x="60" y="60" width="80" height="11" fill="#C9A84C" rx="2"/>
+
+  <!-- Cylinder body -->
+  <rect x="68" y="70" width="64" height="82" fill="#C9A84C" rx="2"/>
+
+  <!-- Side brackets — upper pair -->
+  <rect x="46" y="80" width="22" height="10" fill="#C9A84C" rx="2"/>
+  <rect x="132" y="80" width="22" height="10" fill="#C9A84C" rx="2"/>
+
+  <!-- Side brackets — lower pair -->
+  <rect x="46" y="132" width="22" height="10" fill="#C9A84C" rx="2"/>
+  <rect x="132" y="132" width="22" height="10" fill="#C9A84C" rx="2"/>
+
+  <!-- Bottom collection tray (wider than body) -->
+  <rect x="58" y="150" width="84" height="9" fill="#C9A84C" rx="2"/>
+
+</svg>
