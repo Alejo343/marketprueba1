@@ -27,6 +27,8 @@ export interface ProductVariant {
   min_stock: number;
   low_stock: boolean;
   in_stock: boolean;
+  is_featured: boolean;
+  featured_order: number | null;
   primary_image: Media | null;
   product: Pick<
     Product,

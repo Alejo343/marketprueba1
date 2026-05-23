@@ -244,6 +244,14 @@ export default function ProductListView({ variants = [], regionName, regionSlug 
     if (selectedBrands.size > 0) list = list.filter((v) => v.product?.brand?.name && selectedBrands.has(v.product.brand.name));
 
     switch (sort) {
+      case "default":
+        list.sort((a, b) => {
+          if (a.is_featured === b.is_featured) {
+            return (a.featured_order ?? 9999) - (b.featured_order ?? 9999);
+          }
+          return a.is_featured ? -1 : 1;
+        });
+        break;
       case "price-asc": list.sort((a, b) => a.final_price - b.final_price); break;
       case "price-desc": list.sort((a, b) => b.final_price - a.final_price); break;
       case "name-asc": list.sort((a, b) => (a.product?.name ?? "").localeCompare(b.product?.name ?? "")); break;
