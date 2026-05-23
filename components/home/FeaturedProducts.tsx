@@ -30,12 +30,23 @@ export default function FeaturedProducts() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/regions")
-      .then((r) => r.json())
-      .then((res) => {
-        const loaded: Region[] = (res.data ?? []).filter(
-          (r: Region) => !EXCLUDED_REGION_IDS.includes(r.id),
+    Promise.all([
+      fetch("/api/regions").then((r) => r.json()),
+      fetch("/api/featured-variants").then((r) => r.json()),
+    ])
+      .then(([regionsRes, featuredRes]) => {
+        const allRegions: Region[] = regionsRes.data ?? [];
+        const excludedSet = new Set(EXCLUDED_REGION_IDS);
+        for (const r of allRegions) {
+          if (r.parent_id !== null && excludedSet.has(r.parent_id)) excludedSet.add(r.id);
+        }
+        const allowedRegions = allRegions.filter((r: Region) => !excludedSet.has(r.id));
+        const regionIdsWithProducts = new Set<number>(
+          (featuredRes.data ?? [])
+            .map((v: { product?: { region_id?: number | null } }) => v.product?.region_id)
+            .filter(Boolean),
         );
+        const loaded = allowedRegions.filter((r) => regionIdsWithProducts.has(r.id));
         setRegions(loaded);
         if (loaded.length > 0) setSelectedRegion(loaded[0].id);
       })
@@ -43,13 +54,12 @@ export default function FeaturedProducts() {
   }, []);
 
   useEffect(() => {
+    if (selectedRegion === null) return;
     setLoading(true);
-    const url = selectedRegion
-      ? `/api/featured-variants?region_id=${selectedRegion}`
-      : `/api/featured-variants`;
+    const url = `/api/featured-variants?region_id=${selectedRegion}`;
     fetch(url)
       .then((r) => r.json())
-      .then((res) => setProducts(res.data ?? []))
+      .then((res) => setProducts((res.data ?? []).slice(0, 8)))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [selectedRegion]);

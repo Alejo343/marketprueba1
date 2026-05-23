@@ -42,7 +42,7 @@ export default function PromoBanners() {
                   Controla la temperatura y logra el sabor ahumado perfecto.
                 </p>
                 <Link
-                  href="/region/accesorios-y-vitrinas"
+                  href="/region/barriles"
                   className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] px-5 py-2.5 rounded-lg font-bold text-sm transition-colors duration-200 cursor-pointer"
                 >
                   Compra ahora <ArrowIcon />
@@ -68,7 +68,10 @@ export default function PromoBanners() {
               >
                 <div
                   className="absolute inset-0 bg-no-repeat bg-right-bottom opacity-35 group-hover:opacity-50 transition-opacity duration-300"
-                  style={{ backgroundImage: `url('${b.image}')`, backgroundSize: "42%" }}
+                  style={{
+                    backgroundImage: `url('${b.image}')`,
+                    backgroundSize: "42%",
+                  }}
                 />
                 <div className="absolute inset-0 bg-linear-to-r from-[var(--color-surface)] via-[var(--color-surface)]/85 to-transparent" />
                 <div className="relative z-10 p-7 flex flex-col justify-between h-full">
