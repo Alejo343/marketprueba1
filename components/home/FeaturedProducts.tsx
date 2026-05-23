@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import type { Region, FeaturedProduct } from "@/types";
-import type { ProductVariant } from "@/types";
+import type { Region, ProductVariant } from "@/types";
 import ProductCard from "./ProductCard";
 
 function ChevronDown({ open }: { open: boolean }) {
@@ -19,10 +18,12 @@ function ChevronDown({ open }: { open: boolean }) {
   );
 }
 
+const EXCLUDED_REGION_IDS = [47, 39];
+
 export default function FeaturedProducts() {
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<number | null>(null);
-  const [products, setProducts] = useState<FeaturedProduct[]>([]);
+  const [products, setProducts] = useState<ProductVariant[]>([]);
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [timerKey, setTimerKey] = useState(0);
@@ -32,9 +33,10 @@ export default function FeaturedProducts() {
     fetch("/api/regions")
       .then((r) => r.json())
       .then((res) => {
-        const loaded: Region[] = res.data ?? [];
+        const loaded: Region[] = (res.data ?? []).filter(
+          (r: Region) => !EXCLUDED_REGION_IDS.includes(r.id),
+        );
         setRegions(loaded);
-        // Select first region immediately so the initial product fetch has a valid region_id
         if (loaded.length > 0) setSelectedRegion(loaded[0].id);
       })
       .catch(() => {});
@@ -43,8 +45,8 @@ export default function FeaturedProducts() {
   useEffect(() => {
     setLoading(true);
     const url = selectedRegion
-      ? `/api/featured-products?region_id=${selectedRegion}`
-      : `/api/featured-products`;
+      ? `/api/featured-variants?region_id=${selectedRegion}`
+      : `/api/featured-variants`;
     fetch(url)
       .then((r) => r.json())
       .then((res) => setProducts(res.data ?? []))
@@ -55,10 +57,10 @@ export default function FeaturedProducts() {
   // Auto-cycle every 10 s; restarted when user picks manually (timerKey changes)
   useEffect(() => {
     if (regions.length === 0) return;
-    const options: (number | null)[] = [null, ...regions.map((r) => r.id)];
+    const options = regions.map((r) => r.id);
     const interval = setInterval(() => {
       setSelectedRegion((prev) => {
-        const idx = options.indexOf(prev);
+        const idx = options.indexOf(prev as number);
         return options[(idx + 1) % options.length];
       });
     }, 10000);
@@ -76,24 +78,19 @@ export default function FeaturedProducts() {
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
 
-  const handleSelect = (id: number | null) => {
+  const handleSelect = (id: number) => {
     setSelectedRegion(id);
     setDropdownOpen(false);
     setTimerKey((k) => k + 1);
   };
 
   const selectedName =
-    selectedRegion == null
-      ? "Todas las regiones"
-      : (regions.find((r) => r.id === selectedRegion)?.name ?? "Todas las regiones");
+    regions.find((r) => r.id === selectedRegion)?.name ?? "Seleccionar región";
 
   // Progress bar key — restarts animation on every region change
-  const progressKey = `${timerKey}-${selectedRegion ?? "all"}`;
+  const progressKey = `${timerKey}-${selectedRegion}`;
 
-  const dropdownOptions = [
-    { id: null as number | null, name: "Todas las regiones" },
-    ...regions.map((r) => ({ id: r.id as number | null, name: r.name })),
-  ];
+  const dropdownOptions = regions.map((r) => ({ id: r.id, name: r.name }));
 
   return (
     <section className="py-14 bg-(--color-bg)">
@@ -148,7 +145,7 @@ export default function FeaturedProducts() {
                   {dropdownOptions.map((opt) => {
                     const active = opt.id === selectedRegion;
                     return (
-                      <li key={opt.id ?? "all"}>
+                      <li key={opt.id}>
                         <button
                           onClick={() => handleSelect(opt.id)}
                           className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm transition-colors duration-150 cursor-pointer text-left ${
@@ -184,36 +181,9 @@ export default function FeaturedProducts() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((p) => {
-              const v = p.variants?.[0];
-              if (!v) return null;
-              const cardVariant: ProductVariant = {
-                id: v.id,
-                product_id: v.product_id,
-                presentation: v.presentation,
-                sku: v.sku,
-                barcode: v.barcode,
-                price: v.price,
-                sale_price: v.sale_price,
-                final_price: v.final_price,
-                has_sale: v.has_sale,
-                stock: v.stock,
-                min_stock: v.min_stock,
-                low_stock: v.low_stock,
-                in_stock: v.in_stock,
-                primary_image: p.primary_image,
-                product: {
-                  id: p.id,
-                  name: p.name,
-                  description: "",
-                  sale_type: p.sale_type,
-                  sale_type_label: p.sale_type_label ?? "",
-                  brand: p.brand ?? null,
-                  media: [],
-                },
-              };
-              return <ProductCard key={p.id} variant={cardVariant} />;
-            })}
+            {products.map((v) => (
+              <ProductCard key={v.id} variant={v} />
+            ))}
           </div>
         )}
       </div>

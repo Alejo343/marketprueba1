@@ -4,7 +4,6 @@ import {
   Product,
   Category,
   Region,
-  FeaturedProduct,
 } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -49,12 +48,12 @@ export async function getProductVariantsByRegion(regionId: number) {
   return res.json();
 }
 
-export async function getFeaturedProducts(regionId?: number): Promise<FeaturedProduct[]> {
+export async function getFeaturedVariants(regionId?: number): Promise<ProductVariant[]> {
   const url = regionId
-    ? `/api/featured-products?region_id=${regionId}`
-    : `/api/featured-products`;
+    ? `/api/featured-variants?region_id=${regionId}`
+    : `/api/featured-variants`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error("Error al obtener productos destacados");
+  if (!res.ok) throw new Error("Error al obtener variantes destacadas");
   const json = await res.json();
   return json.data ?? [];
 }
