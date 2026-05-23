@@ -37,6 +37,7 @@ export interface ProductVariant {
     | "sale_type_label"
     | "brand"
     | "media"
+    | "region_id"
   >;
 }
 
@@ -48,6 +49,7 @@ export interface Product {
   sale_type_label: string;
   active: boolean;
   category_id: number;
+  region_id?: number | null;
   brand_id: number | null;
   brand?: Brand | null;
   primary_image: Media | null;

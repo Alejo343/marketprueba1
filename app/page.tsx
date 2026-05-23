@@ -15,10 +15,17 @@ import HomeFooter from "@/components/home/HomeFooter";
 export default function Home() {
   const [latestVariants, setLatestVariants] = useState<ProductVariant[]>([]);
 
+  const EXCLUDED_REGION_IDS = [47, 39];
+
   useEffect(() => {
     fetch("/api/product-variants")
       .then((r) => r.json())
-      .then((res) => setLatestVariants((res.data ?? []).slice(0, 8)))
+      .then((res) => {
+        const filtered = (res.data ?? []).filter(
+          (v: ProductVariant) => !EXCLUDED_REGION_IDS.includes(v.product?.region_id ?? -1),
+        );
+        setLatestVariants(filtered.slice(0, 8));
+      })
       .catch(() => {});
   }, []);
 
