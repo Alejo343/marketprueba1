@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import { useAddToCartAnimation } from "@/hooks/useAddToCartAnimation";
 import { ProductVariant } from "@/types";
@@ -222,13 +223,29 @@ const SORT_OPTIONS = [
 const PER_PAGE = 12;
 
 export default function ProductListView({ variants = [], regionName, regionSlug }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [onlySale, setOnlySale] = useState(false);
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
-  const [page, setPage] = useState(1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+
+  const setPage = useCallback((value: number | ((prev: number) => number)) => {
+    const next = typeof value === "function" ? value(page) : value;
+    const params = new URLSearchParams(searchParams.toString());
+    if (next <= 1) {
+      params.delete("page");
+    } else {
+      params.set("page", String(next));
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [page, pathname, router, searchParams]);
 
   const brands = useMemo(() => {
     const set = new Set<string>();

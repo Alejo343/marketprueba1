@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import ProductListView from "@/components/ProductListView";
@@ -69,11 +70,13 @@ export default async function RegionPage({ params }: PageProps) {
   return (
     <>
       <Header />
-      <ProductListView
-        variants={variants}
-        regionName={matchedRegion.name}
-        regionSlug={regionSlug}
-      />
+      <Suspense>
+        <ProductListView
+          variants={variants}
+          regionName={matchedRegion.name}
+          regionSlug={regionSlug}
+        />
+      </Suspense>
     </>
   );
 }
