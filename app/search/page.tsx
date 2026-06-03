@@ -31,7 +31,8 @@ function SearchResults() {
       (v) =>
         normalize(v.product?.name ?? "").includes(term) ||
         normalize(v.product?.brand?.name ?? "").includes(term) ||
-        normalize(v.presentation ?? "").includes(term),
+        normalize(v.presentation ?? "").includes(term) ||
+        normalize(v.product?.description ?? "").includes(term),
     );
   }, [variants, q]);
 
