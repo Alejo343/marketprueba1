@@ -4,6 +4,8 @@ import { Suspense, useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import ProductListView from "@/components/ProductListView";
+import AgeGate from "@/components/AgeGate";
+import { RESTRICTED_REGION_IDS } from "@/lib/restrictedRegions";
 import { ProductVariant } from "@/types";
 
 function normalize(s: string) {
@@ -36,6 +38,11 @@ function SearchResults() {
     );
   }, [variants, q]);
 
+  const hasRestricted = useMemo(
+    () => filtered.some((v) => RESTRICTED_REGION_IDS.has(v.product?.region_id ?? -1)),
+    [filtered],
+  );
+
   const title = q.trim() ? `Resultados para "${q}"` : "Todos los productos";
 
   if (loading) {
@@ -49,11 +56,14 @@ function SearchResults() {
   }
 
   return (
-    <ProductListView
-      variants={filtered}
-      regionName={title}
-      regionSlug="search"
-    />
+    <>
+      <AgeGate forceShow={hasRestricted} />
+      <ProductListView
+        variants={filtered}
+        regionName={title}
+        regionSlug="search"
+      />
+    </>
   );
 }
 

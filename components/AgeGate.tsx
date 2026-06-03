@@ -16,10 +16,11 @@ const YEARS = Array.from({ length: currentYear - 1919 }, (_, i) => currentYear -
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 interface AgeGateProps {
-  regionSlug: string;
+  regionSlug?: string;
+  forceShow?: boolean;
 }
 
-export default function AgeGate({ regionSlug }: AgeGateProps) {
+export default function AgeGate({ regionSlug, forceShow }: AgeGateProps) {
   const [visible, setVisible] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
@@ -28,14 +29,18 @@ export default function AgeGate({ regionSlug }: AgeGateProps) {
   const [denied, setDenied] = useState(false);
 
   useEffect(() => {
-    if (!RESTRICTED_REGIONS.includes(regionSlug)) return;
+    const isRestricted = forceShow || (regionSlug ? RESTRICTED_REGIONS.includes(regionSlug) : false);
+    if (!isRestricted) {
+      setVisible(false);
+      return;
+    }
     try {
       const verified = sessionStorage.getItem(STORAGE_KEY);
       if (!verified) setVisible(true);
     } catch {
       setVisible(true);
     }
-  }, [regionSlug]);
+  }, [regionSlug, forceShow]);
 
   if (!visible) return null;
 

@@ -26,7 +26,9 @@
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('data',{}\\).get\\('name',''\\) or d.get\\('name',''\\)\\)\")",
       "Bash(npx skills *)",
       "WebFetch(domain:skills.sh)",
-      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(p.dependencies?.next || p.devDependencies?.next\\)\")"
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(p.dependencies?.next || p.devDependencies?.next\\)\")",
+      "Bash(curl -s \"http://localhost:3000/api/product-variants\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\);const j=JSON.parse\\(d\\);const total=j.data?.length??0;const withProduct=j.data?.filter\\(v=>v.product\\)?.length??0;const sample=j.data?.slice\\(0,3\\)?.map\\(v=>\\({name:v.product?.name,brand:v.product?.brand?.name,pres:v.presentation}\\)\\);console.log\\({total,withProduct,sample}\\);\")"
     ]
   }
 }

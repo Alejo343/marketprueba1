@@ -1,6 +1,6 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL;
 
-export const EXCLUDED_REGION_IDS = [47, 39];
+export const EXCLUDED_REGION_IDS: number[] = [];
 
 /** Resolves parent IDs + all their children into a flat set of region IDs to exclude. */
 async function resolveAllExcludedRegionIds(): Promise<number[]> {
