@@ -27,6 +27,8 @@ export interface ProductVariant {
   min_stock: number;
   low_stock: boolean;
   in_stock: boolean;
+  is_featured: boolean;
+  featured_order: number | null;
   primary_image: Media | null;
   product: Pick<
     Product,
@@ -37,6 +39,7 @@ export interface ProductVariant {
     | "sale_type_label"
     | "brand"
     | "media"
+    | "region_id"
   >;
 }
 
@@ -48,6 +51,7 @@ export interface Product {
   sale_type_label: string;
   active: boolean;
   category_id: number;
+  region_id?: number | null;
   brand_id: number | null;
   brand?: Brand | null;
   primary_image: Media | null;

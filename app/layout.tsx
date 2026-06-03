@@ -18,8 +18,11 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Barril Market",
+  title: "The Market Gourmet",
   description: "Barril market Gourmet",
+  icons: {
+    icon: "/logov2w.webp",
+  },
 };
 
 export default function RootLayout({

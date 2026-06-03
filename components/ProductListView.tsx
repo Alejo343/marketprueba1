@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import { useAddToCartAnimation } from "@/hooks/useAddToCartAnimation";
 import { ProductVariant } from "@/types";
@@ -96,6 +97,8 @@ function VariantCard({ variant, category }: { variant: ProductVariant; category:
     ? Math.round(((variant.price - variant.sale_price) / variant.price) * 100)
     : 0;
 
+  const isWhatsAppOnly = variant.sku?.startsWith("VS") ?? false;
+
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     triggerAnimation(addBtnRef.current);
@@ -150,7 +153,7 @@ function VariantCard({ variant, category }: { variant: ProductVariant; category:
         </div>
 
         {/* Quick add */}
-        {variant.in_stock && (
+        {variant.in_stock && !isWhatsAppOnly && (
           <div className="absolute inset-x-3 bottom-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
             <button ref={addBtnRef} onClick={handleAdd}
               className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all duration-200 ${added
@@ -184,11 +187,17 @@ function VariantCard({ variant, category }: { variant: ProductVariant; category:
         <p className="text-(--color-muted) text-[11px] mb-auto pb-3">{variant.presentation}</p>
 
         <div className="flex items-baseline gap-2 pt-3 border-t border-(--color-primary)/8">
-          <span className="text-(--color-primary) font-bold text-base" style={{ fontFamily: "var(--font-playfair)" }}>
-            {fmt(variant.final_price)}
-          </span>
-          {variant.has_sale && variant.price !== variant.final_price && (
-            <span className="text-(--color-muted) text-xs line-through">{fmt(variant.price)}</span>
+          {isWhatsAppOnly ? (
+            <span className="text-(--color-muted) text-sm font-medium">Precio según corte</span>
+          ) : (
+            <>
+              <span className="text-(--color-primary) font-bold text-base" style={{ fontFamily: "var(--font-playfair)" }}>
+                {fmt(variant.final_price)}
+              </span>
+              {variant.has_sale && variant.price !== variant.final_price && (
+                <span className="text-(--color-muted) text-xs line-through">{fmt(variant.price)}</span>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -214,13 +223,29 @@ const SORT_OPTIONS = [
 const PER_PAGE = 12;
 
 export default function ProductListView({ variants = [], regionName, regionSlug }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [onlySale, setOnlySale] = useState(false);
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
-  const [page, setPage] = useState(1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+
+  const setPage = useCallback((value: number | ((prev: number) => number)) => {
+    const next = typeof value === "function" ? value(page) : value;
+    const params = new URLSearchParams(searchParams.toString());
+    if (next <= 1) {
+      params.delete("page");
+    } else {
+      params.set("page", String(next));
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [page, pathname, router, searchParams]);
 
   const brands = useMemo(() => {
     const set = new Set<string>();
@@ -236,6 +261,14 @@ export default function ProductListView({ variants = [], regionName, regionSlug 
     if (selectedBrands.size > 0) list = list.filter((v) => v.product?.brand?.name && selectedBrands.has(v.product.brand.name));
 
     switch (sort) {
+      case "default":
+        list.sort((a, b) => {
+          if (a.is_featured === b.is_featured) {
+            return (a.featured_order ?? 9999) - (b.featured_order ?? 9999);
+          }
+          return a.is_featured ? -1 : 1;
+        });
+        break;
       case "price-asc": list.sort((a, b) => a.final_price - b.final_price); break;
       case "price-desc": list.sort((a, b) => b.final_price - a.final_price); break;
       case "name-asc": list.sort((a, b) => (a.product?.name ?? "").localeCompare(b.product?.name ?? "")); break;

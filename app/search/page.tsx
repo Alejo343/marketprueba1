@@ -12,7 +12,7 @@ function normalize(s: string) {
 
 function SearchResults() {
   const params = useSearchParams();
-  const q = params.get("q") ?? "";
+  const q = params?.get("q") ?? "";
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [loading, setLoading] = useState(true);
 

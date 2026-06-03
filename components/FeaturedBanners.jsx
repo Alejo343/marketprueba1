@@ -28,7 +28,7 @@ const slides = [
       "Controla la temperatura y logra el sabor ahumado perfecto para carnes, costillas, pollo y más.",
     image: "/images/barril.png",
     buttonText: "Compra ahora",
-    href: "/region/accesorios-y-vitrinas",
+    href: "/region/barriles",
   },
   {
     id: 2,
@@ -65,7 +65,10 @@ export default function FeaturedBanners() {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setCurrent((p) => (p + 1) % slides.length), 5000);
+    const t = setInterval(
+      () => setCurrent((p) => (p + 1) % slides.length),
+      5000,
+    );
     return () => clearInterval(t);
   }, []);
 
@@ -76,7 +79,6 @@ export default function FeaturedBanners() {
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[560px]">
-
           {/* Large carousel */}
           <div className="lg:col-span-7 relative bg-(--color-surface) rounded-2xl overflow-hidden border border-(--color-primary)/15">
             {/* Gold corner accent */}
@@ -93,7 +95,9 @@ export default function FeaturedBanners() {
                 <div
                   key={slide.id}
                   className={`absolute inset-0 transition-opacity duration-700 ${
-                    i === current ? "opacity-100" : "opacity-0 pointer-events-none"
+                    i === current
+                      ? "opacity-100"
+                      : "opacity-0 pointer-events-none"
                   }`}
                 >
                   <div className="flex flex-col md:flex-row h-full p-8 md:p-12 gap-6">
@@ -207,7 +211,6 @@ export default function FeaturedBanners() {
               </Link>
             ))}
           </div>
-
         </div>
       </div>
     </section>

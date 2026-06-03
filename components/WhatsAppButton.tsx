@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCartStore } from "@/store/cartStore";
 
 const WHATSAPP_NUMBER = "573155927944";
 const WHATSAPP_MESSAGE =
@@ -10,10 +11,13 @@ const INSTAGRAM_URL = "https://www.instagram.com/themarketgourmet.cali/";
 export default function WhatsAppButton() {
   const [hoveredIg, setHoveredIg] = useState(false);
   const [hoveredWa, setHoveredWa] = useState(false);
+  const isCartOpen = useCartStore((s) => s.isOpen);
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
   const active = hoveredIg || hoveredWa;
+
+  if (isCartOpen) return null;
 
   return (
     <div
