@@ -143,12 +143,18 @@ export default function ProductInfo({ variants, showDisclaimer }: ProductInfoPro
 
       {/* Price */}
       {isWhatsAppOnly ? (
-        <div className="flex items-center gap-2">
-          <span
-            className="text-2xl font-semibold text-(--color-muted)"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            Precio según corte y peso
+        <div className="flex flex-col gap-1">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span
+              className="text-4xl font-bold text-(--color-primary)"
+              style={{ fontFamily: "var(--font-playfair)" }}
+            >
+              {fmt(selected.final_price)}
+            </span>
+            <span className="text-(--color-muted) text-sm">/ gramo</span>
+          </div>
+          <span className="text-(--color-muted) text-xs">
+            Precio por gramo, el valor final depende del corte y peso
           </span>
         </div>
       ) : (
