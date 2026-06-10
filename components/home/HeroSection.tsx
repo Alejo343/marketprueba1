@@ -82,6 +82,11 @@ const cards = [
         href: "/region/barril-market",
         icon: "/svgs/accesorios%20y%20vitrinas.svg",
       },
+      {
+        label: "Accesorios y vitrinas",
+        href: "/region/accesorios-y-vitrinas",
+        icon: "/svgs/accesorios%20y%20vitrinas.svg",
+      },
     ],
   },
   {
@@ -151,11 +156,6 @@ const cards = [
         label: "Sabores del mundo",
         href: "/region/sabores-del-mundo",
         icon: "/svgs/sabores%20del%20mundo.svg",
-      },
-      {
-        label: "Accesorios y vitrinas",
-        href: "/region/accesorios-y-vitrinas",
-        icon: "/svgs/accesorios%20y%20vitrinas.svg",
       },
     ],
   },

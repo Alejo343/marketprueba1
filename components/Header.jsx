@@ -203,16 +203,25 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const hoverTimeout = useRef(null);
   const searchInputRef = useRef(null);
+  const mobileSearchInputRef = useRef(null);
 
   const { theme, toggleTheme } = useTheme();
   const itemCount = mounted ? totalItems() : 0;
 
   useEffect(() => {
     if (searchOpen) {
-      const t = setTimeout(() => searchInputRef.current?.focus(), 300);
+      const t = setTimeout(() => {
+        searchInputRef.current?.focus();
+        mobileSearchInputRef.current?.focus();
+      }, 300);
       return () => clearTimeout(t);
     }
   }, [searchOpen]);
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -226,11 +235,6 @@ export default function Header() {
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [searchOpen]);
-
-  const closeSearch = () => {
-    setSearchOpen(false);
-    setSearchQuery("");
-  };
 
   const openProducts = () => {
     if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
@@ -252,7 +256,10 @@ export default function Header() {
           <div className="flex items-center gap-4 h-18">
             {/* Mobile menu button */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                if (!mobileMenuOpen) closeSearch();
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
               className="lg:hidden flex items-center justify-center w-9 h-9 rounded text-(--color-nav-text) hover:bg-(--color-nav-text)/10 transition-colors duration-200 cursor-pointer"
               aria-label="Menú de navegación"
             >
@@ -392,12 +399,17 @@ export default function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-3 ml-auto">
-              {/* Search toggle - desktop only */}
+              {/* Search toggle */}
               <button
-                onClick={() =>
-                  searchOpen ? closeSearch() : setSearchOpen(true)
-                }
-                className={`hidden lg:flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200 cursor-pointer ${
+                onClick={() => {
+                  if (searchOpen) {
+                    closeSearch();
+                  } else {
+                    setSearchOpen(true);
+                    setMobileMenuOpen(false);
+                  }
+                }}
+                className={`flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200 cursor-pointer ${
                   searchOpen
                     ? "text-(--color-primary) bg-(--color-primary)/10"
                     : "text-(--color-nav-text) hover:text-(--color-primary) hover:bg-(--color-nav-text)/10"
@@ -506,6 +518,43 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {/* Search bar - mobile/tablet */}
+      {searchOpen && (
+        <div className="lg:hidden bg-(--color-nav) border-b border-(--color-primary)/10 px-4 py-3">
+          <div className="flex items-center w-full border border-(--color-primary)/40 rounded-lg bg-(--color-bg) px-3 gap-2.5">
+            <span className="text-(--color-primary)/70 shrink-0">
+              <SearchIcon />
+            </span>
+            <input
+              ref={mobileSearchInputRef}
+              type="search"
+              autoComplete="off"
+              placeholder="Buscar productos, marcas, categorías..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const q = e.currentTarget.value.trim();
+                  if (q) {
+                    router.push(`/search?q=${encodeURIComponent(q)}`);
+                    closeSearch();
+                  }
+                }
+              }}
+              className="flex-1 bg-transparent py-2.5 text-sm text-(--color-nav-text) placeholder:text-(--color-nav-text)/40 outline-none [&::-webkit-search-cancel-button]:hidden"
+              style={{ fontFamily: "var(--font-inter)" }}
+            />
+            <button
+              onClick={closeSearch}
+              className="shrink-0 flex items-center justify-center w-6 h-6 rounded text-(--color-nav-text)/50 hover:text-(--color-primary) transition-colors duration-200 cursor-pointer"
+              aria-label="Cerrar búsqueda"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Mobile menu */}
       {mobileMenuOpen && (

@@ -28,7 +28,8 @@
       "WebFetch(domain:skills.sh)",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(p.dependencies?.next || p.devDependencies?.next\\)\")",
       "Bash(curl -s \"http://localhost:3000/api/product-variants\")",
-      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\);const j=JSON.parse\\(d\\);const total=j.data?.length??0;const withProduct=j.data?.filter\\(v=>v.product\\)?.length??0;const sample=j.data?.slice\\(0,3\\)?.map\\(v=>\\({name:v.product?.name,brand:v.product?.brand?.name,pres:v.presentation}\\)\\);console.log\\({total,withProduct,sample}\\);\")"
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\);const j=JSON.parse\\(d\\);const total=j.data?.length??0;const withProduct=j.data?.filter\\(v=>v.product\\)?.length??0;const sample=j.data?.slice\\(0,3\\)?.map\\(v=>\\({name:v.product?.name,brand:v.product?.brand?.name,pres:v.presentation}\\)\\);console.log\\({total,withProduct,sample}\\);\")",
+      "Bash(npm run *)"
     ]
   }
 }
