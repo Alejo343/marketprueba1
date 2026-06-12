@@ -5,7 +5,7 @@ const BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export async function GET() {
   const [variantsRes, excludedIds] = await Promise.all([
-    fetch(`${BASE}/product-variants?include=product.brand,product.media`, { next: { revalidate: 300 } }),
+    fetch(`${BASE}/product-variants?include=product.brand,product.media`, { cache: "no-store" }),
     fetchExcludedProductIds(),
   ]);
 

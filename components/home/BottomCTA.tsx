@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { ArrowIcon } from "./icons";
+import { ArrowIcon, WhatsAppIcon } from "./icons";
+
+const WHATSAPP_NUMBER = "573155927944";
+const WHATSAPP_MESSAGE = "Hola, quiero ver el catálogo de The Market Gourmet.";
 
 export default function BottomCTA() {
   return (
@@ -17,20 +20,25 @@ export default function BottomCTA() {
           experiencias únicas
         </h2>
         <p className="text-[var(--color-muted)] text-base mb-8 leading-relaxed">
-          Cada producto en Barril Market es elegido por su calidad, origen y
-          sabor. Descubre lo mejor del mercado gourmet colombiano.
+          The Market Gourmet reúne carnes premium, productos gourmet, cava,
+          licores y sabores del mundo cuidadosamente seleccionados para
+          transformar cada comida en una experiencia.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <Link
-            href="/"
+            href="/search"
             className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 cursor-pointer"
           >
-            Explorar tienda completa <ArrowIcon />
+            Ver catálogo completo <ArrowIcon />
           </Link>
-          <span className="text-[var(--color-muted)] text-sm">
-            o llámanos al{" "}
-            <span className="text-[var(--color-primary)]">315 592 79 44</span>
-          </span>
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-transparent border border-[var(--color-primary)]/40 hover:border-[var(--color-primary)] text-[var(--color-text)] px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 cursor-pointer"
+          >
+            <WhatsAppIcon /> Comprar por WhatsApp
+          </a>
         </div>
       </div>
     </section>

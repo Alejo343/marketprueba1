@@ -209,7 +209,7 @@ export default function ProductInfo({ variants, showDisclaimer }: ProductInfoPro
             href={`https://wa.me/573155927944?text=${encodeURIComponent(`Hola, estoy interesado en *${product.name}*. ¿Qué cortes tienen disponibles actualmente y cuáles son sus precios?`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 h-12 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 bg-[#25D366] hover:bg-[#1ebe5d] text-white shadow-[0_0_20px_rgba(37,211,102,0.2)] hover:shadow-[0_0_28px_rgba(37,211,102,0.35)]"
+            className="w-full h-14 px-6 rounded-xl text-base font-bold tracking-widest uppercase flex items-center justify-center gap-3 transition-all duration-300 bg-[#25D366] hover:bg-[#1ebe5d] text-white shadow-[0_0_20px_rgba(37,211,102,0.2)] hover:shadow-[0_0_28px_rgba(37,211,102,0.35)] hover:scale-[1.02]"
           >
             <WhatsAppIcon /> Consultar por WhatsApp
           </a>
@@ -218,37 +218,47 @@ export default function ProductInfo({ variants, showDisclaimer }: ProductInfoPro
           </p>
         </div>
       ) : (
-        <div className="flex items-center gap-3">
-          <QtyControl value={qty} onChange={setQty} min={1} max={selected.stock} />
-          <button
-            ref={addBtnRef}
-            onClick={handleAddToCart}
-            disabled={!selected.in_stock}
-            className={`flex-1 h-12 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
-              !selected.in_stock
-                ? "bg-(--color-subtle-bg) text-(--color-placeholder) cursor-not-allowed"
-                : added
-                ? "bg-emerald-700 text-white"
-                : "bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_28px_rgba(201,168,76,0.35)]"
-            }`}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <QtyControl value={qty} onChange={setQty} min={1} max={selected.stock} />
+            <button
+              ref={addBtnRef}
+              onClick={handleAddToCart}
+              disabled={!selected.in_stock}
+              className={`flex-1 h-12 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
+                !selected.in_stock
+                  ? "bg-(--color-subtle-bg) text-(--color-placeholder) cursor-not-allowed"
+                  : added
+                  ? "bg-emerald-700 text-white"
+                  : "bg-(--color-primary) hover:bg-(--color-primary-hover) text-(--color-on-primary) shadow-[0_0_20px_rgba(201,168,76,0.2)] hover:shadow-[0_0_28px_rgba(201,168,76,0.35)]"
+              }`}
+            >
+              {added ? (
+                <><CheckIcon /> ¡Agregado!</>
+              ) : (
+                <><CartIcon /> {!selected.in_stock ? "Sin stock" : "Agregar al carrito"}</>
+              )}
+            </button>
+            <button
+              onClick={() => setIsFav(!isFav)}
+              className={`w-12 h-12 shrink-0 flex items-center justify-center rounded-xl border transition-all duration-200 cursor-pointer ${
+                isFav
+                  ? "border-(--color-primary) bg-(--color-primary)/10 text-(--color-primary)"
+                  : "border-(--color-divider) bg-(--color-on-primary) text-(--color-muted) hover:border-(--color-primary)/40 hover:text-(--color-primary)"
+              }`}
+              aria-label={isFav ? "Quitar de favoritos" : "Añadir a favoritos"}
+            >
+              <HeartIcon filled={isFav} />
+            </button>
+          </div>
+          <a
+            href={`https://wa.me/573155927944?text=${encodeURIComponent(`Hola, quiero consultar disponibilidad de este producto: ${product.name}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full h-12 px-6 rounded-xl text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 bg-[#25D366] hover:bg-[#1ebe5d] text-white shadow-[0_0_20px_rgba(37,211,102,0.2)] hover:shadow-[0_0_28px_rgba(37,211,102,0.35)] hover:scale-[1.02]"
           >
-            {added ? (
-              <><CheckIcon /> ¡Agregado!</>
-            ) : (
-              <><CartIcon /> {!selected.in_stock ? "Sin stock" : "Agregar al carrito"}</>
-            )}
-          </button>
-          <button
-            onClick={() => setIsFav(!isFav)}
-            className={`w-12 h-12 shrink-0 flex items-center justify-center rounded-xl border transition-all duration-200 cursor-pointer ${
-              isFav
-                ? "border-(--color-primary) bg-(--color-primary)/10 text-(--color-primary)"
-                : "border-(--color-divider) bg-(--color-on-primary) text-(--color-muted) hover:border-(--color-primary)/40 hover:text-(--color-primary)"
-            }`}
-            aria-label={isFav ? "Quitar de favoritos" : "Añadir a favoritos"}
-          >
-            <HeartIcon filled={isFav} />
-          </button>
+            <WhatsAppIcon /> Comprar por WhatsApp
+          </a>
         </div>
       )}
 

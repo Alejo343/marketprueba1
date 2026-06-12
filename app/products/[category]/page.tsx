@@ -61,22 +61,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <ProductGallery images={images} productName={product.name} />
             <ProductInfo variants={variants} showDisclaimer={RESTRICTED_REGIONS.includes(productId)} />
           </div>
-
-          {/* Gold divider */}
-          <div className="h-px bg-linear-to-r from-transparent via-[var(--color-primary)]/20 to-transparent my-16" />
-
-          {/* Description section */}
-          {product.description && (
-            <div className="max-w-2xl">
-              <h2
-                className="text-lg font-bold text-[var(--color-text)] mb-4"
-                style={{ fontFamily: "var(--font-playfair)" }}
-              >
-                Descripción
-              </h2>
-              <p className="text-[var(--color-muted)] text-sm leading-relaxed">{product.description}</p>
-            </div>
-          )}
         </div>
       </div>
     </>
