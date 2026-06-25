@@ -41,12 +41,37 @@ export default function FeaturedProducts() {
           if (r.parent_id !== null && excludedSet.has(r.parent_id)) excludedSet.add(r.id);
         }
         const allowedRegions = allRegions.filter((r: Region) => !excludedSet.has(r.id));
+
+        // Solo regiones de nivel superior (sin padre)
+        const topLevel = allowedRegions.filter((r: Region) => r.parent_id === null);
+
+        // Mapa parentId → [childIds] para saber qué hijos tiene cada padre
+        const childrenMap = new Map<number, number[]>();
+        for (const r of allowedRegions) {
+          if (r.parent_id !== null) {
+            const existing = childrenMap.get(r.parent_id) ?? [];
+            existing.push(r.id);
+            childrenMap.set(r.parent_id, existing);
+          }
+        }
+
+        // IDs de regiones que tienen variantes destacadas
         const regionIdsWithProducts = new Set<number>(
           (featuredRes.data ?? [])
             .map((v: { product?: { region_id?: number | null } }) => v.product?.region_id)
-            .filter(Boolean),
+            .filter(Boolean) as number[],
         );
-        const loaded = allowedRegions.filter((r) => regionIdsWithProducts.has(r.id));
+
+        const REGION_PRIORITY: Record<number, number> = { 30: 0, 14: 1 };
+        const getPriority = (id: number) => REGION_PRIORITY[id] ?? 2;
+
+        // Mostrar la región padre si ella o alguno de sus hijos tiene productos destacados
+        const loaded = topLevel
+          .filter((r) => {
+            if (regionIdsWithProducts.has(r.id)) return true;
+            return (childrenMap.get(r.id) ?? []).some((childId) => regionIdsWithProducts.has(childId));
+          })
+          .sort((a, b) => getPriority(a.id) - getPriority(b.id));
         setRegions(loaded);
         if (loaded.length > 0) setSelectedRegion(loaded[0].id);
       })

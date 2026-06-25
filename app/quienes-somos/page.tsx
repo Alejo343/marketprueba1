@@ -9,14 +9,52 @@ const values = [
   { icon: "✦", label: "Experiencia" },
 ];
 
-const diferenciadores = [
-  "Un concepto de retail gastronómico integral",
-  "Integración de la experiencia en casa y en tienda",
-  "Curaduría de productos premium nacionales e importados",
-  "Oferta de bebidas, vinos y destilados de alta calidad",
-  "Integración de conceptos como Barril Market y Vaca Santa",
-  "Desarrollo de productos propios y líneas exclusivas",
-  "Asesoría gastronómica personalizada",
+const comparativa = [
+  {
+    tradicional: "Vende lo que tiene en inventario",
+    nosotros: "Cura cada producto con criterio gastronómico",
+  },
+  {
+    tradicional: "Estantes genéricos sin hilo conductor",
+    nosotros: "Mundos temáticos: italiano, mexicano, nikkei, gourmet…",
+  },
+  {
+    tradicional: "El cliente busca solo",
+    nosotros: "Asesoría personalizada en cada visita",
+  },
+  {
+    tradicional: "Un solo concepto: tienda",
+    nosotros: "Barril Market + Vaca Santa + Líneas propias bajo un techo",
+  },
+  {
+    tradicional: "Productos de catálogo masivo",
+    nosotros: "Importados, exclusivos y desarrollos propios",
+  },
+  {
+    tradicional: "La experiencia termina en la caja",
+    nosotros: "La experiencia continúa en tu mesa",
+  },
+];
+
+const conceptos = [
+  {
+    nombre: "Barril Market",
+    tagline: "El origen. El fuego. La tradición.",
+    descripcion:
+      "Nacido durante la pandemia como una respuesta al consumo tradicional, Barril Market redefinió la experiencia de asar en casa. Barriles premium, accesorios diferenciados y una curaduría que marcó el estándar.",
+    detalle: "Barriles · Carbón · Accesorios de asado · Experiencia en casa",
+    imagen: "/images/quienes-somos/barriles_y_accesorios.JPG",
+    numero: "01",
+  },
+  {
+    nombre: "Vaca Santa",
+    tagline: "La carnicería que no existía en Cali.",
+    descripcion:
+      "Una carnicería premium diferente. Cortes importados, Wagyu, desarrollos propios y productos terminados pensados para quienes exigen lo mejor. No es una carnicería. Es una declaración de calidad.",
+    detalle: "Wagyu · Cortes importados · Productos propios · Alta calidad",
+    imagen: "/images/quienes-somos/barriles_y_carbon.JPG",
+    numero: "02",
+  },
 ];
 
 const galeriaItems = [
@@ -60,7 +98,7 @@ export default function QuienesSomosPage() {
     >
       <Header />
 
-      {/* Hero — imagen de fondo */}
+      {/* Hero */}
       <section className="relative overflow-hidden" style={{ minHeight: "70vh" }}>
         <div className="absolute inset-0">
           <img
@@ -94,11 +132,73 @@ export default function QuienesSomosPage() {
         </div>
       </section>
 
+      {/* Manifiesto — declaración editorial de diferencial */}
+      <section className="py-24 bg-[var(--color-bg)] relative overflow-hidden">
+        {/* Decoración de fondo */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-primary)]/40 to-transparent" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full"
+            style={{
+              background:
+                "radial-gradient(ellipse, rgba(201,168,76,0.05) 0%, transparent 70%)",
+            }}
+          />
+        </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          {/* Número decorativo */}
+          <div className="flex items-start gap-8 md:gap-16">
+            <div className="hidden md:block shrink-0 pt-2">
+              <span
+                className="text-[6rem] font-bold leading-none select-none"
+                style={{
+                  fontFamily: "var(--font-playfair)",
+                  color: "rgba(201,168,76,0.08)",
+                  letterSpacing: "-0.04em",
+                }}
+              >
+                ≠
+              </span>
+            </div>
+            <div>
+              <span className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.25em] uppercase block mb-6">
+                No somos una tienda más
+              </span>
+              <h2
+                className="text-[2.2rem] md:text-[3.2rem] font-bold text-[var(--color-text)] leading-[1.1] mb-8"
+                style={{ fontFamily: "var(--font-playfair)" }}
+              >
+                Una tienda vende productos.
+                <br />
+                <em className="text-[var(--color-primary)] not-italic">Nosotros construimos experiencias.</em>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-[var(--color-muted)] leading-relaxed">
+                <p>
+                  En Cali puedes encontrar una licorería, una carnicería o una tienda gourmet.
+                  Pero no encontrarás un espacio donde{" "}
+                  <strong className="text-[var(--color-text)]">
+                    todas esas experiencias coexistan bajo una misma visión curatorial
+                  </strong>
+                  , con productos que no están en ningún otro estante de la ciudad.
+                </p>
+                <p>
+                  Desde que una persona entra a The Market Gourmet hasta que cocina en casa,
+                  la experiencia está diseñada:{" "}
+                  <strong className="text-[var(--color-text)]">
+                    selección experta, asesoría real, productos únicos
+                  </strong>{" "}
+                  y conceptos propios que no existen en ninguna otra tienda.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-primary)]/20 to-transparent" />
+      </section>
+
       {/* Historia */}
       <section className="py-20 bg-[var(--color-subtle-bg)] border-y border-[var(--color-primary)]/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* Bloque 1: texto izquierda + imagen derecha */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start mb-16">
             <div className="lg:col-span-3">
               <span className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.2em] uppercase block mb-4">
@@ -151,7 +251,6 @@ export default function QuienesSomosPage() {
             </div>
           </div>
 
-          {/* Bloque 2: imagen izquierda + texto derecha */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
             <div className="lg:col-span-2 order-2 lg:order-1">
               <div
@@ -192,6 +291,175 @@ export default function QuienesSomosPage() {
                 consolidándose como una propuesta diferencial en la ciudad de Cali.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparativa — El diferencial visual */}
+      <section className="py-24 bg-[var(--color-bg)] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute top-0 right-0 w-[400px] h-[400px]"
+            style={{
+              background:
+                "radial-gradient(circle at top right, rgba(201,168,76,0.04) 0%, transparent 60%)",
+            }}
+          />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.25em] uppercase block mb-4">
+              La diferencia es real
+            </span>
+            <h2
+              className="text-[2rem] md:text-[2.8rem] font-bold text-[var(--color-text)] mb-4"
+              style={{ fontFamily: "var(--font-playfair)" }}
+            >
+              ¿Por qué no somos una tienda tradicional?
+            </h2>
+            <p className="text-[var(--color-muted)] max-w-xl mx-auto">
+              La comparación habla por sí sola.
+            </p>
+          </div>
+
+          {/* Encabezados de columnas */}
+          <div className="grid grid-cols-[1fr_48px_1fr] gap-0 mb-3 max-w-4xl mx-auto">
+            <div className="text-center pb-3 border-b border-[#1E1E1E]">
+              <span className="text-[var(--color-muted)] text-xs font-semibold tracking-[0.2em] uppercase">
+                Tienda Tradicional
+              </span>
+            </div>
+            <div />
+            <div className="text-center pb-3 border-b border-[var(--color-primary)]/40">
+              <span className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.2em] uppercase">
+                The Market Gourmet
+              </span>
+            </div>
+          </div>
+
+          {/* Filas de comparación */}
+          <div className="max-w-4xl mx-auto divide-y divide-[#1E1E1E]/60">
+            {comparativa.map((item, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-[1fr_48px_1fr] gap-0 py-5 group"
+              >
+                {/* Tienda tradicional */}
+                <div className="flex items-center justify-end pr-6">
+                  <p className="text-[var(--color-muted)] text-sm leading-relaxed text-right">
+                    {item.tradicional}
+                  </p>
+                </div>
+
+                {/* Separador central con vs */}
+                <div className="flex items-center justify-center">
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="w-px h-4 bg-[#2A2A2A]" />
+                    <span
+                      className="text-[10px] font-bold text-[#333] tracking-[0.15em] uppercase"
+                      style={{ writingMode: "horizontal-tb" }}
+                    >
+                      vs
+                    </span>
+                    <span className="w-px h-4 bg-[#2A2A2A]" />
+                  </div>
+                </div>
+
+                {/* The Market Gourmet */}
+                <div className="flex items-center pl-6">
+                  <div className="flex items-start gap-3">
+                    <span className="shrink-0 mt-1 w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
+                    <p className="text-[var(--color-text)] text-sm leading-relaxed font-medium">
+                      {item.nosotros}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Nuestros conceptos — Barril Market y Vaca Santa */}
+      <section className="py-24 bg-[var(--color-subtle-bg)] border-y border-[var(--color-primary)]/10 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.25em] uppercase block mb-4">
+              Múltiples mundos, una sola dirección
+            </span>
+            <h2
+              className="text-[2rem] md:text-[2.8rem] font-bold text-[var(--color-text)] mb-4"
+              style={{ fontFamily: "var(--font-playfair)" }}
+            >
+              Nuestros conceptos
+            </h2>
+            <p className="text-[var(--color-muted)] max-w-xl mx-auto">
+              Bajo el techo de The Market Gourmet conviven marcas propias que no encontrarás
+              en ninguna otra tienda de la ciudad.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {conceptos.map((c, i) => (
+              <div
+                key={i}
+                className="relative rounded-2xl overflow-hidden border border-[var(--color-primary)]/15 group"
+                style={{ minHeight: "420px" }}
+              >
+                {/* Imagen de fondo */}
+                <img
+                  src={c.imagen}
+                  alt={c.nombre}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[#080808]/75" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#080808]/95 via-[#080808]/40 to-transparent" />
+
+                {/* Contenido */}
+                <div className="relative h-full flex flex-col justify-between p-8 md:p-10" style={{ minHeight: "420px" }}>
+                  {/* Número */}
+                  <div className="flex items-start justify-between">
+                    <span
+                      className="text-[4rem] font-bold leading-none select-none"
+                      style={{
+                        fontFamily: "var(--font-playfair)",
+                        color: "rgba(201,168,76,0.15)",
+                        letterSpacing: "-0.04em",
+                      }}
+                    >
+                      {c.numero}
+                    </span>
+                    <div className="w-8 h-px bg-[var(--color-primary)]/40 mt-6" />
+                  </div>
+
+                  {/* Info principal */}
+                  <div>
+                    <p className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.2em] uppercase mb-3">
+                      {c.tagline}
+                    </p>
+                    <h3
+                      className="text-[2rem] md:text-[2.5rem] font-bold text-[var(--color-text)] mb-4 leading-tight"
+                      style={{ fontFamily: "var(--font-playfair)" }}
+                    >
+                      {c.nombre}
+                    </h3>
+                    <p className="text-[var(--color-muted)] text-sm leading-relaxed mb-6 max-w-sm">
+                      {c.descripcion}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {c.detalle.split(" · ").map((tag, j) => (
+                        <span
+                          key={j}
+                          className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[var(--color-primary)] border border-[var(--color-primary)]/30 rounded-full px-3 py-1"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -291,43 +559,8 @@ export default function QuienesSomosPage() {
         </div>
       </section>
 
-      {/* Propuesta de valor */}
-      <section className="py-20 bg-[var(--color-bg)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <span className="text-[var(--color-primary)] text-xs font-semibold tracking-[0.2em] uppercase block mb-4">
-              Lo que nos diferencia
-            </span>
-            <h2
-              className="text-[2rem] md:text-[2.5rem] font-bold text-[var(--color-text)] mb-4"
-              style={{ fontFamily: "var(--font-playfair)" }}
-            >
-              Nuestra propuesta de valor
-            </h2>
-            <p className="text-[var(--color-muted)] max-w-xl mx-auto">
-              En The Market Gourmet no solo vendemos productos, construimos experiencias.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {diferenciadores.map((item, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-4 bg-[var(--color-surface)] border border-[var(--color-primary)]/15 rounded-xl p-5 hover:border-[var(--color-primary)]/40 transition-colors duration-300"
-              >
-                <span className="shrink-0 w-6 h-6 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 text-[var(--color-primary)] flex items-center justify-center text-xs font-bold mt-0.5">
-                  {i + 1}
-                </span>
-                <p className="text-[var(--color-text)] text-sm leading-relaxed font-medium">
-                  {item}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Valores */}
-      <section className="py-20 bg-[var(--color-subtle-bg)] border-y border-[var(--color-primary)]/10">
+      <section className="py-20 bg-[var(--color-bg)] border-b border-[var(--color-primary)]/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="inline-block w-12 h-px bg-[var(--color-primary)] mb-6" />
@@ -357,7 +590,7 @@ export default function QuienesSomosPage() {
         </div>
       </section>
 
-      {/* CTA final — imagen de fondo */}
+      {/* CTA final */}
       <section className="relative overflow-hidden">
         <div className="relative h-[420px] md:h-[500px]">
           <img
